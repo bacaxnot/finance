@@ -9,8 +9,6 @@ Project finance_app {
 
 Table users {
   id              uuid [pk, default: `gen_random_uuid()`]
-  email           varchar(255) [not null, unique]
-  password_hash   varchar(255) [not null]
   full_name       varchar(255)
   locale          varchar(10)  // e.g. es-CO
   created_at      timestamptz [not null, default: `now()`]
@@ -28,17 +26,10 @@ Table auth_identities {
   updated_at      timestamptz [not null, default: `now()`]
 }
 
-Table currencies {
-  code        varchar(3) [pk] // ISO code, e.g. COP
-  name        varchar(100) [not null]
-  symbol      varchar(10)
-  is_default  boolean [not null, default: false]
-}
-
 Table user_settings {
   id                    uuid [pk, default: `gen_random_uuid()`]
   user_id               uuid [not null, unique]
-  default_currency_code varchar(3) [not null, ref: > currencies.code]
+  default_currency varchar(3) [not null]
   // future: notification prefs, time zone, etc.
 }
 
@@ -46,60 +37,25 @@ Table user_settings {
 // Core Accounting Domain
 // =========================
 
-Enum account_type {
-  CASH
-  CHECKING
-  SAVINGS
-  CREDIT_CARD
-  LOAN_ASSET         // loans I've given (people owe me)
-  LOAN_LIABILITY     // loans I owe (future)
-  WALLET
-  OTHER
-}
-
-Enum account_status {
-  ACTIVE
-  ARCHIVED
-}
-
 Table accounts {
   id                 uuid [pk, default: `gen_random_uuid()`]
   user_id            uuid [not null, ref: > users.id]
   name               varchar(255) [not null]
   institution_name   varchar(255) // e.g. Bancolombia, Nubank
-  type               account_type [not null]
-  currency_code      varchar(3)   [not null, ref: > currencies.code]
+  type               varchar(50) [not null] // account type: CASH, CHECKING, SAVINGS, CREDIT_CARD, LOAN_ASSET, LOAN_LIABILITY, WALLET, OTHER
+  currency          varchar(3)   [not null]
   initial_balance    numeric(18,2) [not null, default: 0]
-  status             account_status [not null, default: 'ACTIVE']
+  is_archived        boolean [not null, default: false]
   opened_at          date
   closed_at          date
   created_at         timestamptz [not null, default: `now()`]
   updated_at         timestamptz [not null, default: `now()`]
 }
 
-Enum transaction_type {
-  INCOME
-  EXPENSE
-  TRANSFER
-  INTEREST
-  CARD_PAYMENT
-  ADJUSTMENT
-}
-
-Enum transaction_origin {
-  MANUAL
-  STATEMENT_IMPORT
-  AI_ASSISTED
-  SYSTEM
-}
-
 Table categories {
   id          uuid [pk, default: `gen_random_uuid()`]
   user_id     uuid [not null, ref: > users.id]
   name        varchar(255) [not null]
-  parent_id   uuid [ref: > categories.id]
-  is_income   boolean [not null, default: false]
-  is_expense  boolean [not null, default: true]
   created_at  timestamptz [not null, default: `now()`]
 }
 
@@ -114,15 +70,12 @@ Table transactions {
   id                 uuid [pk, default: `gen_random_uuid()`]
   user_id            uuid [not null, ref: > users.id]
   account_id         uuid [not null, ref: > accounts.id]
-  type               transaction_type [not null]
+  direction          varchar(20) [not null] // INBOUND, OUTBOUND
   amount             numeric(18,2) [not null] // positive numbers, direction inferred from type
-  currency_code      varchar(3) [not null, ref: > currencies.code]
+  currency          varchar(3) [not null]
   description        text
   category_id        uuid [ref: > categories.id]
   occurred_at        timestamptz [not null]
-  origin             transaction_origin [not null, default: 'MANUAL']
-  transfer_group_id  uuid // links both sides of a transfer
-  statement_item_id  uuid // optional FK to imported_statement_items.id (see below)
   external_ref       varchar(255) // bank reference / id
   created_at         timestamptz [not null, default: `now()`]
   updated_at         timestamptz [not null, default: `now()`]
@@ -138,13 +91,13 @@ Table transaction_tags {
 }
 
 // Explicit transfer aggregate to avoid double-counting
-Table money_transfers {
+Table account_transfers {
   id               uuid [pk, default: `gen_random_uuid()`]
   user_id          uuid [not null, ref: > users.id]
   from_account_id  uuid [not null, ref: > accounts.id]
   to_account_id    uuid [not null, ref: > accounts.id]
   amount           numeric(18,2) [not null]
-  currency_code    varchar(3) [not null, ref: > currencies.code]
+  currency        varchar(3) [not null]
   description      text
   executed_at      timestamptz [not null]
   created_at       timestamptz [not null, default: `now()`]
@@ -154,30 +107,25 @@ Table money_transfers {
 // Statements & Import / AI
 // =========================
 
-Enum statement_status {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
+Table files {
+  id            uuid [pk, default: `gen_random_uuid()`]
+  user_id       uuid [not null, ref: > users.id]
+  file_name     varchar(500) [not null]
+  file_type     varchar(100)
+  file_size     bigint
+  storage_path  varchar(1000) [not null]
+  created_at    timestamptz [not null, default: `now()`]
 }
 
-Enum statement_item_status {
-  NEW
-  MATCHED_EXISTING
-  MERGED
-  DISCARDED
-}
-
-Table statements {
+Table imported_statements {
   id                uuid [pk, default: `gen_random_uuid()`]
   user_id           uuid [not null, ref: > users.id]
-  account_id        uuid [not null, ref: > accounts.id]
+  account_id        uuid [ref: > accounts.id]
+  file_id           uuid [ref: > files.id]
   provider          varchar(100) // Bancolombia, Nubank, etc.
-  file_name         varchar(500)
-  file_type         varchar(50)  // pdf, csv, etc.
   period_start      date
   period_end        date
-  status            statement_status [not null, default: 'PENDING']
+  suggested_account_id uuid [not null, ref: > accounts.id]
   error_message     text
   uploaded_at       timestamptz [not null, default: `now()`]
   processed_at      timestamptz
@@ -185,221 +133,15 @@ Table statements {
 
 Table imported_statement_items {
   id                uuid [pk, default: `gen_random_uuid()`]
-  statement_id      uuid [not null, ref: > statements.id]
+  statement_id      uuid [not null, ref: > imported_statements.id]
   raw_date          varchar(50)
   raw_description   text
   raw_amount        varchar(50)
   raw_balance       varchar(50)
   parsed_date       timestamptz
   parsed_amount     numeric(18,2)
-  parsed_type       varchar(20)  // debit / credit
-  suggested_account_id uuid [ref: > accounts.id]
+  parsed_direction       varchar(20)  // INBOUND, OUTBOUND
   suggested_category_id uuid [ref: > categories.id]
-  status            statement_item_status [not null, default: 'NEW']
   matched_transaction_id uuid [ref: > transactions.id]
   created_at        timestamptz [not null, default: `now()`]
 }
-
-Table potential_duplicates {
-  id                    uuid [pk, default: `gen_random_uuid()`]
-  transaction_id        uuid [not null, ref: > transactions.id]
-  possible_duplicate_id uuid [not null, ref: > transactions.id]
-  score                 numeric(5,2) // similarity score
-  created_at            timestamptz [not null, default: `now()`]
-
-  indexes {
-    (transaction_id, possible_duplicate_id) [unique]
-  }
-}
-
-// =========================
-// Savings & Interest Domain
-// =========================
-
-Enum interest_frequency {
-  DAILY
-  MONTHLY
-  YEARLY
-}
-
-Enum interest_capitalization {
-  PAYOUT
-  REINVEST
-}
-
-Table interest_bearing_accounts {
-  id               uuid [pk, default: `gen_random_uuid()`]
-  account_id       uuid [not null, unique, ref: > accounts.id]
-  annual_rate      numeric(7,4) [not null] // e.g. 0.1200 = 12% yearly
-  frequency        interest_frequency [not null]
-  capitalization   interest_capitalization [not null]
-  started_at       date
-}
-
-Table savings_contributions {
-  id               uuid [pk, default: `gen_random_uuid()`]
-  user_id          uuid [not null, ref: > users.id]
-  source_account_id uuid [not null, ref: > accounts.id]
-  target_account_id uuid [not null, ref: > accounts.id] // usually interest-bearing
-  transaction_id   uuid [not null, ref: > transactions.id]
-  contributed_at   timestamptz [not null]
-}
-
-// =========================
-// Credit Card Domain
-// =========================
-
-Table credit_cards {
-  id                 uuid [pk, default: `gen_random_uuid()`]
-  account_id         uuid [not null, unique, ref: > accounts.id]
-  card_last4         varchar(4)
-  credit_limit       numeric(18,2)
-  closing_day        smallint // day of month
-  due_day            smallint // day of month
-  annual_interest_rate numeric(7,4) // for revolved balance
-  created_at         timestamptz [not null, default: `now()`]
-}
-
-Table credit_card_statements {
-  id                    uuid [pk, default: `gen_random_uuid()`]
-  credit_card_id        uuid [not null, ref: > credit_cards.id]
-  period_start          date
-  period_end            date
-  statement_due_date    date
-  statement_balance     numeric(18,2) [not null, default: 0]
-  minimum_payment       numeric(18,2)
-  interest_charged      numeric(18,2) [not null, default: 0]
-  created_at            timestamptz [not null, default: `now()`]
-}
-
-Table credit_card_payments {
-  id                    uuid [pk, default: `gen_random_uuid()`]
-  credit_card_id        uuid [not null, ref: > credit_cards.id]
-  from_account_id       uuid [not null, ref: > accounts.id]
-  bank_tx_id            uuid [not null, ref: > transactions.id]  // in source bank account
-  card_tx_id            uuid [not null, ref: > transactions.id]  // in credit card account
-  statement_id          uuid [ref: > credit_card_statements.id]
-  amount                numeric(18,2) [not null]
-  paid_at               timestamptz [not null]
-}
-
-// =========================
-// Loans I've Given Domain
-// =========================
-
-Enum loan_interest_type {
-  NONE
-  FIXED
-  DYNAMIC
-}
-
-Enum loan_status {
-  ACTIVE
-  PAID_OFF
-  WRITTEN_OFF
-}
-
-Table contacts {
-  id          uuid [pk, default: `gen_random_uuid()`]
-  user_id     uuid [not null, ref: > users.id]
-  name        varchar(255) [not null]
-  email       varchar(255)
-  phone       varchar(50)
-  created_at  timestamptz [not null, default: `now()`]
-}
-
-Table loans {
-  id                 uuid [pk, default: `gen_random_uuid()`]
-  user_id            uuid [not null, ref: > users.id]
-  borrower_id        uuid [ref: > contacts.id]
-  borrower_name      varchar(255) // denormalized for quick reference
-  principal_amount   numeric(18,2) [not null]
-  currency_code      varchar(3) [not null, ref: > currencies.code]
-  start_date         date [not null]
-  interest_type      loan_interest_type [not null]
-  fixed_interest_rate numeric(7,4) // used when interest_type = FIXED
-  compounding_frequency interest_frequency
-  status             loan_status [not null, default: 'ACTIVE']
-  account_id         uuid [ref: > accounts.id] // optional link to dedicated loan asset account
-  created_at         timestamptz [not null, default: `now()`]
-  updated_at         timestamptz [not null, default: `now()`]
-}
-
-Table loan_rate_changes {
-  id                 uuid [pk, default: `gen_random_uuid()`]
-  loan_id            uuid [not null, ref: > loans.id]
-  effective_from     date [not null]
-  interest_rate      numeric(7,4) [not null]
-  note               text
-  created_at         timestamptz [not null, default: `now()`]
-}
-
-Enum loan_payment_allocation {
-  INTEREST_FIRST
-  PRINCIPAL_FIRST
-  PRO_RATA
-}
-
-Table loan_payments {
-  id                    uuid [pk, default: `gen_random_uuid()`]
-  loan_id               uuid [not null, ref: > loans.id]
-  from_account_id       uuid [not null, ref: > accounts.id]
-  bank_transaction_id   uuid [not null, ref: > transactions.id]
-  allocation_strategy   loan_payment_allocation [not null]
-  amount_total          numeric(18,2) [not null]
-  amount_principal      numeric(18,2) [not null]
-  amount_interest       numeric(18,2) [not null]
-  paid_at               timestamptz [not null]
-  created_at            timestamptz [not null, default: `now()`]
-}
-
-Enum loan_schedule_status {
-  PLANNED
-  PAID
-  OVERDUE
-}
-
-Table loan_schedules {
-  id                uuid [pk, default: `gen_random_uuid()`]
-  loan_id           uuid [not null, ref: > loans.id]
-  due_date          date [not null]
-  amount_principal  numeric(18,2) [not null]
-  amount_interest   numeric(18,2) [not null]
-  status            loan_schedule_status [not null, default: 'PLANNED']
-  paid_payment_id   uuid [ref: > loan_payments.id]
-  created_at        timestamptz [not null, default: `now()`]
-}
-
-// =========================
-// Reporting / Insights
-// =========================
-
-Table net_worth_snapshots {
-  id                uuid [pk, default: `gen_random_uuid()`]
-  user_id           uuid [not null, ref: > users.id]
-  as_of_date        date [not null]
-  total_assets      numeric(18,2) [not null]
-  total_liabilities numeric(18,2) [not null]
-  net_worth         numeric(18,2) [not null]
-  created_at        timestamptz [not null, default: `now()`]
-
-  indexes {
-    (user_id, as_of_date) [unique]
-  }
-}
-
-// Optional pre-aggregated category metrics per month
-Table category_monthly_summaries {
-  id            uuid [pk, default: `gen_random_uuid()`]
-  user_id       uuid [not null, ref: > users.id]
-  category_id   uuid [not null, ref: > categories.id]
-  year_month    char(7) [not null] // YYYY-MM
-  amount        numeric(18,2) [not null]
-  is_income     boolean [not null]
-  created_at    timestamptz [not null, default: `now()`]
-
-  indexes {
-    (user_id, category_id, year_month, is_income) [unique]
-  }
-}
-
