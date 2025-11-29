@@ -10,6 +10,7 @@ So we'll use me as the inception user to solve his needs.
 - I want to be able to track the payments of money people owe me, as well as set interest rates to those loans
 - I should be able to see at any point in time the exact amount of money i have in any bank account i have
 - I should be able to track my credit cards also, and see how much money i owe on the credit card and how much money I pay in interests
+- I want to be able to upload a bank statement and the system should be able to extract the information using AI and create the transactions from the file
 
 ## Current setup
 
