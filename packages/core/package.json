@@ -17,7 +17,9 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "uuid": "^13.0.0"
   }
 }
