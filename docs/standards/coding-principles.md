@@ -180,6 +180,75 @@ const activeUsers = users.filter((u) => u.isActive);
 - Cryptic variable names (`u`, `tmp`, `data`)
 - Clever one-liners that need comments to explain
 
+## Tell, Don't Ask
+
+**Objects should expose behavior, not internal state. Tell objects what to do, don't ask for their data and do it yourself.**
+
+```typescript
+// ❌ Bad: Asking for data and manipulating it
+class User {
+  constructor(
+    public firstName: PersonName,
+    public lastName: PersonName
+  ) {}
+}
+
+// Consumer asks for data
+const fullName = `${user.firstName.toString()} ${user.lastName.toString()}`;
+
+// ❌ Bad: Exposing internal structure
+class User {
+  get id(): UserId {
+    return this._id; // Leaks implementation details
+  }
+}
+
+// ✅ Good: Telling the object what you need
+class User {
+  private firstName: PersonName;
+  private lastName: PersonName;
+
+  getFullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  toPrimitives(): UserPrimitives {
+    return {
+      id: this.id.toString(),
+      firstName: this.firstName.toString(),
+      lastName: this.lastName.toString(),
+      // ...
+    };
+  }
+}
+
+// Consumer tells object what they need
+const fullName = user.getFullName();
+const data = user.toPrimitives();
+```
+
+**Why this matters:**
+
+- Encapsulation - Internal representation can change without breaking consumers
+- Single responsibility - Object handles its own logic
+- Easier to test - Test behavior, not state
+- Domain model stays intact - Business logic in one place
+
+**What to expose:**
+
+- Behavior (methods that do things)
+- Primitive representations (`toPrimitives()`) for serialization
+- Identity (if necessary, as primitives)
+
+**What NOT to expose:**
+
+- Internal value objects or entities
+- Raw properties (use `private`)
+- Getters/setters that just wrap properties
+- Implementation details
+
+**Exception:** Value objects can expose their value since they ARE their value. But aggregates should hide complexity.
+
 ## No Premature Optimization
 
 **Make it work, make it right, then make it fast (if needed).**
@@ -262,8 +331,9 @@ throw new Error(
 2. **Rule of Three** - Duplicate before abstracting
 3. **Comments** - Explain WHY, not WHAT
 4. **Simplicity** - Boring is better than clever
-5. **No premature optimization** - Measure before optimizing
-6. **Boy Scout Rule** - Leave it better than you found it
-7. **Clear errors** - Write for humans
+5. **Tell, Don't Ask** - Expose behavior, not state
+6. **No premature optimization** - Measure before optimizing
+7. **Boy Scout Rule** - Leave it better than you found it
+8. **Clear errors** - Write for humans
 
 When in doubt, choose the simpler option.
