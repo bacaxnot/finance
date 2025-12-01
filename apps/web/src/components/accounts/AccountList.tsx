@@ -17,12 +17,26 @@ import { AccountSkeleton } from "./AccountSkeleton";
 
 interface AccountListProps {
 	hideCreateButton?: boolean;
+	filters?: Filters;
+	onFiltersChange?: (filters: Filters) => void;
+	isFiltersOpen?: boolean;
+	onFiltersOpenChange?: (open: boolean) => void;
 }
 
-export function AccountList({ hideCreateButton = false }: AccountListProps) {
-	const [filters, setFilters] = useState<Filters>({
+export function AccountList({
+	hideCreateButton = false,
+	filters: externalFilters,
+	onFiltersChange: externalOnFiltersChange,
+	isFiltersOpen,
+	onFiltersOpenChange,
+}: AccountListProps) {
+	const [internalFilters, setInternalFilters] = useState<Filters>({
 		status: AccountStatus.ACTIVE,
 	});
+
+	// Use external filters if provided, otherwise use internal state
+	const filters = externalFilters !== undefined ? externalFilters : internalFilters;
+	const setFilters = externalOnFiltersChange || setInternalFilters;
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 	const [archivingAccount, setArchivingAccount] = useState<Account | null>(null);
@@ -153,6 +167,9 @@ export function AccountList({ hideCreateButton = false }: AccountListProps) {
 					filters={filters}
 					onFiltersChange={setFilters}
 					className={hideCreateButton ? "sm:ml-auto" : ""}
+					isOpen={isFiltersOpen}
+					onOpenChange={onFiltersOpenChange}
+					triggerHidden={isFiltersOpen !== undefined}
 				/>
 			</div>
 

@@ -5,6 +5,52 @@
 
 ---
 
+## 🚨 Plan de resolución – Hallazgos QA (Severidad Alta)
+
+### 1. Página raíz muestra boilerplate (Issue #1)
+- [ ] **Redirección/Remplazo de `/`**  
+  - Definir si `/` debe redirigir permanentemente a `/landing` o renderizar el landing directamente.  
+  - Ajustar `app/page.tsx` o configurar middleware/redirect según la decisión.
+- [ ] **Revisar navegación global**  
+  - Verificar que cualquier enlace al home (navbar, footer, etc.) lleve al destino correcto tras el cambio.
+- [ ] **Smoke test**  
+  - Levantar la app y confirmar que visitar `/` muestra la landing real sin errores.
+
+### 2. Filtros “All” no funcionan (Issue #3)
+- [ ] **Integrar botón de filtros en el header de Accounts**  
+  - Revisar `apps/web/src/app/(auth)/(dashboard)/accounts/page.tsx` y definir la nueva estructura del header para que el ícono de filtros conviva con el botón Back/título, tanto en desktop como en mobile.  
+  - Crear un `Button` solamente con el ícono `Filter`, con `aria-label` y tamaño ≥44px, y elevar el estado de apertura/cierre del panel de filtros al nivel de `AccountsPage`.
+- [ ] **Actualizar `AccountFilters` para ser controlado externamente**  
+  - Añadir props (`isOpen`, `onOpenChange`, `triggerHidden`, etc.) para que el sheet móvil pueda abrirse desde el nuevo botón del header y ocultar el trigger interno cuando no sea necesario.  
+  - Mantener el layout inline en desktop y asegurarse de que las opciones “All” usen `""` → `undefined` al guardarse en los handlers.
+- [ ] **Resincronizar estado y limpiar valores**  
+  - Implementar `useEffect` para que `localFilters` refleje cualquier cambio realizado desde `AccountsPage` (botón Clear, combinaciones de filtros).  
+  - Normalizar los handlers para evitar que el string `"all"` llegue al API (convertir a `undefined` antes de guardar).
+- [ ] **QA y accesibilidad**  
+  - Probar en mobile/desktop que el nuevo botón abre/cierra el panel correctamente, combinando filtros, usando el botón Clear y aplicando los cambios.  
+  - Validar focus management (teclado/esc) y lectura por screen reader del nuevo botón.
+
+### 3. Modal de edición no persiste cambios (Issue #5)
+- [ ] **Integrar `useUpdateAccount`**  
+  - Conectar el formulario de edición con la mutación y manejar estados de carga/error.  
+  - Invalidate queries necesarias tras éxito (ya gestionado por el hook).
+- [ ] **Reset de formulario al cambiar de cuenta**  
+  - Usar `form.reset` o key única para evitar valores obsoletos.
+- [ ] **Pruebas manuales**  
+  - Editar múltiples cuentas para validar que los cambios se reflejan en lista y tabla.
+
+### 4. API de actualización no modifica `balance` (Issue #7)
+- [ ] **Actualizar `accountsApi.updateAccount`**  
+  - Mapear `input.initialBalance` hacia `balance` (o cambiar el schema para editar `balance`).  
+  - Garantizar que las fechas `updatedAt` se mantengan correctas.
+- [ ] **Alinear tipos/DTOs**  
+  - Revisar `UpdateAccountInput` para que represente los campos realmente editables.  
+  - Ajustar `AccountForm` si es necesario (por ejemplo, renombrar campo a `balance`).
+- [ ] **Regresión**  
+  - Crear y editar cuentas verificando que los balances actuales cambian y se reflejan en la vista consolidada.
+
+---
+
 ## 🎯 MVP - Primera Iteración
 
 ### Epic 1 - Configuration, Security & Personalization
