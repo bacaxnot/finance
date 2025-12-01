@@ -28,6 +28,16 @@ export class User {
     );
   }
 
+  static fromPrimitives(primitives: UserPrimitives): User {
+    return new User(
+      UserId.from(primitives.id),
+      new PersonName(primitives.firstName),
+      new PersonName(primitives.lastName),
+      primitives.createdAt,
+      primitives.updatedAt
+    );
+  }
+
   getFullName(): string {
     return `${this.firstName} ${this.lastName}`;
   }
