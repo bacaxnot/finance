@@ -6,8 +6,8 @@ import type {
 	CreateAccountInput,
 	UpdateAccountInput,
 	AccountFilters,
-} from "@repo/db";
-import { AccountStatus } from "@repo/db";
+} from "@/mock/types";
+import { AccountStatus } from "@/mock/types";
 import { MOCK_ACCOUNTS, getMockConsolidatedView } from "@/lib/mock-data/accounts";
 
 // Simulate API delay

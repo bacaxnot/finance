@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { UpdateAccountInput, Account } from "@repo/db";
+import type { UpdateAccountInput, Account } from "@/mock/types";
 import { accountsApi } from "@/lib/api";
 import { ACCOUNTS_QUERY_KEY } from "./useAccounts";
 import { ACCOUNT_QUERY_KEY } from "./useAccount";

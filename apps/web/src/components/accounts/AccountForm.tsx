@@ -2,12 +2,12 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Account, CreateAccountInput } from "@repo/db";
+import type { Account, CreateAccountInput } from "@/mock/types";
 import {
 	createAccountSchema,
 	AccountType,
 	Currency,
-} from "@repo/db";
+} from "@/mock/types";
 import {
 	Form,
 	FormControl,

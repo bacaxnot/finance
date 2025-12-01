@@ -1,6 +1,6 @@
 "use client";
 
-import type { Account } from "@repo/db";
+import type { Account } from "@/mock/types";
 import {
 	Dialog,
 	DialogContent,

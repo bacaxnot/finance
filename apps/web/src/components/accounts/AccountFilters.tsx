@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { AccountFilters as Filters } from "@repo/db";
-import { AccountType, AccountStatus } from "@repo/db";
+import type { AccountFilters as Filters } from "@/mock/types";
+import { AccountType, AccountStatus } from "@/mock/types";
 import { Button } from "@/components/ui/button";
 import {
 	Sheet,

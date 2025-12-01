@@ -4,8 +4,8 @@ import {
 	CreditCard,
 	type LucideIcon,
 } from "lucide-react";
-import type { AccountType } from "@repo/db";
-import { AccountType as AccountTypeEnum } from "@repo/db";
+import type { AccountType } from "@/mock/types";
+import { AccountType as AccountTypeEnum } from "@/mock/types";
 import { cn } from "@/lib/utils";
 
 interface AccountTypeIconProps {

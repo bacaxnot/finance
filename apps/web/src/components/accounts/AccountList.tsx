@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { Account, AccountFilters as Filters, CreateAccountInput } from "@repo/db";
-import { AccountStatus } from "@repo/db";
+import type { Account, AccountFilters as Filters, CreateAccountInput } from "@/mock/types";
+import { AccountStatus } from "@/mock/types";
 import { useAccounts, useCreateAccount, useArchiveAccount } from "@/hooks/accounts";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";

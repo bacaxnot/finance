@@ -1,7 +1,7 @@
 "use client";
 
-import type { Account } from "@repo/db";
-import { AccountStatus } from "@repo/db";
+import type { Account } from "@/mock/types";
+import { AccountStatus } from "@/mock/types";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {

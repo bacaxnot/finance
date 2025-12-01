@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, ChevronRight } from "lucide-react";
 import { AccountTypeIcon } from "./AccountTypeIcon";
-import { AccountType } from "@repo/db";
+import { AccountType } from "@/mock/types";
 
 const formatCurrency = (amount: number, currency: string) => {
 	return new Intl.NumberFormat("en-US", {

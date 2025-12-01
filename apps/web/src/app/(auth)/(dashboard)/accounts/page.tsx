@@ -10,7 +10,7 @@ import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AccountForm } from "@/components/accounts/AccountForm";
 import { useCreateAccount } from "@/hooks/accounts";
-import type { CreateAccountInput } from "@repo/db";
+import type { CreateAccountInput } from "@/mock/types";
 
 export default function AccountsPage() {
 	const router = useRouter();
