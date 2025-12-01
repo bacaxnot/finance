@@ -73,7 +73,7 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 					<SheetTrigger asChild>
 						<Button
 							variant="outline"
-							className="h-11 min-h-[44px] gap-2"
+							className="h-11 min-h-[44px] gap-2 rounded-full px-5 shadow-sm"
 						>
 							<Filter className="size-4" />
 							Filters
@@ -84,24 +84,27 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 							)}
 						</Button>
 					</SheetTrigger>
-					<SheetContent side="bottom" className="h-[90vh] p-4">
+					<SheetContent
+						side="bottom"
+						className="h-[90vh] overflow-y-auto rounded-t-3xl px-5 py-6"
+					>
 						<SheetHeader>
 							<SheetTitle>Filters</SheetTitle>
 							<SheetDescription>
 								Filter accounts by type, status, or name
 							</SheetDescription>
 						</SheetHeader>
-						<div className="mt-6 space-y-6">
+						<div className="mt-6 flex flex-col gap-6">
 							{/* Type */}
-							<div className="space-y-2">
-								<Label>Account Type</Label>
+							<div className="flex flex-col gap-1.5">
+								<Label className="text-sm font-medium text-muted-foreground">Account Type</Label>
 								<Select
 									value={localFilters.type || ""}
 									onValueChange={(value) =>
 										setLocalFilters({ ...localFilters, type: value as any || undefined })
 									}
 								>
-									<SelectTrigger className="h-11">
+									<SelectTrigger className="h-11 rounded-xl px-4">
 										<SelectValue placeholder="All Types" />
 									</SelectTrigger>
 									<SelectContent>
@@ -115,15 +118,15 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 							</div>
 
 							{/* Status */}
-							<div className="space-y-2">
-								<Label>Status</Label>
+							<div className="flex flex-col gap-1.5">
+								<Label className="text-sm font-medium text-muted-foreground">Status</Label>
 								<Select
 									value={localFilters.status || ""}
 									onValueChange={(value) =>
 										setLocalFilters({ ...localFilters, status: value as any || undefined })
 									}
 								>
-									<SelectTrigger className="h-11">
+									<SelectTrigger className="h-11 rounded-xl px-4">
 										<SelectValue placeholder="All Status" />
 									</SelectTrigger>
 									<SelectContent>
@@ -137,25 +140,25 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 							</div>
 
 							{/* Search */}
-							<div className="space-y-2">
-								<Label>Search</Label>
+							<div className="flex flex-col gap-1.5">
+								<Label className="text-sm font-medium text-muted-foreground">Search</Label>
 								<Input
 									placeholder="Search by account name..."
 									value={localFilters.search || ""}
 									onChange={(e) =>
 										setLocalFilters({ ...localFilters, search: e.target.value || undefined })
 									}
-									className="h-11"
+									className="h-11 rounded-xl px-4"
 								/>
 							</div>
 
 							{/* Actions */}
-							<div className="flex gap-2 pt-4">
+							<div className="flex flex-col gap-3 pt-2 sm:flex-row">
 								<Button
 									type="button"
 									variant="outline"
 									onClick={handleClear}
-									className="flex-1 h-11 min-h-[44px]"
+									className="flex-1 h-11 min-h-[44px] rounded-xl"
 								>
 									<X className="mr-2 size-4" />
 									Clear
@@ -163,7 +166,7 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 								<Button
 									type="button"
 									onClick={handleApply}
-									className="flex-1 h-11 min-h-[44px]"
+									className="flex-1 h-11 min-h-[44px] rounded-xl"
 								>
 									Apply Filters
 								</Button>
@@ -174,7 +177,12 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 			</div>
 
 			{/* Desktop: Inline Filters */}
-			<div className={cn("hidden md:flex md:items-center md:gap-4", className)}>
+			<div
+				className={cn(
+					"hidden w-full flex-wrap items-center gap-3 rounded-2xl border border-border bg-card/40 px-4 py-3 shadow-sm md:flex",
+					className,
+				)}
+			>
 				{/* Search */}
 				<Input
 					placeholder="Search accounts..."
@@ -182,7 +190,7 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 					onChange={(e) =>
 						onFiltersChange({ ...filters, search: e.target.value || undefined })
 					}
-					className="w-64"
+					className="h-10 flex-1 min-w-[220px] rounded-xl"
 				/>
 
 				{/* Type */}
@@ -192,7 +200,7 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 						onFiltersChange({ ...filters, type: value as any || undefined })
 					}
 				>
-					<SelectTrigger className="w-40">
+					<SelectTrigger className="h-10 min-w-[170px] rounded-xl">
 						<SelectValue placeholder="All Types" />
 					</SelectTrigger>
 					<SelectContent>
@@ -211,7 +219,7 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 						onFiltersChange({ ...filters, status: value as any || undefined })
 					}
 				>
-					<SelectTrigger className="w-40">
+					<SelectTrigger className="h-10 min-w-[170px] rounded-xl">
 						<SelectValue placeholder="All Status" />
 					</SelectTrigger>
 					<SelectContent>
@@ -230,6 +238,7 @@ export function AccountFilters({ filters, onFiltersChange, className }: AccountF
 						variant="ghost"
 						onClick={handleClear}
 						size="sm"
+						className="ml-auto text-muted-foreground hover:text-foreground"
 					>
 						<X className="mr-2 size-4" />
 						Clear ({activeFilterCount})
