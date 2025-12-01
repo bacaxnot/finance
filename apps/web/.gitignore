@@ -57,3 +57,6 @@ node_modules/
 # Logs
 *.log
 
+
+# clerk configuration (can include secrets)
+/.clerk/
