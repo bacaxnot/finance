@@ -2,6 +2,7 @@
 
 > Historias de usuario y tareas de desarrollo frontend para la aplicación de finanzas personales.
 > Basado en el documento de planificación del negocio.
+> Nota de diseño: evitar componentes tipo "card"; usar superficies planas, listas y paneles simples.
 
 ---
 
@@ -113,7 +114,7 @@
 
 **Componentes a crear:**
 - `AccountList.tsx`
-- `AccountCard.tsx`
+- `AccountListItem.tsx` (layout plano sin cards)
 - `AccountForm.tsx` (crear/editar)
 - `AccountTypeIcon.tsx`
 - `ArchiveAccountModal.tsx`
@@ -127,7 +128,7 @@
 **Frontend Tasks:**
 
 - [ ] **Dashboard Principal**
-  - Cards para métricas principales:
+  - Bloques horizontales sin cards para métricas principales:
     - Total Cash & Liquid Assets
     - Total Debt
     - Total Receivables (dinero que me deben)
@@ -143,7 +144,7 @@
 
 **Componentes a crear:**
 - `Dashboard.tsx`
-- `MetricCard.tsx`
+- `MetricStat.tsx` (unidad visual sin card styles)
 - `AccountBreakdown.tsx`
 - `BalanceChart.tsx`
 
@@ -193,7 +194,7 @@
   - Columnas: date, description, account, category, amount
   - Sorting por cualquier columna
   - Row highlighting al hover
-  - Mobile-optimized card view
+  - Mobile view con filas apiladas (sin cards)
 
 - [ ] **Smart Search/Filter Input**
   - Input único que filtra inteligentemente
@@ -213,7 +214,7 @@
 - `SmartSearchInput.tsx`
 - `FilterChips.tsx`
 - `TransactionRow.tsx` (desktop)
-- `TransactionCard.tsx` (mobile)
+- `TransactionListItemMobile.tsx`
 
 **Prioridad:** 🔴 Crítica
 
@@ -455,7 +456,7 @@
 **Frontend Tasks:**
 
 - [ ] **Loans List Page**
-  - Cards/Table con: borrower, principal, paid, accrued interest, remaining, last payment
+  - Tabla/lista plana (sin cards) con: borrower, principal, paid, accrued interest, remaining, last payment
   - Filter: active vs. fully repaid
   - Sort por: amount, date, borrower name
   - Click en loan para ver detalle
@@ -468,7 +469,7 @@
 
 **Componentes a crear:**
 - `LoansListPage.tsx`
-- `LoanCard.tsx`
+- `LoanListItem.tsx`
 - `LoanDetailPage.tsx`
 - `PaymentTimeline.tsx`
 
@@ -513,12 +514,12 @@
   - Sortable columns
   - Sticky header
   - Row selection
-  - Responsive (mobile card view)
+  - Responsive (mobile stacked view sin cards)
   - Loading skeleton
 
-- [ ] **Card**
-  - Base card con header, body, footer
-  - Variants: default, bordered, elevated
+- [ ] **Surface/Panel**
+  - Contenedor simple sin estética de card
+  - Variantes: flat, bordered suave
 
 - [ ] **Badge**
   - Status indicators
@@ -652,7 +653,7 @@
 
 ### Sprint 1 (2 semanas) - Foundation
 - Setup proyecto Next.js + TailwindCSS
-- Componentes base (Button, Input, Modal, Card)
+- Componentes base (Button, Input, Modal, Surface)
 - Layout principal + navegación
 - Auth UI (login/logout)
 - Protected routes
