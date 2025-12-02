@@ -20,7 +20,7 @@ describe("UserId", () => {
   });
 
   describe("from", () => {
-    test("creates UserId from valid UUID v7 string", () => {
+    test("creates UserId from valid UUID string", () => {
       const validV7 = "01936d8f-5e27-7b3a-9c4e-123456789abc";
       const userId = UserId.from(validV7);
 
@@ -28,29 +28,20 @@ describe("UserId", () => {
     });
 
     test("throws error for empty string", () => {
-      expect(() => UserId.from("")).toThrow("User ID cannot be empty");
+      expect(() => UserId.from("")).toThrow("Invalid UUID format");
     });
 
     test("throws error for whitespace-only string", () => {
-      expect(() => UserId.from("   ")).toThrow("User ID cannot be empty");
+      expect(() => UserId.from("   ")).toThrow("Invalid UUID format");
     });
 
     test("throws error for invalid UUID format", () => {
-      expect(() => UserId.from("not-a-uuid")).toThrow(
-        "User ID must be a valid UUID v7"
-      );
-    });
-
-    test("throws error for UUID v4", () => {
-      const v4Uuid = "550e8400-e29b-41d4-a716-446655440000";
-      expect(() => UserId.from(v4Uuid)).toThrow(
-        "User ID must be a valid UUID v7"
-      );
+      expect(() => UserId.from("not-a-uuid")).toThrow("Invalid UUID format");
     });
 
     test("throws error for malformed UUID", () => {
       expect(() => UserId.from("01936d8f-5e27-7b3a-9c4e")).toThrow(
-        "User ID must be a valid UUID v7"
+        "Invalid UUID format"
       );
     });
   });
