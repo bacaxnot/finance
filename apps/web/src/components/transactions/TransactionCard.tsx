@@ -22,7 +22,6 @@ const formatDate = (date: Date) => {
 	return new Intl.DateTimeFormat("en-US", {
 		month: "short",
 		day: "numeric",
-		year: "numeric",
 	}).format(date);
 };
 
@@ -59,61 +58,43 @@ export function TransactionCard({
 }: TransactionCardProps) {
 	const isIncome = transaction.type === TransactionType.INCOME;
 	const isExpense = transaction.type === TransactionType.EXPENSE;
-	const isTransfer = transaction.type === TransactionType.TRANSFER;
 
 	return (
 		<div
 			className={cn(
-				"relative min-h-[88px] border-b border-border py-4 pl-5 pr-4 transition-shadow",
-				onClick && "cursor-pointer hover:bg-accent/50",
+				"flex items-center gap-3 border-b border-border py-4 px-4 transition-colors",
+				onClick && "cursor-pointer hover:bg-secondary/30",
 			)}
 			onClick={() => onClick?.(transaction)}
 		>
-			{/* Color indicator bar */}
-			<div
-				className={cn(
-					"absolute left-0 top-0 bottom-0 w-1",
-					isIncome && "bg-green-500",
-					isExpense && "bg-red-500",
-					isTransfer && "bg-blue-500",
+			{/* Icon */}
+			<div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary/50">
+				<TransactionCategoryIcon category={transaction.category} size="lg" />
+			</div>
+
+			{/* Details */}
+			<div className="flex-1 min-w-0">
+				<h3 className="font-semibold text-[15px] leading-tight truncate">
+					{transaction.description}
+				</h3>
+				<p className="text-[13px] text-muted-foreground mt-0.5">
+					{getCategoryLabel(transaction.category)} •{" "}
+					{formatDate(transaction.date)}
+				</p>
+			</div>
+
+			{/* Amount */}
+			<div className="text-right shrink-0">
+				<div className="font-semibold text-base tabular-nums">
+					{isExpense && "−"}
+					{isIncome && "+"}
+					{formatCurrency(transaction.amount)}
+				</div>
+				{transaction.status !== "completed" && (
+					<Badge variant="secondary" className="text-xs mt-1">
+						{transaction.status}
+					</Badge>
 				)}
-			/>
-
-			<div className="flex items-center gap-3">
-				{/* Icon */}
-				<div className="flex size-10 items-center justify-center rounded-full bg-muted">
-					<TransactionCategoryIcon category={transaction.category} />
-				</div>
-
-				{/* Details */}
-				<div className="flex-1 min-w-0">
-					<h3 className="font-semibold truncate">{transaction.description}</h3>
-					<p className="text-sm text-muted-foreground">
-						{getCategoryLabel(transaction.category)} •{" "}
-						{formatDate(transaction.date)}
-					</p>
-				</div>
-
-				{/* Amount */}
-				<div className="text-right">
-					<div
-						className={cn(
-							"font-bold text-lg",
-							isIncome && "text-green-600",
-							isExpense && "text-red-600",
-							isTransfer && "text-blue-600",
-						)}
-					>
-						{isExpense && "-"}
-						{isIncome && "+"}
-						{formatCurrency(transaction.amount)}
-					</div>
-					{transaction.status !== "completed" && (
-						<Badge variant="secondary" className="text-xs">
-							{transaction.status}
-						</Badge>
-					)}
-				</div>
 			</div>
 		</div>
 	);

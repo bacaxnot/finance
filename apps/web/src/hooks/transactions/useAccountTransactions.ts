@@ -22,11 +22,14 @@ export function useAccountTransactions(
 	return useInfiniteQuery({
 		queryKey: [ACCOUNT_TRANSACTIONS_QUERY_KEY, accountId, serializedFilters],
 		queryFn: ({ pageParam }) =>
-			transactionsApi.getAccountTransactions(accountId, {
-				limit: 20,
-				cursor: pageParam,
-				...additionalFilters,
-			}),
+			transactionsApi.getAccountTransactions(
+				accountId,
+				additionalFilters,
+				{
+					limit: 20,
+					cursor: pageParam,
+				},
+			),
 		initialPageParam: undefined as string | undefined,
 		getNextPageParam: (lastPage) => lastPage.nextCursor,
 		enabled: !!accountId,

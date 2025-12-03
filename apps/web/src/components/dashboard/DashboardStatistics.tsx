@@ -10,10 +10,15 @@ interface DashboardStatisticsProps {
 	currency: Currency;
 }
 
-const formatCurrency = (amount: number, currency: Currency) => {
+const formatCurrency = (
+	amount: number,
+	currency: Currency,
+	showSign = false,
+) => {
 	return new Intl.NumberFormat("en-US", {
 		style: "currency",
 		currency,
+		signDisplay: showSign ? "always" : "auto",
 	}).format(amount);
 };
 
@@ -24,10 +29,13 @@ export function DashboardStatistics({
 	currency,
 }: DashboardStatisticsProps) {
 	return (
-		<div className="space-y-4">
+		<div className="space-y-2">
 			{/* Balance Principal */}
 			<div>
-				<p className="text-6xl md:text-7xl font-bold text-foreground tracking-tight">
+				<p
+					className="font-bold text-foreground tracking-tight"
+					style={{ fontSize: "clamp(2.5rem, 14vw, 6rem)" }}
+				>
 					{formatCurrency(totalBalance, currency)}
 				</p>
 			</div>
@@ -36,12 +44,15 @@ export function DashboardStatistics({
 			<div className="flex items-center gap-2">
 				<Badge
 					variant="secondary"
-					className="h-10 px-4 text-sm font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 border-0"
+					className="h-8 px-3 text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 border-0"
 				>
-					{formatCurrency(totalExpense, currency)}
+					−{formatCurrency(totalExpense, currency)}
 				</Badge>
-				<Badge variant="outline" className="h-10 px-4 text-sm font-semibold">
-					{formatCurrency(totalIncome, currency)}
+				<Badge
+					variant="secondary"
+					className="h-8 px-3 text-xs font-medium bg-green-500/10 text-green-700 hover:bg-green-500/20 border-0"
+				>
+					+{formatCurrency(totalIncome, currency)}
 				</Badge>
 			</div>
 		</div>

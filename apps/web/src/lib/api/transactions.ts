@@ -93,9 +93,13 @@ export const transactionsApi = {
 	 */
 	async getAccountTransactions(
 		accountId: string,
+		filters?: Omit<TransactionFilters, "accountId">,
 		pagination?: TransactionPagination,
 	): Promise<TransactionListResponse> {
-		return this.getTransactions({ accountId }, pagination);
+		return this.getTransactions(
+			{ accountId, ...(filters || {}) },
+			pagination,
+		);
 	},
 
 	/**

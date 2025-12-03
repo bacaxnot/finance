@@ -18,7 +18,7 @@ const randomDateInLastMonths = (months: number): Date => {
 // Helper to create specific date
 const date = (dateString: string): Date => new Date(dateString);
 
-export const MOCK_TRANSACTIONS: Transaction[] = [
+const BASE_TRANSACTIONS: Transaction[] = [
 	// ========================================================================
 	// ACCOUNT 1: Main Checking - 60 transactions (high frequency, mixed types)
 	// ========================================================================
@@ -567,6 +567,116 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
 		createdAt: date("2024-08-10"),
 		updatedAt: date("2024-08-10"),
 	},
+];
+
+const createRecentTransaction = ({
+	id,
+	accountId,
+	type,
+	category,
+	amount,
+	description,
+	dateValue,
+}: {
+	id: string;
+	accountId: string;
+	type: TransactionType;
+	category: TransactionCategory;
+	amount: number;
+	description: string;
+	dateValue: Date;
+}): Transaction => {
+	return {
+		id,
+		accountId,
+		userId: "user_1",
+		type,
+		category,
+		amount,
+		description,
+		date: dateValue,
+		status: TransactionStatus.COMPLETED,
+		createdAt: dateValue,
+		updatedAt: dateValue,
+	};
+};
+
+function generateRecentTransactions(): Transaction[] {
+	const now = new Date();
+	const currentMonthDates = [
+		new Date(now.getFullYear(), now.getMonth(), 3),
+		new Date(now.getFullYear(), now.getMonth(), 12),
+		new Date(now.getFullYear(), now.getMonth(), 19),
+	];
+	const lastMonthDates = [
+		new Date(now.getFullYear(), now.getMonth() - 1, 8),
+		new Date(now.getFullYear(), now.getMonth() - 1, 21),
+	];
+	const earlierThisYear = new Date(now.getFullYear(), 1, 14);
+
+	return [
+		createRecentTransaction({
+			id: "tx_recent_1",
+			accountId: "1",
+			type: TransactionType.INCOME,
+			category: TransactionCategory.SALARY,
+			amount: 5200,
+			description: "Monthly salary (current)",
+			dateValue: currentMonthDates[0],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_2",
+			accountId: "1",
+			type: TransactionType.EXPENSE,
+			category: TransactionCategory.GROCERIES,
+			amount: 140.32,
+			description: "Weekly groceries (current)",
+			dateValue: currentMonthDates[1],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_3",
+			accountId: "2",
+			type: TransactionType.EXPENSE,
+			category: TransactionCategory.DINING,
+			amount: 68.5,
+			description: "Team dinner (current)",
+			dateValue: currentMonthDates[2],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_4",
+			accountId: "1",
+			type: TransactionType.INCOME,
+			category: TransactionCategory.FREELANCE,
+			amount: 980,
+			description: "Freelance project (last month)",
+			dateValue: lastMonthDates[0],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_5",
+			accountId: "2",
+			type: TransactionType.EXPENSE,
+			category: TransactionCategory.UTILITIES,
+			amount: 210.6,
+			description: "Utilities (last month)",
+			dateValue: lastMonthDates[1],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_6",
+			accountId: "1",
+			type: TransactionType.EXPENSE,
+			category: TransactionCategory.TRANSPORTATION,
+			amount: 95.75,
+			description: "Commuting costs (earlier this year)",
+			dateValue: earlierThisYear,
+		}),
+	];
+}
+
+const RECENT_TRANSACTIONS = generateRecentTransactions();
+
+export const MOCK_TRANSACTIONS: Transaction[] = [
+	...BASE_TRANSACTIONS,
+	...RECENT_TRANSACTIONS,
 ];
 
 /**

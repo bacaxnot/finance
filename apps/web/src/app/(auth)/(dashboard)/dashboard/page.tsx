@@ -17,7 +17,10 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import type { TransactionFilters } from "@/mock/types";
 
 // Helper function to get date range based on period
-function getPeriodDateRange(period: string): { dateFrom?: Date; dateTo?: Date } {
+function getPeriodDateRange(period: string): {
+	dateFrom?: Date;
+	dateTo?: Date;
+} {
 	const now = new Date();
 	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -27,7 +30,11 @@ function getPeriodDateRange(period: string): { dateFrom?: Date; dateTo?: Date } 
 			return { dateFrom: startOfMonth, dateTo: undefined };
 		}
 		case "last-month": {
-			const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+			const startOfLastMonth = new Date(
+				now.getFullYear(),
+				now.getMonth() - 1,
+				1,
+			);
 			const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 			return { dateFrom: startOfLastMonth, dateTo: endOfLastMonth };
 		}
@@ -42,14 +49,17 @@ function getPeriodDateRange(period: string): { dateFrom?: Date; dateTo?: Date } 
 }
 
 export default function DashboardPage() {
-	const { data: consolidatedData, isLoading: isLoadingView } = useConsolidatedView();
+	const { data: consolidatedData, isLoading: isLoadingView } =
+		useConsolidatedView();
 	const { data: accountsData } = useAccounts();
 	const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
 	const [selectedPeriod, setSelectedPeriod] = useState<string>("this-month");
-	const [filters, setFilters] = useState<Omit<TransactionFilters, "accountId">>(() => {
-		const periodRange = getPeriodDateRange("this-month");
-		return periodRange;
-	});
+	const [filters, setFilters] = useState<Omit<TransactionFilters, "accountId">>(
+		() => {
+			const periodRange = getPeriodDateRange("this-month");
+			return periodRange;
+		},
+	);
 
 	// Update filters when period changes
 	const handlePeriodChange = (period: string) => {
@@ -60,7 +70,9 @@ export default function DashboardPage() {
 
 	// Get transactions based on selected account
 	const { data: transactionsData } = useConsolidatedTransactions(
-		selectedAccountId === "all" ? filters : { ...filters, accountId: selectedAccountId }
+		selectedAccountId === "all"
+			? filters
+			: { ...filters, accountId: selectedAccountId },
 	);
 
 	const statistics = transactionsData?.pages[0]?.statistics;
@@ -82,7 +94,8 @@ export default function DashboardPage() {
 				{/* Statistics con balance y badges */}
 				{statistics && (
 					<DashboardStatistics
-						totalBalance={consolidatedData.totalBalance}
+						/*totalBalance={consolidatedData.totalBalance}*/
+						totalBalance={5000}
 						totalIncome={statistics.totalIncome}
 						totalExpense={statistics.totalExpense}
 						currency={consolidatedData.currency}
@@ -90,12 +103,12 @@ export default function DashboardPage() {
 				)}
 
 				{/* Filtros rápidos con selector de cuenta */}
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-1 text-sm">
 					<QuickFilters
 						value={selectedPeriod}
 						onPeriodChange={handlePeriodChange}
 					/>
-					<span className="text-sm text-muted-foreground">en</span>
+					<span className="text-muted-foreground">·</span>
 					<AccountSelector
 						accounts={accounts}
 						selectedAccountId={selectedAccountId}
@@ -188,7 +201,9 @@ function ConsolidatedTransactionList({
 		return (
 			<div className="flex flex-col items-center justify-center py-8 text-center">
 				<AlertCircle className="size-12 text-muted-foreground mb-4" />
-				<h3 className="text-lg font-semibold mb-2">Failed to load transactions</h3>
+				<h3 className="text-lg font-semibold mb-2">
+					Failed to load transactions
+				</h3>
 				<p className="text-muted-foreground mb-4 max-w-sm">
 					There was an error loading your transactions. Please try again.
 				</p>
@@ -256,30 +271,45 @@ function DashboardLoadingSkeleton() {
 		<div className="space-y-6">
 			{/* Header skeleton */}
 			<header className="flex items-start justify-between">
-				<div className="h-5 w-16 bg-muted animate-pulse rounded" />
-				<div className="size-11 bg-muted animate-pulse rounded" />
+				<div className="h-5 w-16 bg-muted/50 animate-pulse rounded" />
+				<div className="size-11 bg-muted/50 animate-pulse rounded-lg" />
 			</header>
 
 			{/* Balance skeleton */}
-			<div className="space-y-4">
-				<div className="h-16 w-64 bg-muted animate-pulse rounded" />
+			<div className="space-y-2">
+				<div className="h-20 w-72 bg-muted/50 animate-pulse rounded-lg" />
 				<div className="flex items-center gap-2">
-					<div className="h-10 w-32 bg-muted animate-pulse rounded-full" />
-					<div className="h-10 w-32 bg-muted animate-pulse rounded-full" />
+					<div className="h-8 w-28 bg-muted/50 animate-pulse rounded-lg" />
+					<div className="h-8 w-28 bg-muted/50 animate-pulse rounded-lg" />
 				</div>
 			</div>
 
 			{/* Quick filters skeleton */}
-			<div className="flex items-center gap-2">
-				<div className="h-9 w-28 bg-muted animate-pulse rounded-full" />
-				<div className="h-4 w-6 bg-muted animate-pulse rounded" />
-				<div className="h-9 w-36 bg-muted animate-pulse rounded-full" />
+			<div className="flex items-center gap-1 text-sm">
+				<div className="h-8 w-24 bg-muted/50 animate-pulse rounded-lg" />
+				<div className="h-4 w-2 bg-muted/50 animate-pulse rounded" />
+				<div className="h-8 w-32 bg-muted/50 animate-pulse rounded-lg" />
 			</div>
 
 			{/* Transactions skeleton */}
-			<div className="space-y-3">
+			<div className="border-t border-border">
 				{[1, 2, 3, 4, 5].map((i) => (
-					<div key={i} className="h-20 bg-muted animate-pulse rounded" />
+					<div
+						key={i}
+						className="flex items-center gap-3 border-b border-border py-4 px-4"
+					>
+						{/* Icon skeleton */}
+						<div className="size-11 shrink-0 bg-muted/50 animate-pulse rounded-xl" />
+
+						{/* Details skeleton */}
+						<div className="flex-1 space-y-2">
+							<div className="h-4 w-32 bg-muted/50 animate-pulse rounded" />
+							<div className="h-3 w-24 bg-muted/50 animate-pulse rounded" />
+						</div>
+
+						{/* Amount skeleton */}
+						<div className="h-5 w-20 shrink-0 bg-muted/50 animate-pulse rounded" />
+					</div>
 				))}
 			</div>
 		</div>
