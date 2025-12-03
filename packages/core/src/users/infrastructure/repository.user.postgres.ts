@@ -27,7 +27,7 @@ export class UserRepositoryPostgres implements UserRepository {
       });
   }
 
-  async find(id: string): Promise<User> {
+  async search(id: string): Promise<User | null> {
     const result = await db
       .select()
       .from(users)
@@ -35,7 +35,7 @@ export class UserRepositoryPostgres implements UserRepository {
       .limit(1);
 
     if (result.length === 0) {
-      throw new Error(`User with id ${id} not found`);
+      return null;
     }
 
     const row = result[0];

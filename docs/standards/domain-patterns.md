@@ -4,48 +4,36 @@ Conventions and patterns for implementing domain layer components.
 
 ## Repository Conventions
 
-### Find vs Search
+### Repository Query Convention: Search Only
 
-We use explicit naming to communicate whether a query is guaranteed to return a result.
+Repositories use **`search()`** for all queries, returning nullable values or empty arrays. The "find vs search" distinction is applied at the **use case level**, not the repository level.
 
-**`find()`** - Guaranteed to return, throws if not found
-**`search()`** - Optional return, can be null/empty
+**Repository Level:** Always use `search()` - returns `null` or empty array if not found
 
 ```typescript
 export interface UserRepository {
-  // Guaranteed: Use when you know the entity exists
-  find(id: string): Promise<User>;
-
-  // Optional: Use when entity might not exist
+  // All repository queries use search()
   search(id: string): Promise<User | null>;
   searchByEmail(email: string): Promise<User | null>;
+  searchActive(): Promise<User[]>;        // Can be empty
+  searchByRole(role: string): Promise<User[]>;  // Can be empty
 }
 ```
 
-### When to use `find()`
-
-Use `find()` when the entity **must exist** for the operation to be valid:
+**Use Case Level:** Implement "find" logic when entity must exist
 
 ```typescript
-// Use case expects user to exist
+// When entity MUST exist, throw in use case
 async execute(userId: string) {
-  const user = await this.userRepo.find(userId); // Throws if not found
+  const user = await this.userRepo.search(userId);
+  if (!user) {
+    throw new UserNotFoundError(userId);
+  }
   // Continue with confidence that user exists
   user.updateProfile(...);
 }
-```
 
-**Throws:** Repository implementation should throw a domain-specific error:
-```typescript
-throw new UserNotFoundError(id);
-```
-
-### When to use `search()`
-
-Use `search()` when the entity **might not exist** and that's a valid scenario:
-
-```typescript
-// Check if email is already taken
+// When entity might not exist, handle null
 async execute(email: string) {
   const existingUser = await this.userRepo.searchByEmail(email);
   if (existingUser) {
@@ -55,64 +43,55 @@ async execute(email: string) {
 }
 ```
 
-**Returns:** `null` or empty array if nothing found.
+### Why This Convention?
 
-### Array queries
+**1. Repository Simplicity**
+- Repositories only do data retrieval, no business decisions
+- No need to decide "should this throw or return null?"
+- Consistent interface: all methods use `search()`
 
-For queries returning collections, use `search` prefix:
+**2. Use Case Control**
+- Business logic determines what "not found" means
+- Some use cases need to throw, others handle null differently
+- Explicit error handling at the right layer
+
+**3. Type Safety**
+```typescript
+// Repository always returns nullable
+search(id: string): Promise<User | null>  // Compiler forces null check
+
+// Use case handles based on business rules
+const user = await repo.search(id);
+if (!user) throw new UserNotFoundError(id);  // Explicit
+```
+
+### Array Queries
+
+Collections always use `search()` and return empty arrays when nothing found:
 
 ```typescript
 export interface UserRepository {
-  searchActive(): Promise<User[]>;        // Can be empty
-  searchByRole(role: string): Promise<User[]>;  // Can be empty
+  searchActive(): Promise<User[]>;        // Returns [] if empty
+  searchByRole(role: string): Promise<User[]>;  // Returns [] if empty
 }
 ```
 
 Empty arrays are valid - no need for `| null`.
 
-## Benefits
-
-**1. Clear intent at call site**
-```typescript
-// Reader knows: this will throw if user doesn't exist
-const user = await repo.find(userId);
-
-// Reader knows: need to handle null case
-const user = await repo.search(userId);
-if (!user) return;
-```
-
-**2. Reduces boilerplate**
-```typescript
-// ❌ Before: Manual null check everywhere
-const user = await repo.find(userId);
-if (!user) throw new NotFoundError();
-
-// ✅ After: find() guarantees existence
-const user = await repo.find(userId);
-```
-
-**3. Type safety**
-```typescript
-find(id: string): Promise<User>        // No null handling needed
-search(id: string): Promise<User | null>  // Compiler forces null check
-```
-
 ## Start Simple
 
-Only add methods as you need them. Don't create `search()` until you have a use case for optional lookups.
+Only add repository methods as you need them for specific use cases.
 
 ```typescript
 // ✅ Good: Start with what you need
 export interface UserRepository {
   save(user: User): Promise<void>;
-  find(id: string): Promise<User>;
+  search(id: string): Promise<User | null>;
 }
 
 // ❌ Bad: Premature methods
 export interface UserRepository {
   save(user: User): Promise<void>;
-  find(id: string): Promise<User>;
   search(id: string): Promise<User | null>;
   searchByEmail(email: string): Promise<User | null>;
   searchByRole(role: string): Promise<User[]>;

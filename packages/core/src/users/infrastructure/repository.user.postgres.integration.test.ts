@@ -64,31 +64,29 @@ describe.skipIf(skipIntegration)("UserRepositoryPostgres - Integration", () => {
     expect(result[0].lastName).toBe("Johnson");
   });
 
-  test("find returns a user by id", async () => {
+  test("search returns a user by id", async () => {
     const user = User.create("Alice", "Brown");
     const primitives = user.toPrimitives();
     createdUserIds.push(primitives.id);
 
     await repository.save(user);
 
-    const foundUser = await repository.find(primitives.id);
-    const foundPrimitives = foundUser.toPrimitives();
+    const foundUser = await repository.search(primitives.id);
+
+    expect(foundUser).not.toBeNull();
+    const foundPrimitives = foundUser!.toPrimitives();
 
     expect(foundPrimitives.id).toBe(primitives.id);
     expect(foundPrimitives.firstName).toBe("Alice");
     expect(foundPrimitives.lastName).toBe("Brown");
-    expect(foundUser.getFullName()).toBe("Alice Brown");
+    expect(foundUser!.getFullName()).toBe("Alice Brown");
   });
 
-  test("find throws error when user is not found", async () => {
+  test("search returns null when user is not found", async () => {
     const nonExistentId = "00000000-0000-7000-8000-000000000000";
 
-    try {
-      await repository.find(nonExistentId);
-      expect(true).toBe(false); // Should not reach here
-    } catch (error) {
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).toBe(`User with id ${nonExistentId} not found`);
-    }
+    const result = await repository.search(nonExistentId);
+
+    expect(result).toBeNull();
   });
 });
