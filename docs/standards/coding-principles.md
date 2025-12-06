@@ -214,7 +214,7 @@ class User {
 
   toPrimitives(): UserPrimitives {
     return {
-      id: this.id.toString(),
+      id: this.id.value,
       firstName: this.firstName.toString(),
       lastName: this.lastName.toString(),
       // ...
@@ -303,23 +303,23 @@ But don't:
 - "Clean up" working code that doesn't need it
 - Change style just for consistency if it works
 
-## Error Messages
+## Exception Messages
 
-**Write error messages for humans, not machines.**
+**Write exception messages for humans, not machines.**
 
 ```typescript
 // ❌ Bad: Vague, unhelpful
-throw new Error("Invalid input");
-throw new Error("Error");
+throw new InvalidArgumentException("Invalid input");
+throw new InvalidArgumentException("Error");
 
 // ✅ Good: Specific, actionable
-throw new Error("User ID cannot be empty");
-throw new Error(
+throw new InvalidArgumentException("User ID cannot be empty");
+throw new InvalidArgumentException(
   "Name contains invalid characters. Only letters, spaces, hyphens, and apostrophes are allowed."
 );
 ```
 
-**Good error messages:**
+**Good exception messages:**
 
 - Say what went wrong
 - Say what was expected
@@ -334,6 +334,6 @@ throw new Error(
 5. **Tell, Don't Ask** - Expose behavior, not state
 6. **No premature optimization** - Measure before optimizing
 7. **Boy Scout Rule** - Leave it better than you found it
-8. **Clear errors** - Write for humans
+8. **Clear exceptions** - Write for humans
 
 When in doubt, choose the simpler option.

@@ -5,43 +5,43 @@ describe("PersonName", () => {
   describe("constructor - valid names", () => {
     test("accepts simple name", () => {
       const name = new PersonName("John");
-      expect(name.toString()).toBe("John");
+      expect(name.value).toBe("John");
     });
 
     test("accepts name with spaces", () => {
       const name = new PersonName("María José");
-      expect(name.toString()).toBe("María José");
+      expect(name.value).toBe("María José");
     });
 
     test("accepts name with hyphens", () => {
       const name = new PersonName("Jean-Claude");
-      expect(name.toString()).toBe("Jean-Claude");
+      expect(name.value).toBe("Jean-Claude");
     });
 
     test("accepts name with apostrophes", () => {
       const name = new PersonName("O'Brien");
-      expect(name.toString()).toBe("O'Brien");
+      expect(name.value).toBe("O'Brien");
     });
 
     test("accepts name with accents", () => {
       const name = new PersonName("José");
-      expect(name.toString()).toBe("José");
+      expect(name.value).toBe("José");
     });
 
     test("accepts complex international name", () => {
       const name = new PersonName("María-José D'Angelo");
-      expect(name.toString()).toBe("María-José D'Angelo");
+      expect(name.value).toBe("María-José D'Angelo");
     });
 
     test("trims whitespace from name", () => {
       const name = new PersonName("  John  ");
-      expect(name.toString()).toBe("John");
+      expect(name.value).toBe("John");
     });
 
     test("accepts name at max length (100 chars)", () => {
       const longName = "a".repeat(100);
       const name = new PersonName(longName);
-      expect(name.toString()).toBe(longName);
+      expect(name.value).toBe(longName);
     });
   });
 
@@ -116,15 +116,15 @@ describe("PersonName", () => {
     });
   });
 
-  describe("toString", () => {
+  describe("value", () => {
     test("returns the trimmed name value", () => {
       const name = new PersonName("  María  ");
-      expect(name.toString()).toBe("María");
+      expect(name.value).toBe("María");
     });
 
     test("returns name with preserved internal spaces", () => {
       const name = new PersonName("María José");
-      expect(name.toString()).toBe("María José");
+      expect(name.value).toBe("María José");
     });
   });
 });

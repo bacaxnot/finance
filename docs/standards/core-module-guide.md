@@ -10,19 +10,20 @@ We use **Vertical Slice Architecture** (organize by feature) with **Clean Archit
 
 ```
 packages/core/
-├── _shared/               # Shared utilities (see Shared Code section)
-│   ├── domain/
-│   ├── application/
-│   └── utils/
-├── users/                 # Feature modules (vertical slices)
-├── accounts/
-└── transactions/
+├── src/
+│   ├── _shared/           # Shared utilities (see Shared Code section)
+│   │   ├── domain/
+│   │   ├── application/
+│   │   └── utils/
+│   ├── users/             # Feature modules (vertical slices)
+│   ├── accounts/
+│   └── transactions/
 ```
 
 ## Standard Module Structure
 
 ```
-packages/core/<module-name>/
+packages/core/src/<module-name>/
 ├── domain/
 │   ├── aggregate.<name>.ts
 │   ├── value-object.<name>.ts
@@ -40,7 +41,7 @@ packages/core/<module-name>/
 ### Example: Users Module
 
 ```
-packages/core/users/
+packages/core/src/users/
 ├── domain/
 │   ├── aggregate.user.ts
 │   ├── value-object.user-id.ts
@@ -174,7 +175,7 @@ The `_shared/` folder contains code used by **3 or more modules**. The underscor
 ### Structure:
 
 ```
-packages/core/_shared/
+packages/core/src/_shared/
 ├── domain/
 │   ├── value-object.id.ts       # Base for UUID IDs
 │   ├── value-object.string.ts   # Base for string value objects
@@ -182,7 +183,7 @@ packages/core/_shared/
 │   ├── domain-event.base.ts     # Base DomainEvent
 │   └── money.value-object.ts    # Money VO (if 3+ modules need it)
 ├── application/
-│   └── result.ts                # Result<T, E> for error handling
+│   └── result.ts                # Result<T, E> for exception handling
 └── utils/
     └── (add as needed when 3+ modules need it)
 ```
@@ -198,7 +199,7 @@ packages/core/_shared/
 
 **`_shared/application/`** - Application-level abstractions
 
-- Result types (`Result<T, E>`) for error handling
+- Result types (`Result<T, E>`) for exception handling
 - Application-level contracts (add as needed)
 
 **`_shared/utils/`** - Technical utilities
@@ -228,38 +229,49 @@ packages/core/_shared/
 ### Example Usage:
 
 ```typescript
-// _shared/domain/value-object.id.ts
-export abstract class IdValueObject {
-  constructor(protected readonly value: string) {
-    if (!this.isValidUuid(value)) {
-      throw new Error("Invalid UUID");
+// src/_shared/domain/value-object.id.ts
+import { v7 as uuidv7, validate as uuidValidate } from "uuid";
+import { InvalidArgumentException } from "./exception.invalid-argument";
+
+export class Id {
+  public readonly value: string;
+
+  constructor(value?: string) {
+    if (value == undefined) {
+      this.value = this.generate();
+    } else {
+      this.ensureIsValidUuid(value);
+      this.value = value;
     }
   }
 
-  private isValidUuid(value: string): boolean {
-    return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      value
-    );
+  private generate(): string {
+    return uuidv7();
   }
 
-  equals(other: IdValueObject): boolean {
+  private ensureIsValidUuid(value: string): void {
+    if (uuidValidate(value)) return;
+    throw new InvalidArgumentException("Invalid UUID format");
+  }
+
+  equals(other: Id): boolean {
     return this.value === other.value;
   }
+}
 
-  toString(): string {
-    return this.value;
+// src/users/domain/value-object.user-id.ts
+import { Id } from "~/_shared/domain/value-object.id";
+
+export class UserId extends Id {
+  constructor(value?: string) {
+    super(value);
   }
 }
 
-// users/domain/value-object.user-id.ts
-import { IdValueObject } from "_shared/domain/value-object.id";
-
-export class UserId extends IdValueObject {
-  // Inherits validation and equals from base
-  static create(value: string): UserId {
-    return new UserId(value);
-  }
-}
+// Usage examples:
+const newId = new UserId();           // Generates new UUID v7
+const existingId = new UserId("...");  // Uses existing UUID
+console.log(newId.value);              // Access UUID string via .value
 ```
 
 ## Cross-Module Dependencies

@@ -20,7 +20,7 @@ export class User {
 
   static create(firstName: string, lastName: string): User {
     return new User(
-      UserId.generate(),
+      new UserId(),
       new PersonName(firstName),
       new PersonName(lastName),
       new Date(),
@@ -30,7 +30,7 @@ export class User {
 
   static fromPrimitives(primitives: UserPrimitives): User {
     return new User(
-      UserId.from(primitives.id),
+      new UserId(primitives.id),
       new PersonName(primitives.firstName),
       new PersonName(primitives.lastName),
       primitives.createdAt,
@@ -39,14 +39,14 @@ export class User {
   }
 
   getFullName(): string {
-    return `${this.firstName} ${this.lastName}`;
+    return `${this.firstName.value} ${this.lastName.value}`;
   }
 
   toPrimitives(): UserPrimitives {
     return {
-      id: this.id.toString(),
-      firstName: this.firstName.toString(),
-      lastName: this.lastName.toString(),
+      id: this.id.value,
+      firstName: this.firstName.value,
+      lastName: this.lastName.value,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
