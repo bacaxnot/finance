@@ -1,4 +1,4 @@
-# Coding Principles
+# Code Principles
 
 Core principles and practices for writing clean, maintainable code in this project.
 
@@ -187,10 +187,7 @@ const activeUsers = users.filter((u) => u.isActive);
 ```typescript
 // ❌ Bad: Asking for data and manipulating it
 class User {
-  constructor(
-    public firstName: PersonName,
-    public lastName: PersonName
-  ) {}
+  constructor(public firstName: PersonName, public lastName: PersonName) {}
 }
 
 // Consumer asks for data
