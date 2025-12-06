@@ -1,6 +1,6 @@
-# Domain Patterns
+# Code Conventions
 
-Conventions and patterns for implementing domain layer components.
+Language conventions specific to our codebase.
 
 ## Validation Method Naming: `ensure*`
 
