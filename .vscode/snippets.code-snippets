@@ -1,0 +1,15 @@
+{
+  "Value Object Factory": {
+    "scope": "typescript",
+    "prefix": "_fact",
+    "body": [
+      "export class ${TM_FILENAME_BASE/((^|[\\-_.])(\\w))/${3:/upcase}/g} {",
+      "\tstatic create(value?: string): ${TM_FILENAME_BASE/(?:-factory|\\.factory)$|(^|[\\-_.])(\\w)/${2:/upcase}/g} {",
+      "\t\treturn new ${TM_FILENAME_BASE/(?:-factory|\\.factory)$|(^|[\\-_.])(\\w)/${2:/upcase}/g}(value ?? $0);",
+      "\t}",
+      "}"
+    ],
+    "description": "Create an object factory based on '*-factory.ts' file name",
+    "isFileTemplate": true
+  }
+}
