@@ -2,8 +2,8 @@ import { describe, test, expect, afterEach } from "bun:test";
 import { eq } from "@repo/db/orm";
 import { db } from "@repo/db";
 import { categories, users } from "@repo/db/schema";
-import { Category } from "../domain/aggregate.category";
-import { CategoryRepositoryPostgres } from "./repository.category.postgres";
+import { Category } from "~/categories/domain/aggregate.category";
+import { CategoryRepositoryPostgres } from "~/categories/infrastructure/repository.category.postgres";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 

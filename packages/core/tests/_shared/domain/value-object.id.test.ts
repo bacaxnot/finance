@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { Id } from "./value-object.id";
+import { Id } from "~/_shared/domain/value-object.id";
 
 describe("Id", () => {
   describe("constructor without value", () => {

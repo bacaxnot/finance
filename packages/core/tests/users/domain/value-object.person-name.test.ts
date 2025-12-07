@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { PersonName } from "./value-object.person-name";
+import { PersonName } from "~/users/domain/value-object.person-name";
 
 describe("PersonName", () => {
   describe("constructor - valid names", () => {

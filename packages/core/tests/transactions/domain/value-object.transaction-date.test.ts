@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { TransactionDate } from "./value-object.transaction-date";
+import { TransactionDate } from "~/transactions/domain/value-object.transaction-date";
 
 describe("TransactionDate", () => {
   describe("constructor - valid dates", () => {

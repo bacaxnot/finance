@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { User } from "./aggregate.user";
+import { User } from "~/users/domain/aggregate.user";
 
 describe("User", () => {
   describe("create", () => {

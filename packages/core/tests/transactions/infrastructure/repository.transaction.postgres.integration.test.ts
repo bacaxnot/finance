@@ -2,8 +2,8 @@ import { describe, test, expect, afterEach } from "bun:test";
 import { eq } from "@repo/db/orm";
 import { db } from "@repo/db";
 import { transactions, users, accounts, categories } from "@repo/db/schema";
-import { Transaction } from "../domain/aggregate.transaction";
-import { TransactionRepositoryPostgres } from "./repository.transaction.postgres";
+import { Transaction } from "~/transactions/domain/aggregate.transaction";
+import { TransactionRepositoryPostgres } from "~/transactions/infrastructure/repository.transaction.postgres";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 

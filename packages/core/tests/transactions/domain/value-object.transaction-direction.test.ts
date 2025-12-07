@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { TransactionDirection } from "./value-object.transaction-direction";
+import { TransactionDirection } from "~/transactions/domain/value-object.transaction-direction";
 
 describe("TransactionDirection", () => {
   describe("constructor - valid directions", () => {

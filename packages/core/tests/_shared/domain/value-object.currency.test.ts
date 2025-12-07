@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { Currency, ALLOWED_CURRENCIES } from "./value-object.currency";
+import { Currency, ALLOWED_CURRENCIES } from "~/_shared/domain/value-object.currency";
 
 describe("Currency", () => {
   describe("constructor - valid currencies", () => {

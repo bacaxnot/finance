@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { Category } from "./aggregate.category";
+import { Category } from "~/categories/domain/aggregate.category";
 
 describe("Category", () => {
   const validUserId = "01936d8f-5e27-7b3a-9c4e-123456789abc";

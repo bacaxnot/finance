@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { AccountName } from "./value-object.account-name";
+import { AccountName } from "~/accounts/domain/value-object.account-name";
 
 describe("AccountName", () => {
   describe("constructor - valid names", () => {

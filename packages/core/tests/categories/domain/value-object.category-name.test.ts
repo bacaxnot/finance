@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { CategoryName } from "./value-object.category-name";
+import { CategoryName } from "~/categories/domain/value-object.category-name";
 
 describe("CategoryName", () => {
   describe("constructor - valid names", () => {

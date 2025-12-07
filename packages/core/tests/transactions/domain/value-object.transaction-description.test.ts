@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { TransactionDescription } from "./value-object.transaction-description";
+import { TransactionDescription } from "~/transactions/domain/value-object.transaction-description";
 
 describe("TransactionDescription", () => {
   describe("constructor - valid descriptions", () => {

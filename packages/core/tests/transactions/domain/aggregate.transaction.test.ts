@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { Transaction } from "./aggregate.transaction";
+import { Transaction } from "~/transactions/domain/aggregate.transaction";
 
 describe("Transaction", () => {
   const validUserId = "01936d8f-5e27-7b3a-9c4e-123456789abc";
