@@ -4,6 +4,7 @@ import { db } from "@repo/db";
 import { users } from "@repo/db/schema";
 import { User } from "~/users/domain/aggregate.user";
 import { UserRepositoryPostgres } from "~/users/infrastructure/repository.user.postgres";
+import { UserId } from "~/users/domain/value-object.user-id";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 
@@ -71,7 +72,7 @@ describe.skipIf(skipIntegration)("UserRepositoryPostgres - Integration", () => {
 
     await repository.save(user);
 
-    const foundUser = await repository.search(primitives.id);
+    const foundUser = await repository.search(new UserId(primitives.id));
 
     expect(foundUser).not.toBeNull();
     const foundPrimitives = foundUser!.toPrimitives();
@@ -85,7 +86,7 @@ describe.skipIf(skipIntegration)("UserRepositoryPostgres - Integration", () => {
   test("search returns null when user is not found", async () => {
     const nonExistentId = "00000000-0000-7000-8000-000000000000";
 
-    const result = await repository.search(nonExistentId);
+    const result = await repository.search(new UserId(nonExistentId));
 
     expect(result).toBeNull();
   });

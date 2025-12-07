@@ -4,6 +4,7 @@ import { db } from "@repo/db";
 import { categories, users } from "@repo/db/schema";
 import { Category } from "~/categories/domain/aggregate.category";
 import { CategoryRepositoryPostgres } from "~/categories/infrastructure/repository.category.postgres";
+import { CategoryId } from "~/categories/domain/value-object.category-id";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 
@@ -106,7 +107,7 @@ describe.skipIf(skipIntegration)(
 
       await repository.save(category);
 
-      const foundCategory = await repository.search(primitives.id);
+      const foundCategory = await repository.search(new CategoryId(primitives.id));
 
       expect(foundCategory).not.toBeNull();
       const foundPrimitives = foundCategory!.toPrimitives();
@@ -119,7 +120,7 @@ describe.skipIf(skipIntegration)(
     test("search returns null when category is not found", async () => {
       const nonExistentId = "00000000-0000-7000-8000-000000000000";
 
-      const result = await repository.search(nonExistentId);
+      const result = await repository.search(new CategoryId(nonExistentId));
 
       expect(result).toBeNull();
     });

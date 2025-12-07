@@ -3,6 +3,7 @@ import { accounts } from "@repo/db/schema";
 import { Account } from "../domain/aggregate.account";
 import { eq } from "@repo/db/orm";
 import { AccountRepository } from "../domain/repository.account";
+import { AccountId } from "../domain/value-object.account-id";
 
 export class AccountRepositoryPostgres implements AccountRepository {
   async save(account: Account): Promise<void> {
@@ -30,11 +31,11 @@ export class AccountRepositoryPostgres implements AccountRepository {
       });
   }
 
-  async search(id: string): Promise<Account | null> {
+  async search(id: AccountId): Promise<Account | null> {
     const result = await db
       .select()
       .from(accounts)
-      .where(eq(accounts.id, id))
+      .where(eq(accounts.id, id.value))
       .limit(1);
 
     if (result.length === 0) {

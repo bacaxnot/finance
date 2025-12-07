@@ -3,6 +3,7 @@ import { users } from "@repo/db/schema";
 import { User } from "../domain/aggregate.user";
 import { eq } from "@repo/db/orm";
 import { UserRepository } from "../domain/repository.user";
+import { UserId } from "../domain/value-object.user-id";
 
 export class UserRepositoryPostgres implements UserRepository {
   async save(user: User): Promise<void> {
@@ -27,11 +28,11 @@ export class UserRepositoryPostgres implements UserRepository {
       });
   }
 
-  async search(id: string): Promise<User | null> {
+  async search(id: UserId): Promise<User | null> {
     const result = await db
       .select()
       .from(users)
-      .where(eq(users.id, id))
+      .where(eq(users.id, id.value))
       .limit(1);
 
     if (result.length === 0) {

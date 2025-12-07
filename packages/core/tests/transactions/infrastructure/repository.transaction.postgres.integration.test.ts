@@ -4,6 +4,7 @@ import { db } from "@repo/db";
 import { transactions, users, accounts, categories } from "@repo/db/schema";
 import { Transaction } from "~/transactions/domain/aggregate.transaction";
 import { TransactionRepositoryPostgres } from "~/transactions/infrastructure/repository.transaction.postgres";
+import { TransactionId } from "~/transactions/domain/value-object.transaction-id";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 
@@ -224,7 +225,7 @@ describe.skipIf(skipIntegration)(
 
       await repository.save(transaction);
 
-      const foundTransaction = await repository.search(primitives.id);
+      const foundTransaction = await repository.search(new TransactionId(primitives.id));
 
       expect(foundTransaction).not.toBeNull();
       const foundPrimitives = foundTransaction!.toPrimitives();
@@ -242,7 +243,7 @@ describe.skipIf(skipIntegration)(
     test("search returns null when transaction is not found", async () => {
       const nonExistentId = "00000000-0000-7000-8000-000000000000";
 
-      const result = await repository.search(nonExistentId);
+      const result = await repository.search(new TransactionId(nonExistentId));
 
       expect(result).toBeNull();
     });

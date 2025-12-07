@@ -4,6 +4,7 @@ import { db } from "@repo/db";
 import { accounts, users } from "@repo/db/schema";
 import { Account } from "~/accounts/domain/aggregate.account";
 import { AccountRepositoryPostgres } from "~/accounts/infrastructure/repository.account.postgres";
+import { AccountId } from "~/accounts/domain/value-object.account-id";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 
@@ -112,7 +113,7 @@ describe.skipIf(skipIntegration)(
 
       await repository.save(account);
 
-      const foundAccount = await repository.search(primitives.id);
+      const foundAccount = await repository.search(new AccountId(primitives.id));
 
       expect(foundAccount).not.toBeNull();
       const foundPrimitives = foundAccount!.toPrimitives();
@@ -133,7 +134,7 @@ describe.skipIf(skipIntegration)(
     test("search returns null when account is not found", async () => {
       const nonExistentId = "00000000-0000-7000-8000-000000000000";
 
-      const result = await repository.search(nonExistentId);
+      const result = await repository.search(new AccountId(nonExistentId));
 
       expect(result).toBeNull();
     });

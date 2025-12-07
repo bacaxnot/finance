@@ -3,6 +3,7 @@ import { transactions } from "@repo/db/schema";
 import { Transaction } from "../domain/aggregate.transaction";
 import { eq } from "@repo/db/orm";
 import { TransactionRepository } from "../domain/repository.transaction";
+import { TransactionId } from "../domain/value-object.transaction-id";
 
 export class TransactionRepositoryPostgres implements TransactionRepository {
   async save(transaction: Transaction): Promise<void> {
@@ -37,11 +38,11 @@ export class TransactionRepositoryPostgres implements TransactionRepository {
       });
   }
 
-  async search(id: string): Promise<Transaction | null> {
+  async search(id: TransactionId): Promise<Transaction | null> {
     const result = await db
       .select()
       .from(transactions)
-      .where(eq(transactions.id, id))
+      .where(eq(transactions.id, id.value))
       .limit(1);
 
     if (result.length === 0) {

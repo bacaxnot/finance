@@ -1,6 +1,7 @@
 import { User } from "./aggregate.user";
+import { UserId } from "./value-object.user-id";
 
 export interface UserRepository {
   save(user: User): Promise<void>;
-  search(id: string): Promise<User | null>;
+  search(id: UserId): Promise<User | null>;
 }

@@ -3,6 +3,7 @@ import { categories } from "@repo/db/schema";
 import { Category } from "../domain/aggregate.category";
 import { eq } from "@repo/db/orm";
 import { CategoryRepository } from "../domain/repository.category";
+import { CategoryId } from "../domain/value-object.category-id";
 
 export class CategoryRepositoryPostgres implements CategoryRepository {
   async save(category: Category): Promise<void> {
@@ -26,11 +27,11 @@ export class CategoryRepositoryPostgres implements CategoryRepository {
       });
   }
 
-  async search(id: string): Promise<Category | null> {
+  async search(id: CategoryId): Promise<Category | null> {
     const result = await db
       .select()
       .from(categories)
-      .where(eq(categories.id, id))
+      .where(eq(categories.id, id.value))
       .limit(1);
 
     if (result.length === 0) {
