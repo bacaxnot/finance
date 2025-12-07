@@ -100,7 +100,7 @@ class Money {
   private amount: number;
   private currency: Currency;
 
-  constructor(amount: number, currency: Currency);
+  constructor(amount: number, currency: string);
 
   add(other: Money): Money; // Requires same currency
   subtract(other: Money): Money; // Requires same currency
