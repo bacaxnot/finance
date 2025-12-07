@@ -135,6 +135,11 @@ class AccountName {
 - `ensureIsNotEmpty(value: string)` - Name cannot be empty or whitespace-only
 - `ensureHasValidLength(value: string)` - Maximum 100 characters
 
+**Behavior:**
+
+- Trims leading and trailing whitespace
+- Case-insensitive equality comparison (`equals()` method)
+
 ### Aggregates
 
 #### Account
@@ -228,6 +233,11 @@ class CategoryName {
 
 - `ensureIsNotEmpty(value: string)` - Name cannot be empty or whitespace-only
 - `ensureHasValidLength(value: string)` - Maximum 50 characters
+
+**Behavior:**
+
+- Trims leading and trailing whitespace
+- Case-insensitive equality comparison (`equals()` method)
 
 ### Aggregates
 
