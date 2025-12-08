@@ -6,37 +6,43 @@ Guidelines for designing and implementing use cases in the application layer.
 
 **Each use case has a single entry point and single responsibility.**
 
-Use cases orchestrate domain logic and infrastructure. They accept primitives, return domain objects, and receive dependencies via composition.
+Use cases orchestrate domain logic and infrastructure. They accept primitives as input, return domain objects or void, and receive dependencies via constructor injection.
 
 ## Structure
 
+Use cases are implemented as classes with:
+- **Constructor**: Receives collaborators (repositories, other use cases)
+- **Execute method**: Receives business parameters as primitives
+
 ```typescript
-// Use case signature
-type CreateAccount = (
-  accountRepository: AccountRepository
-) => {
-  execute(params: {
+class CreateAccount {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: {
     id: string;           // Client-generated UUID v7
     userId: string;
     name: string;
     initialBalanceAmount: number;
     currency: string;
-  }): Promise<void>;      // Mutations return void
-};
-
-// Implementation
-export const createAccount: CreateAccount = (
-  accountRepository
-) => ({
-  async execute({ id, userId, name, initialBalanceAmount, currency }) {
+  }): Promise<void> {
     // 1. Create aggregate with provided ID
     const account = Account.create(id, userId, name, initialBalanceAmount, currency);
 
     // 2. Persist
-    await accountRepository.save(account);
+    await this.accountRepository.save(account);
 
-    // No return - mutations return void
-  },
+    // Mutations return void
+  }
+}
+
+// Usage
+const createAccount = new CreateAccount(accountRepository);
+await createAccount.execute({
+  id: "01936a2b-1234-7890-abcd-ef1234567890",
+  userId: "01234567-89ab-cdef-0123-456789abcdef",
+  name: "Main Checking",
+  initialBalanceAmount: 50000,
+  currency: "COP"
 });
 ```
 
@@ -44,7 +50,7 @@ export const createAccount: CreateAccount = (
 
 Use cases follow this pattern:
 - **File**: `use-case.{verb}-{entity}.ts`
-- **Type**: `{Verb}{Entity}`
+- **Class**: `{Verb}{Entity}`
 
 ```
 use-case.create-account.ts       → CreateAccount
@@ -54,39 +60,68 @@ use-case.update-transaction.ts    → UpdateTransaction
 
 ## Dependency Injection
 
-Use cases receive their collaborators through **positional arguments** and accept business data through a **parameter object** in the execute method.
-
-**Why this pattern?**
-- Positional arguments for dependencies: Clear at the use case construction level
-- Parameter object for execute: Easier to call and extend business parameters
+Use cases receive their collaborators through **constructor injection** and accept business data through a **parameter object** in the execute method.
 
 ```typescript
-// ✅ Good: Two-level separation
-type CreateAccount = (
-  accountRepository: AccountRepository,  // ← Dependencies: positional
-  eventBus: EventBus
-) => {
-  execute(params: {                      // ← Business params: object
+class CreateTransaction {
+  constructor(
+    private readonly transactionRepository: TransactionRepository,
+    private readonly accountRepository: AccountRepository
+  ) {}
+
+  async execute(params: {
+    id: string;
     userId: string;
-    name: string;
+    accountId: string;
     amount: number;
     currency: string;
-  }): Promise<Account>;
-};
+    direction: 'inbound' | 'outbound';
+    description: string;
+  }): Promise<void> {
+    // Implementation
+  }
+}
 
 // Usage
-const createAccount = CreateAccount(accountRepo, eventBus);
-await createAccount.execute({ userId: "123", name: "Savings", amount: 1000, currency: "COP" });
+const createTransaction = new CreateTransaction(
+  transactionRepository,
+  accountRepository
+);
+
+await createTransaction.execute({
+  id: "01936d4e-...",
+  userId: "01234567-...",
+  accountId: "01936a2b-...",
+  amount: 150000,
+  currency: "COP",
+  direction: "outbound",
+  description: "Grocery shopping"
+});
 ```
 
+**Why this pattern?**
+
+- **Dependency Inversion Principle**: Dependencies are declared in the constructor. When one use case depends on another, it only needs to know the interface (methods like `execute()`), not the internal dependencies.
+- **Clear separation**: Constructor = what the use case needs to work. Execute = what the business operation needs.
+- **Composability**: Easy to compose use cases together without coupling to their dependencies.
+
+**Example of use case composition**:
 ```typescript
-// ❌ Bad: Everything as nested objects (hard to read)
-type CreateAccount = (params: {
-  accountRepository: AccountRepository;
-  eventBus: EventBus;
-}) => {
-  execute(params: { /* ... */ }): Promise<Account>;
-};
+class CreateTransactionWithCategory {
+  constructor(
+    private readonly createCategory: CreateCategory,      // Use case dependency
+    private readonly createTransaction: CreateTransaction  // Use case dependency
+  ) {}
+
+  async execute(params: { /* ... */ }): Promise<void> {
+    // Use other use cases without knowing their dependencies
+    if (params.categoryName) {
+      await this.createCategory.execute({ id: params.categoryId, userId: params.userId, name: params.categoryName });
+    }
+
+    await this.createTransaction.execute({ /* ... */ });
+  }
+}
 ```
 
 ## Input/Output Contract
@@ -95,23 +130,23 @@ type CreateAccount = (params: {
 **Output**: Queries return domain objects, mutations return void
 
 ```typescript
-// ✅ Good: Query returns aggregate
-execute(userId: string): Promise<Account[]>
+// ✅ Good: Query returns aggregates
+async execute(params: { userId: string }): Promise<Account[]>
 
 // ✅ Good: Mutation returns void
-execute(id: string, name: string): Promise<void>
+async execute(params: { id: string; name: string }): Promise<void>
 
-// ❌ Bad: Value objects in
-execute(userId: UserId, amount: Money): Promise<Account>
+// ❌ Bad: Value objects as input
+async execute(params: { userId: UserId; amount: Money }): Promise<Account>
 
-// ❌ Bad: Primitives out
-execute(userId: string): Promise<{ id: string; name: string }>
+// ❌ Bad: Primitives as output
+async execute(params: { userId: string }): Promise<{ id: string; name: string }>
 ```
 
 **Why primitives as input?**
 - Use cases are the application boundary
-- External systems send primitives (HTTP, CLI, etc.)
-- Validation happens inside the use case
+- External systems send primitives (HTTP, CLI, events)
+- Value object creation and validation happens inside the use case
 
 ## Mutation Pattern
 
@@ -120,32 +155,58 @@ execute(userId: string): Promise<{ id: string; name: string }>
 For creation use cases, the client generates and provides the entity ID (UUID v7).
 
 ```typescript
-// Creation: Client sends ID
-type CreateAccount = (repo: AccountRepository) => {
-  execute(params: {
-    id: string;        // Client-generated
+// Creation: Client generates ID
+class CreateAccount {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: {
+    id: string;        // Client-generated UUID v7
     userId: string;
     name: string;
-    // ...
-  }): Promise<void>;
-};
+    initialBalanceAmount: number;
+    currency: string;
+  }): Promise<void> {
+    const account = Account.create(params.id, params.userId, params.name, params.initialBalanceAmount, params.currency);
+    await this.accountRepository.save(account);
+  }
+}
 
-// Update: ID identifies the entity
-type UpdateAccount = (repo: AccountRepository) => {
-  execute(params: {
+// Update: ID identifies entity
+class UpdateAccount {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: {
     id: string;
     name: string;
     // ...
-  }): Promise<void>;
-};
+  }): Promise<void> {
+    const account = await this.accountRepository.search(new AccountId(params.id));
+    if (!account) throw new AccountNotFoundException(params.id);
 
-// Delete: ID identifies the entity
-type DeleteAccount = (repo: AccountRepository) => {
-  execute(params: {
+    account.updateName(params.name);
+    await this.accountRepository.save(account);
+  }
+}
+
+// Delete: ID identifies entity
+class DeleteAccount {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: {
     id: string;
     userId: string;
-  }): Promise<void>;
-};
+  }): Promise<void> {
+    const accountId = new AccountId(params.id);
+    const account = await this.accountRepository.search(accountId);
+
+    if (!account) throw new AccountNotFoundException(params.id);
+    if (account.userId.value !== params.userId) {
+      throw new UnauthorizedAccessException();
+    }
+
+    await this.accountRepository.delete(accountId);
+  }
+}
 ```
 
 **Benefits:**
@@ -174,17 +235,25 @@ Let domain exceptions bubble up. Don't catch and wrap them.
 
 ```typescript
 // ✅ Good: Let domain errors propagate
-async execute(name: string) {
-  const accountName = new AccountName(name); // May throw InvalidArgumentException
-  // ...
+class CreateAccount {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: { id: string; userId: string; name: string /* ... */ }): Promise<void> {
+    const accountName = new AccountName(params.name); // May throw InvalidArgumentException
+    // ... rest of implementation
+  }
 }
 
 // ❌ Bad: Catching and wrapping
-async execute(name: string) {
-  try {
-    const accountName = new AccountName(name);
-  } catch (error) {
-    throw new UseCaseError("Invalid name", error); // Don't do this
+class CreateAccount {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: { id: string; userId: string; name: string /* ... */ }): Promise<void> {
+    try {
+      const accountName = new AccountName(params.name);
+    } catch (error) {
+      throw new UseCaseError("Invalid name", error); // Don't do this
+    }
   }
 }
 ```
@@ -193,57 +262,101 @@ async execute(name: string) {
 
 Before implementing a use case:
 
-1. ✓ Name follows convention: `use-case.{verb}-{entity}.ts`
-2. ✓ Single execute method
-3. ✓ Dependencies via positional parameters
-4. ✓ Execute accepts primitives only
-5. ✓ Returns domain objects
-6. ✓ Repository has required methods
-7. ✓ No error wrapping
+1. ✓ File name follows convention: `use-case.{verb}-{entity}.ts`
+2. ✓ Class name follows convention: `{Verb}{Entity}`
+3. ✓ Single execute method
+4. ✓ Dependencies injected via constructor
+5. ✓ Execute accepts parameter object with primitives only
+6. ✓ Queries return domain objects, mutations return void
+7. ✓ Repository has required methods
+8. ✓ No error wrapping
 
 ## Examples
 
 **Simple query**:
 ```typescript
-export const listAccountsByUser: ListAccountsByUser = (
-  accountRepository
-) => ({
-  async execute({ userId }) {
-    const userIdVO = new UserId(userId);
-    return accountRepository.searchByUserId(userIdVO);
-  },
+class ListAccountsByUser {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: { userId: string }): Promise<Account[]> {
+    const userId = new UserId(params.userId);
+    return this.accountRepository.searchByUserId(userId);
+  }
+}
+
+// Usage
+const listAccountsByUser = new ListAccountsByUser(accountRepository);
+const accounts = await listAccountsByUser.execute({
+  userId: "01234567-89ab-cdef-0123-456789abcdef"
 });
 ```
 
 **Complex mutation**:
 ```typescript
-export const createTransaction: CreateTransaction = (
-  transactionRepository,
-  accountRepository
-) => ({
-  async execute({ id, accountId, amount, currency, direction, description }) {
-    // Get aggregate
-    const account = await accountRepository.search(new AccountId(accountId));
-    if (!account) throw new AccountNotFoundError(accountId);
+class CreateTransaction {
+  constructor(
+    private readonly transactionRepository: TransactionRepository,
+    private readonly accountRepository: AccountRepository
+  ) {}
 
-    // Create transaction with provided ID
+  async execute(params: {
+    id: string;
+    userId: string;
+    accountId: string;
+    categoryId: string | null;
+    amount: number;
+    currency: string;
+    direction: 'inbound' | 'outbound';
+    description: string;
+    transactionDate: string;
+    notes: string | null;
+  }): Promise<void> {
+    // 1. Fetch and verify account
+    const account = await this.accountRepository.search(new AccountId(params.accountId));
+    if (!account) throw new AccountNotFoundException(params.accountId);
+    if (account.userId.value !== params.userId) {
+      throw new UnauthorizedAccessException();
+    }
+
+    // 2. Create transaction
     const transaction = Transaction.create(
-      id,
-      account.id,
-      amount,
-      currency,
-      direction,
-      description
+      params.id,
+      params.userId,
+      params.accountId,
+      params.categoryId,
+      params.amount,
+      params.currency,
+      params.direction,
+      params.description,
+      params.transactionDate,
+      params.notes
     );
 
-    // Update aggregate
-    account.applyTransaction(transaction);
+    // 3. Update account balance
+    account.applyTransaction(transaction.amount, transaction.direction);
 
-    // Persist both
-    await transactionRepository.save(transaction);
-    await accountRepository.save(account);
+    // 4. Persist both
+    await this.transactionRepository.save(transaction);
+    await this.accountRepository.save(account);
+  }
+}
 
-    // Mutations return void
-  },
+// Usage
+const createTransaction = new CreateTransaction(
+  transactionRepository,
+  accountRepository
+);
+
+await createTransaction.execute({
+  id: "01936d4e-5678-90ab-cdef-1234567890ab",
+  userId: "01234567-89ab-cdef-0123-456789abcdef",
+  accountId: "01936a2b-1234-7890-abcd-ef1234567890",
+  categoryId: "01936c3d-5678-90ab-cdef-1234567890ab",
+  amount: 150000,
+  currency: "COP",
+  direction: "outbound",
+  description: "Monthly grocery shopping",
+  transactionDate: "2025-12-08T10:30:00.000Z",
+  notes: "Supermarket trip"
 });
 ```
