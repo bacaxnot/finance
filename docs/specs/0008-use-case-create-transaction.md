@@ -30,6 +30,7 @@ type CreateTransaction = (
   accountRepository: AccountRepository
 ) => {
   execute(params: {
+    id: string;
     userId: string;
     accountId: string;
     categoryId: string | null;
@@ -39,7 +40,7 @@ type CreateTransaction = (
     description: string;
     transactionDate: string;
     notes: string | null;
-  }): Promise<Transaction>;
+  }): Promise<void>;
 };
 ```
 
@@ -47,6 +48,7 @@ type CreateTransaction = (
 
 | Parameter | Type | Required | Constraints |
 |-----------|------|----------|-------------|
+| id | string | Yes | Valid UUID v7 (client-generated) |
 | userId | string | Yes | Valid UUID, user must exist |
 | accountId | string | Yes | Valid UUID, account must exist and belong to user |
 | categoryId | string \| null | Yes | Valid UUID if provided, null if no category |
@@ -82,21 +84,20 @@ type CreateTransaction = (
    - Outbound: subtracts from balance
 
 6. **Transaction Creation**
-   - System generates unique TransactionId (UUID v7)
+   - Client provides unique TransactionId (UUID v7)
    - Created and updated timestamps set to current time
 
 ## Success Flow
 
-1. Receive primitive parameters
+1. Receive primitive parameters (including client-generated id)
 2. Fetch account from repository using accountId
 3. Verify account exists and belongs to user
 4. Verify transaction currency matches account currency
 5. If categoryId provided, verify category exists (optional: verify ownership)
-6. Create Transaction aggregate using `Transaction.create()`
+6. Create Transaction aggregate using `Transaction.create()` with provided id
 7. Update account balance based on transaction direction
 8. Persist transaction via repository
 9. Persist updated account via repository
-10. Return created Transaction aggregate
 
 ## Error Scenarios
 
@@ -112,10 +113,7 @@ type CreateTransaction = (
 
 ## Return Value
 
-Returns the created `Transaction` aggregate with:
-- Generated `id` (TransactionId)
-- Provided `userId`, `accountId`, `categoryId`, `amount`, `direction`, `description`, `transactionDate`, `notes`
-- `createdAt` and `updatedAt` timestamps
+Returns `void`. Success is indicated by no exception being thrown.
 
 ## Repository Requirements
 
@@ -135,15 +133,16 @@ interface AccountRepository {
 1. **Transaction.create()** signature update:
 ```typescript
 static create(
+  id: string,                     // Client-generated UUID v7
   userId: string,
   accountId: string,
-  categoryId: string | null,     // Changed from required string
+  categoryId: string | null,      // Explicit null, not optional
   amount: number,
   currency: string,
   direction: TransactionDirectionType,
   description: string,
   transactionDate: string,
-  notes: string | null            // Changed from string | undefined
+  notes: string | null            // Explicit null, not optional
 ): Transaction
 ```
 
@@ -161,7 +160,8 @@ class Account {
 ```typescript
 const createTransaction = CreateTransaction(transactionRepository, accountRepository);
 
-const transaction = await createTransaction.execute({
+await createTransaction.execute({
+  id: "01936d4e-5678-90ab-cdef-1234567890ab",
   userId: "01234567-89ab-cdef-0123-456789abcdef",
   accountId: "01936a2b-1234-7890-abcd-ef1234567890",
   categoryId: "01936c3d-5678-90ab-cdef-1234567890ab",
@@ -173,7 +173,6 @@ const transaction = await createTransaction.execute({
   notes: "Supermarket trip"
 });
 
-// transaction.id.value => "01936d4e-..." (generated)
 ```
 
 ## Notes

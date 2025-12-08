@@ -23,9 +23,10 @@ type CreateCategory = (
   categoryRepository: CategoryRepository
 ) => {
   execute(params: {
+    id: string;
     userId: string;
     name: string;
-  }): Promise<Category>;
+  }): Promise<void>;
 };
 ```
 
@@ -33,6 +34,7 @@ type CreateCategory = (
 
 | Parameter | Type | Required | Constraints |
 |-----------|------|----------|-------------|
+| id | string | Yes | Valid UUID v7 (client-generated) |
 | userId | string | Yes | Valid UUID, user must exist |
 | name | string | Yes | 1-50 characters, non-empty after trim |
 
@@ -44,19 +46,18 @@ type CreateCategory = (
    - Trimmed before storage
 
 2. **Category Creation**
-   - System generates unique CategoryId (UUID v7)
+   - Client provides unique CategoryId (UUID v7)
    - Created and updated timestamps set to current time
    - No duplicate name validation (users can have multiple categories with same name)
 
 ## Success Flow
 
-1. Receive primitive parameters (userId, name)
+1. Receive primitive parameters (id, userId, name)
 2. Create Category aggregate using `Category.create()` factory method
+   - Uses provided id
    - Validates category name
-   - Generates CategoryId
    - Sets timestamps
 3. Persist category via repository
-4. Return created Category aggregate
 
 ## Error Scenarios
 
@@ -67,10 +68,7 @@ type CreateCategory = (
 
 ## Return Value
 
-Returns the created `Category` aggregate with:
-- Generated `id` (CategoryId)
-- Provided `userId`, `name`
-- `createdAt` and `updatedAt` timestamps
+Returns `void`. Success is indicated by no exception being thrown.
 
 ## Repository Requirements
 
@@ -85,13 +83,12 @@ interface CategoryRepository {
 ```typescript
 const createCategory = CreateCategory(categoryRepository);
 
-const category = await createCategory.execute({
+await createCategory.execute({
+  id: "01936c3d-5678-90ab-cdef-1234567890ab",
   userId: "01234567-89ab-cdef-0123-456789abcdef",
   name: "Groceries"
 });
 
-// category.id.value => "01936a2b-..." (generated)
-// category.toPrimitives() => { id: "...", userId: "...", name: "Groceries", ... }
 ```
 
 ## Notes

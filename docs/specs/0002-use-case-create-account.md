@@ -23,11 +23,12 @@ type CreateAccount = (
   accountRepository: AccountRepository
 ) => {
   execute(params: {
+    id: string;
     userId: string;
     name: string;
     initialBalanceAmount: number;
     currency: string;
-  }): Promise<Account>;
+  }): Promise<void>;
 };
 ```
 
@@ -35,6 +36,7 @@ type CreateAccount = (
 
 | Parameter | Type | Required | Constraints |
 |-----------|------|----------|-------------|
+| id | string | Yes | Valid UUID v7 (client-generated) |
 | userId | string | Yes | Valid UUID, user must exist |
 | name | string | Yes | 1-100 characters, non-empty after trim |
 | initialBalanceAmount | number | Yes | >= 0 |
@@ -53,20 +55,19 @@ type CreateAccount = (
    - Currency must be valid and supported
 
 3. **Account Creation**
-   - System generates unique AccountId (UUID v7)
+   - Client provides unique AccountId (UUID v7)
    - Current balance equals initial balance at creation
    - Created and updated timestamps set to current time
 
 ## Success Flow
 
-1. Receive primitive parameters (userId, name, initialBalanceAmount, currency)
+1. Receive primitive parameters (id, userId, name, initialBalanceAmount, currency)
 2. Create Account aggregate using `Account.create()` factory method
+   - Uses provided id
    - Validates account name
    - Creates Money value objects for balances
-   - Generates AccountId
    - Sets timestamps
 3. Persist account via repository
-4. Return created Account aggregate
 
 ## Error Scenarios
 
@@ -79,11 +80,7 @@ type CreateAccount = (
 
 ## Return Value
 
-Returns the created `Account` aggregate with:
-- Generated `id` (AccountId)
-- Provided `userId`, `name`
-- `initialBalance` and `currentBalance` (both equal at creation)
-- `createdAt` and `updatedAt` timestamps
+Returns `void`. Success is indicated by no exception being thrown.
 
 ## Repository Requirements
 
@@ -98,15 +95,14 @@ interface AccountRepository {
 ```typescript
 const createAccount = CreateAccount(accountRepository);
 
-const account = await createAccount.execute({
+await createAccount.execute({
+  id: "01936a2b-1234-7890-abcd-ef1234567890",
   userId: "01234567-89ab-cdef-0123-456789abcdef",
   name: "Main Checking Account",
   initialBalanceAmount: 50000,
   currency: "COP"
 });
 
-// account.id.value => "01936a2b-..." (generated)
-// account.toPrimitives() => { id: "...", userId: "...", name: "Main Checking Account", ... }
 ```
 
 ## Notes
