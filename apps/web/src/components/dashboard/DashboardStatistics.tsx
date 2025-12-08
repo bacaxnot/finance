@@ -2,6 +2,7 @@
 
 import type { Currency } from "@/mock/types";
 import { Badge } from "@/components/ui/badge";
+import { useFitText } from "@/hooks/useFitText";
 
 interface DashboardStatisticsProps {
 	totalBalance: number;
@@ -28,15 +29,24 @@ export function DashboardStatistics({
 	totalExpense,
 	currency,
 }: DashboardStatisticsProps) {
+	const formattedBalance = formatCurrency(totalBalance, currency);
+	const { ref: balanceRef, scale: balanceScale } =
+		useFitText<HTMLParagraphElement>(formattedBalance);
+
 	return (
 		<div className="space-y-2">
 			{/* Balance Principal */}
-			<div>
+			<div className="max-w-full">
 				<p
-					className="font-bold text-foreground tracking-tight"
-					style={{ fontSize: "clamp(2.5rem, 14vw, 6rem)" }}
+					ref={balanceRef}
+					className="font-bold text-foreground tracking-tight leading-none whitespace-nowrap overflow-hidden text-ellipsis inline-block"
+					style={{
+						transform: `scale(${balanceScale})`,
+						transformOrigin: "left center",
+						fontSize: "clamp(2rem, 10vw, 5rem)",
+					}}
 				>
-					{formatCurrency(totalBalance, currency)}
+					{formattedBalance}
 				</p>
 			</div>
 

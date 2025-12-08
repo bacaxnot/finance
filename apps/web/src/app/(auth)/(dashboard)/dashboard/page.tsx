@@ -94,8 +94,7 @@ export default function DashboardPage() {
 				{/* Statistics con balance y badges */}
 				{statistics && (
 					<DashboardStatistics
-						/*totalBalance={consolidatedData.totalBalance}*/
-						totalBalance={5000}
+						totalBalance={consolidatedData.totalBalance}
 						totalIncome={statistics.totalIncome}
 						totalExpense={statistics.totalExpense}
 						currency={consolidatedData.currency}
@@ -170,7 +169,7 @@ function ConsolidatedTransactionList({
 	if (isLoading) {
 		return (
 			<div className="space-y-4">
-				<div className="md:hidden space-y-3">
+				<div className="md:hidden space-y-2">
 					<TransactionSkeleton variant="card" count={5} />
 				</div>
 				<div className="hidden md:block">
@@ -271,45 +270,30 @@ function DashboardLoadingSkeleton() {
 		<div className="space-y-6">
 			{/* Header skeleton */}
 			<header className="flex items-start justify-between">
-				<div className="h-5 w-16 bg-muted/50 animate-pulse rounded" />
-				<div className="size-11 bg-muted/50 animate-pulse rounded-lg" />
+				<div className="h-5 w-16 bg-muted animate-pulse rounded" />
+				<div className="size-11 bg-muted animate-pulse rounded" />
 			</header>
 
 			{/* Balance skeleton */}
-			<div className="space-y-2">
-				<div className="h-20 w-72 bg-muted/50 animate-pulse rounded-lg" />
+			<div className="space-y-4">
+				<div className="h-16 w-64 bg-muted animate-pulse rounded" />
 				<div className="flex items-center gap-2">
-					<div className="h-8 w-28 bg-muted/50 animate-pulse rounded-lg" />
-					<div className="h-8 w-28 bg-muted/50 animate-pulse rounded-lg" />
+					<div className="h-10 w-32 bg-muted animate-pulse rounded-full" />
+					<div className="h-10 w-32 bg-muted animate-pulse rounded-full" />
 				</div>
 			</div>
 
 			{/* Quick filters skeleton */}
-			<div className="flex items-center gap-1 text-sm">
-				<div className="h-8 w-24 bg-muted/50 animate-pulse rounded-lg" />
-				<div className="h-4 w-2 bg-muted/50 animate-pulse rounded" />
-				<div className="h-8 w-32 bg-muted/50 animate-pulse rounded-lg" />
+			<div className="flex items-center gap-2">
+				<div className="h-9 w-28 bg-muted animate-pulse rounded-full" />
+				<div className="h-4 w-6 bg-muted animate-pulse rounded" />
+				<div className="h-9 w-36 bg-muted animate-pulse rounded-full" />
 			</div>
 
 			{/* Transactions skeleton */}
-			<div className="border-t border-border">
+			<div className="space-y-3">
 				{[1, 2, 3, 4, 5].map((i) => (
-					<div
-						key={i}
-						className="flex items-center gap-3 border-b border-border py-4 px-4"
-					>
-						{/* Icon skeleton */}
-						<div className="size-11 shrink-0 bg-muted/50 animate-pulse rounded-xl" />
-
-						{/* Details skeleton */}
-						<div className="flex-1 space-y-2">
-							<div className="h-4 w-32 bg-muted/50 animate-pulse rounded" />
-							<div className="h-3 w-24 bg-muted/50 animate-pulse rounded" />
-						</div>
-
-						{/* Amount skeleton */}
-						<div className="h-5 w-20 shrink-0 bg-muted/50 animate-pulse rounded" />
-					</div>
+					<div key={i} className="h-20 bg-muted animate-pulse rounded" />
 				))}
 			</div>
 		</div>
