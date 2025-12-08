@@ -19,7 +19,7 @@ export type TransactionPrimitives = {
   direction: TransactionDirectionType;
   description: string;
   transactionDate: string; // ISO 8601 UTC
-  notes?: string;
+  notes: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -34,28 +34,28 @@ export class Transaction {
     private direction: TransactionDirection,
     private description: TransactionDescription,
     private date: TransactionDate,
-    private notes: string | undefined,
+    private notes: string | null,
     private readonly createdAt: Date,
     private updatedAt: Date
   ) {}
 
-  static create(
-    userId: string,
-    accountId: string,
-    categoryId: string,
-    amount: number,
-    currency: string,
-    direction: TransactionDirectionType,
-    description: string,
-    transactionDate: string, // ISO 8601 UTC
-    notes?: string
-  ): Transaction {
+  static create({
+    id,
+    userId,
+    accountId,
+    categoryId,
+    amount,
+    direction,
+    description,
+    transactionDate,
+    notes,
+  }: Omit<TransactionPrimitives, "createdAt" | "updatedAt">): Transaction {
     return new Transaction(
-      new TransactionId(),
+      new TransactionId(id),
       new UserId(userId),
       new AccountId(accountId),
       new CategoryId(categoryId),
-      new Money(amount, currency),
+      new Money(amount.amount, amount.currency),
       new TransactionDirection(direction),
       new TransactionDescription(description),
       new TransactionDate(new Date(transactionDate)),
