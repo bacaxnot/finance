@@ -1,0 +1,26 @@
+import { InvalidArgumentException } from "~/_shared/domain/exceptions";
+
+const MAX_DESCRIPTION_LENGTH = 200;
+
+export class TransactionDescription {
+  constructor(public readonly value: string) {
+    this.ensureIsNotEmpty(value);
+    this.ensureHasValidLength(value);
+  }
+
+  private ensureIsNotEmpty(value: string): void {
+    if (value && value.trim() !== "") return;
+    throw new InvalidArgumentException("Transaction description cannot be empty");
+  }
+
+  private ensureHasValidLength(value: string): void {
+    if (value.trim().length <= MAX_DESCRIPTION_LENGTH) return;
+    throw new InvalidArgumentException(
+      `Transaction description is too long (max ${MAX_DESCRIPTION_LENGTH} characters)`
+    );
+  }
+
+  equals(other: TransactionDescription): boolean {
+    return this.value === other.value;
+  }
+}

@@ -24,4 +24,7 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   }
+  // File nesting (looks like a tree in the explorer)
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false
 }
