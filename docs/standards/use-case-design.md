@@ -16,7 +16,7 @@ Use cases are implemented as classes with:
 
 ```typescript
 class CreateAccount {
-  constructor(private readonly accountRepository: AccountRepository) {}
+  constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: {
     id: string;           // Client-generated UUID v7
@@ -29,7 +29,7 @@ class CreateAccount {
     const account = Account.create(id, userId, name, initialBalanceAmount, currency);
 
     // 2. Persist
-    await this.accountRepository.save(account);
+    await this.repository.save(account);
 
     // Mutations return void
   }
@@ -61,6 +61,8 @@ use-case.update-transaction.ts    → UpdateTransaction
 ## Dependency Injection
 
 Use cases receive their collaborators through **constructor injection** and accept business data through a **parameter object** in the execute method.
+
+**Collaborator naming**: Use generic names when the type provides sufficient context (single repository → `repository`). Use explicit names when there are multiple collaborators of the same type.
 
 ```typescript
 class CreateTransaction {
@@ -157,7 +159,7 @@ For creation use cases, the client generates and provides the entity ID (UUID v7
 ```typescript
 // Creation: Client generates ID
 class CreateAccount {
-  constructor(private readonly accountRepository: AccountRepository) {}
+  constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: {
     id: string;        // Client-generated UUID v7
@@ -167,44 +169,44 @@ class CreateAccount {
     currency: string;
   }): Promise<void> {
     const account = Account.create(params.id, params.userId, params.name, params.initialBalanceAmount, params.currency);
-    await this.accountRepository.save(account);
+    await this.repository.save(account);
   }
 }
 
 // Update: ID identifies entity
 class UpdateAccount {
-  constructor(private readonly accountRepository: AccountRepository) {}
+  constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: {
     id: string;
     name: string;
     // ...
   }): Promise<void> {
-    const account = await this.accountRepository.search(new AccountId(params.id));
+    const account = await this.repository.search(new AccountId(params.id));
     if (!account) throw new AccountNotFoundException(params.id);
 
     account.updateName(params.name);
-    await this.accountRepository.save(account);
+    await this.repository.save(account);
   }
 }
 
 // Delete: ID identifies entity
 class DeleteAccount {
-  constructor(private readonly accountRepository: AccountRepository) {}
+  constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: {
     id: string;
     userId: string;
   }): Promise<void> {
     const accountId = new AccountId(params.id);
-    const account = await this.accountRepository.search(accountId);
+    const account = await this.repository.search(accountId);
 
     if (!account) throw new AccountNotFoundException(params.id);
     if (account.userId.value !== params.userId) {
       throw new UnauthorizedAccessException();
     }
 
-    await this.accountRepository.delete(accountId);
+    await this.repository.delete(accountId);
   }
 }
 ```
@@ -236,7 +238,7 @@ Let domain exceptions bubble up. Don't catch and wrap them.
 ```typescript
 // ✅ Good: Let domain errors propagate
 class CreateAccount {
-  constructor(private readonly accountRepository: AccountRepository) {}
+  constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: { id: string; userId: string; name: string /* ... */ }): Promise<void> {
     const accountName = new AccountName(params.name); // May throw InvalidArgumentException
@@ -246,7 +248,7 @@ class CreateAccount {
 
 // ❌ Bad: Catching and wrapping
 class CreateAccount {
-  constructor(private readonly accountRepository: AccountRepository) {}
+  constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: { id: string; userId: string; name: string /* ... */ }): Promise<void> {
     try {
@@ -276,11 +278,11 @@ Before implementing a use case:
 **Simple query**:
 ```typescript
 class ListAccountsByUser {
-  constructor(private readonly accountRepository: AccountRepository) {}
+  constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: { userId: string }): Promise<Account[]> {
     const userId = new UserId(params.userId);
-    return this.accountRepository.searchByUserId(userId);
+    return this.repository.searchByUserId(userId);
   }
 }
 
