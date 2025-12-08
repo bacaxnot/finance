@@ -14,7 +14,7 @@ export type TransactionPrimitives = {
   id: string;
   userId: string;
   accountId: string;
-  categoryId: string;
+  categoryId: string | null;
   amount: { amount: number; currency: string };
   direction: TransactionDirectionType;
   description: string;
@@ -24,12 +24,22 @@ export type TransactionPrimitives = {
   updatedAt: Date;
 };
 
+export type UpdateTransactionPrimitives = Partial<{
+  categoryId: string | null;
+  amount: number;
+  currency: string;
+  direction: TransactionDirectionType;
+  description: string;
+  transactionDate: string;
+  notes: string | null;
+}>;
+
 export class Transaction {
   private constructor(
     private readonly id: TransactionId,
     private readonly userId: UserId,
     private readonly accountId: AccountId,
-    private readonly categoryId: CategoryId,
+    private categoryId: CategoryId | null,
     private amount: Money,
     private direction: TransactionDirection,
     private description: TransactionDescription,
@@ -54,7 +64,7 @@ export class Transaction {
       new TransactionId(id),
       new UserId(userId),
       new AccountId(accountId),
-      new CategoryId(categoryId),
+      categoryId ? new CategoryId(categoryId) : null,
       new Money(amount.amount, amount.currency),
       new TransactionDirection(direction),
       new TransactionDescription(description),
@@ -70,7 +80,7 @@ export class Transaction {
       new TransactionId(primitives.id),
       new UserId(primitives.userId),
       new AccountId(primitives.accountId),
-      new CategoryId(primitives.categoryId),
+      primitives.categoryId ? new CategoryId(primitives.categoryId) : null,
       new Money(primitives.amount.amount, primitives.amount.currency),
       new TransactionDirection(primitives.direction),
       new TransactionDescription(primitives.description),
@@ -86,7 +96,7 @@ export class Transaction {
       id: this.id.value,
       userId: this.userId.value,
       accountId: this.accountId.value,
-      categoryId: this.categoryId.value,
+      categoryId: this.categoryId ? this.categoryId.value : null,
       amount: this.amount.toPrimitives(),
       direction: this.direction.value,
       description: this.description.value,
@@ -95,5 +105,71 @@ export class Transaction {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
+  }
+
+  belongsTo(userId: string): boolean {
+    return this.userId.value === userId;
+  }
+
+  getAccountId(): string {
+    return this.accountId.value;
+  }
+
+  getAmount(): { amount: number; currency: string } {
+    return this.amount.toPrimitives();
+  }
+
+  getDirection(): "inbound" | "outbound" {
+    return this.direction.value;
+  }
+
+  update(params: UpdateTransactionPrimitives): void {
+    if (params.amount !== undefined || params.currency !== undefined) {
+      this.updateAmount(params.amount, params.currency);
+    }
+    if (params.categoryId !== undefined) {
+      this.updateCategoryId(params.categoryId);
+    }
+    if (params.direction !== undefined) {
+      this.updateDirection(params.direction);
+    }
+    if (params.description !== undefined) {
+      this.updateDescription(params.description);
+    }
+    if (params.transactionDate !== undefined) {
+      this.updateTransactionDate(params.transactionDate);
+    }
+    if (params.notes !== undefined) {
+      this.updateNotes(params.notes);
+    }
+
+    this.updatedAt = new Date();
+  }
+
+  private updateCategoryId(categoryId: string | null): void {
+    this.categoryId = categoryId ? new CategoryId(categoryId) : null;
+  }
+
+  private updateAmount(amount: number | undefined, currency: string | undefined): void {
+    const currentAmount = this.amount.toPrimitives();
+    const newAmount = amount !== undefined ? amount : currentAmount.amount;
+    const newCurrency = currency !== undefined ? currency : currentAmount.currency;
+    this.amount = new Money(newAmount, newCurrency);
+  }
+
+  private updateDirection(direction: TransactionDirectionType): void {
+    this.direction = new TransactionDirection(direction);
+  }
+
+  private updateDescription(description: string): void {
+    this.description = new TransactionDescription(description);
+  }
+
+  private updateTransactionDate(transactionDate: string): void {
+    this.date = new TransactionDate(new Date(transactionDate));
+  }
+
+  private updateNotes(notes: string | null): void {
+    this.notes = notes;
   }
 }

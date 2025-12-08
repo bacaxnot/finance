@@ -71,9 +71,7 @@ export const transactions = pgTable("transactions", {
   accountId: uuid("account_id")
     .notNull()
     .references(() => accounts.id),
-  categoryId: uuid("category_id")
-    .notNull()
-    .references(() => categories.id),
+  categoryId: uuid("category_id").references(() => categories.id),
   amount: numeric("amount", { precision: 19, scale: 4 }).notNull(),
   currency: varchar("currency", { length: 3 }).notNull().notNull(),
   direction: transactionDirectionEnum("direction").notNull(),
