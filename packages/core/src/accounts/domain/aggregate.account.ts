@@ -24,19 +24,25 @@ export class Account {
     private updatedAt: Date
   ) {}
 
-  static create(
-    userId: string,
-    name: string,
-    initialBalanceAmount: number,
-    currency: string
-  ): Account {
-    const initialBalance = new Money(initialBalanceAmount, currency);
-    const currentBalance = new Money(initialBalanceAmount, currency);
+  static create({
+    id,
+    userId,
+    name,
+    initialBalance,
+  }: Omit<AccountPrimitives, "createdAt" | "updatedAt" | "currentBalance">): Account {
+    const initialBalanceMoney = new Money(
+      initialBalance.amount,
+      initialBalance.currency
+    );
+    const currentBalance = new Money(
+      initialBalance.amount,
+      initialBalance.currency
+    );
     return new Account(
-      new AccountId(),
+      new AccountId(id),
       new UserId(userId),
       new AccountName(name),
-      initialBalance,
+      initialBalanceMoney,
       currentBalance,
       new Date(),
       new Date()
