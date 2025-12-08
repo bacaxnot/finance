@@ -19,17 +19,17 @@ Allows a user to create a new financial account (bank account, credit card, cash
 ## Signature
 
 ```typescript
-type CreateAccount = (
-  accountRepository: AccountRepository
-) => {
-  execute(params: {
+class CreateAccount {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: {
     id: string;
     userId: string;
     name: string;
     initialBalanceAmount: number;
     currency: string;
-  }): Promise<void>;
-};
+  }): Promise<void>
+}
 ```
 
 ## Input Parameters
@@ -93,7 +93,7 @@ interface AccountRepository {
 ## Example Usage
 
 ```typescript
-const createAccount = CreateAccount(accountRepository);
+const createAccount = new CreateAccount(accountRepository);
 
 await createAccount.execute({
   id: "01936a2b-1234-7890-abcd-ef1234567890",
@@ -102,7 +102,6 @@ await createAccount.execute({
   initialBalanceAmount: 50000,
   currency: "COP"
 });
-
 ```
 
 ## Notes

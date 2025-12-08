@@ -24,15 +24,17 @@ Allows a user to delete an existing transaction and reverses its effect on the a
 ## Signature
 
 ```typescript
-type DeleteTransaction = (
-  transactionRepository: TransactionRepository,
-  accountRepository: AccountRepository
-) => {
-  execute(params: {
+class DeleteTransaction {
+  constructor(
+    private readonly transactionRepository: TransactionRepository,
+    private readonly accountRepository: AccountRepository
+  ) {}
+
+  async execute(params: {
     userId: string;
     transactionId: string;
-  }): Promise<void>;
-};
+  }): Promise<void>
+}
 ```
 
 ## Input Parameters
@@ -115,7 +117,7 @@ class Account {
 ## Example Usage
 
 ```typescript
-const deleteTransaction = DeleteTransaction(transactionRepository, accountRepository);
+const deleteTransaction = new DeleteTransaction(transactionRepository, accountRepository);
 
 await deleteTransaction.execute({
   userId: "01234567-89ab-cdef-0123-456789abcdef",

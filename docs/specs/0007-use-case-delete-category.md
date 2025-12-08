@@ -24,14 +24,14 @@ Allows a user to delete an existing category. Transactions associated with the d
 ## Signature
 
 ```typescript
-type DeleteCategory = (
-  categoryRepository: CategoryRepository
-) => {
-  execute(params: {
+class DeleteCategory {
+  constructor(private readonly categoryRepository: CategoryRepository) {}
+
+  async execute(params: {
     userId: string;
     categoryId: string;
-  }): Promise<void>;
-};
+  }): Promise<void>
+}
 ```
 
 ## Input Parameters
@@ -93,7 +93,7 @@ interface CategoryRepository {
 ## Example Usage
 
 ```typescript
-const deleteCategory = DeleteCategory(categoryRepository);
+const deleteCategory = new DeleteCategory(categoryRepository);
 
 await deleteCategory.execute({
   userId: "01234567-89ab-cdef-0123-456789abcdef",

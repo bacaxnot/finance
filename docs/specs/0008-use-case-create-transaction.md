@@ -25,11 +25,13 @@ Allows a user to create a new financial transaction (income or expense) for a sp
 ## Signature
 
 ```typescript
-type CreateTransaction = (
-  transactionRepository: TransactionRepository,
-  accountRepository: AccountRepository
-) => {
-  execute(params: {
+class CreateTransaction {
+  constructor(
+    private readonly transactionRepository: TransactionRepository,
+    private readonly accountRepository: AccountRepository
+  ) {}
+
+  async execute(params: {
     id: string;
     userId: string;
     accountId: string;
@@ -40,8 +42,8 @@ type CreateTransaction = (
     description: string;
     transactionDate: string;
     notes: string | null;
-  }): Promise<void>;
-};
+  }): Promise<void>
+}
 ```
 
 ## Input Parameters
@@ -158,7 +160,7 @@ class Account {
 ## Example Usage
 
 ```typescript
-const createTransaction = CreateTransaction(transactionRepository, accountRepository);
+const createTransaction = new CreateTransaction(transactionRepository, accountRepository);
 
 await createTransaction.execute({
   id: "01936d4e-5678-90ab-cdef-1234567890ab",
@@ -172,7 +174,6 @@ await createTransaction.execute({
   transactionDate: "2025-12-08T10:30:00.000Z",
   notes: "Supermarket trip"
 });
-
 ```
 
 ## Notes

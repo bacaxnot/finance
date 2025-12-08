@@ -19,13 +19,13 @@ Retrieves all accounts belonging to a specific user.
 ## Signature
 
 ```typescript
-type ListAccountsByUser = (
-  accountRepository: AccountRepository
-) => {
-  execute(params: {
+class ListAccountsByUser {
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  async execute(params: {
     userId: string;
-  }): Promise<Account[]>;
-};
+  }): Promise<Account[]>
+}
 ```
 
 ## Input Parameters
@@ -85,7 +85,7 @@ interface AccountRepository {
 ## Example Usage
 
 ```typescript
-const listAccountsByUser = ListAccountsByUser(accountRepository);
+const listAccountsByUser = new ListAccountsByUser(accountRepository);
 
 const accounts = await listAccountsByUser.execute({
   userId: "01234567-89ab-cdef-0123-456789abcdef"

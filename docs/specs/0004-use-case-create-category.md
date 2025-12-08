@@ -19,15 +19,15 @@ Allows a user to create a new transaction category for organizing their financia
 ## Signature
 
 ```typescript
-type CreateCategory = (
-  categoryRepository: CategoryRepository
-) => {
-  execute(params: {
+class CreateCategory {
+  constructor(private readonly categoryRepository: CategoryRepository) {}
+
+  async execute(params: {
     id: string;
     userId: string;
     name: string;
-  }): Promise<void>;
-};
+  }): Promise<void>
+}
 ```
 
 ## Input Parameters
@@ -81,14 +81,13 @@ interface CategoryRepository {
 ## Example Usage
 
 ```typescript
-const createCategory = CreateCategory(categoryRepository);
+const createCategory = new CreateCategory(categoryRepository);
 
 await createCategory.execute({
   id: "01936c3d-5678-90ab-cdef-1234567890ab",
   userId: "01234567-89ab-cdef-0123-456789abcdef",
   name: "Groceries"
 });
-
 ```
 
 ## Notes

@@ -19,13 +19,13 @@ Retrieves all categories belonging to a specific user.
 ## Signature
 
 ```typescript
-type ListCategoriesByUser = (
-  categoryRepository: CategoryRepository
-) => {
-  execute(params: {
+class ListCategoriesByUser {
+  constructor(private readonly categoryRepository: CategoryRepository) {}
+
+  async execute(params: {
     userId: string;
-  }): Promise<Category[]>;
-};
+  }): Promise<Category[]>
+}
 ```
 
 ## Input Parameters
@@ -81,7 +81,7 @@ interface CategoryRepository {
 ## Example Usage
 
 ```typescript
-const listCategoriesByUser = ListCategoriesByUser(categoryRepository);
+const listCategoriesByUser = new ListCategoriesByUser(categoryRepository);
 
 const categories = await listCategoriesByUser.execute({
   userId: "01234567-89ab-cdef-0123-456789abcdef"

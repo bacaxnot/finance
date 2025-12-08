@@ -19,14 +19,14 @@ Retrieves all transactions for a specific account belonging to a user.
 ## Signature
 
 ```typescript
-type ListTransactionsByAccount = (
-  transactionRepository: TransactionRepository
-) => {
-  execute(params: {
+class ListTransactionsByAccount {
+  constructor(private readonly transactionRepository: TransactionRepository) {}
+
+  async execute(params: {
     userId: string;
     accountId: string;
-  }): Promise<Transaction[]>;
-};
+  }): Promise<Transaction[]>
+}
 ```
 
 ## Input Parameters
@@ -86,7 +86,7 @@ interface TransactionRepository {
 ## Example Usage
 
 ```typescript
-const listTransactionsByAccount = ListTransactionsByAccount(transactionRepository);
+const listTransactionsByAccount = new ListTransactionsByAccount(transactionRepository);
 
 const transactions = await listTransactionsByAccount.execute({
   userId: "01234567-89ab-cdef-0123-456789abcdef",

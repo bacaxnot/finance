@@ -25,11 +25,13 @@ Allows a user to update an existing transaction's details and recalculates accou
 ## Signature
 
 ```typescript
-type UpdateTransaction = (
-  transactionRepository: TransactionRepository,
-  accountRepository: AccountRepository
-) => {
-  execute(params: {
+class UpdateTransaction {
+  constructor(
+    private readonly transactionRepository: TransactionRepository,
+    private readonly accountRepository: AccountRepository
+  ) {}
+
+  async execute(params: {
     userId: string;
     transactionId: string;
     categoryId?: string | null;
@@ -39,8 +41,8 @@ type UpdateTransaction = (
     description?: string;
     transactionDate?: string;
     notes?: string | null;
-  }): Promise<Transaction>;
-};
+  }): Promise<void>
+}
 ```
 
 ## Input Parameters
@@ -96,7 +98,6 @@ type UpdateTransaction = (
 5. If categoryId provided, verify category exists
 6. Update transaction fields
 7. Persist updated transaction
-8. Return updated Transaction aggregate
 
 ## Error Scenarios
 
@@ -111,11 +112,7 @@ type UpdateTransaction = (
 
 ## Return Value
 
-Returns the updated `Transaction` aggregate with:
-- Same `id` (TransactionId)
-- Updated fields as specified
-- Same `createdAt` timestamp
-- Updated `updatedAt` timestamp
+Returns `void`. Success is indicated by no exception being thrown.
 
 ## Repository Requirements
 
@@ -153,9 +150,9 @@ class Transaction {
 ## Example Usage
 
 ```typescript
-const updateTransaction = UpdateTransaction(transactionRepository, accountRepository);
+const updateTransaction = new UpdateTransaction(transactionRepository, accountRepository);
 
-const updatedTransaction = await updateTransaction.execute({
+await updateTransaction.execute({
   userId: "01234567-89ab-cdef-0123-456789abcdef",
   transactionId: "01936d4e-5678-90ab-cdef-1234567890ab",
   categoryId: "01936c3d-5678-90ab-cdef-1234567890ab",
@@ -163,7 +160,7 @@ const updatedTransaction = await updateTransaction.execute({
   description: "Monthly grocery shopping - updated"
 });
 
-// Account balance automatically recalculated
+// Success - account balance automatically recalculated
 ```
 
 ## Notes

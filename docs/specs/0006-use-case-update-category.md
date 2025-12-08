@@ -22,15 +22,15 @@ Allows a user to update the name of an existing category.
 ## Signature
 
 ```typescript
-type UpdateCategory = (
-  categoryRepository: CategoryRepository
-) => {
-  execute(params: {
+class UpdateCategory {
+  constructor(private readonly categoryRepository: CategoryRepository) {}
+
+  async execute(params: {
     userId: string;
     categoryId: string;
     name: string;
-  }): Promise<Category>;
-};
+  }): Promise<void>
+}
 ```
 
 ## Input Parameters
@@ -65,7 +65,6 @@ type UpdateCategory = (
 5. Verify category belongs to user (compare userId)
 6. Update category name using `updateName(name)` method
 7. Persist updated category via repository
-8. Return updated Category aggregate
 
 ## Error Scenarios
 
@@ -78,12 +77,7 @@ type UpdateCategory = (
 
 ## Return Value
 
-Returns the updated `Category` aggregate with:
-- Same `id` (CategoryId)
-- Same `userId`
-- Updated `name` (CategoryName)
-- Same `createdAt` timestamp
-- Updated `updatedAt` timestamp
+Returns `void`. Success is indicated by no exception being thrown.
 
 ## Repository Requirements
 
@@ -110,15 +104,15 @@ class Category {
 ## Example Usage
 
 ```typescript
-const updateCategory = UpdateCategory(categoryRepository);
+const updateCategory = new UpdateCategory(categoryRepository);
 
-const updatedCategory = await updateCategory.execute({
+await updateCategory.execute({
   userId: "01234567-89ab-cdef-0123-456789abcdef",
   categoryId: "01936a2b-1234-7890-abcd-ef1234567890",
   name: "Supermarket Shopping"
 });
 
-// updatedCategory.toPrimitives() => { id: "...", name: "Supermarket Shopping", updatedAt: <new time>, ... }
+// Success - no return value
 ```
 
 ## Notes
