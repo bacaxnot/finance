@@ -16,26 +16,26 @@ type CreateAccount = (
   accountRepository: AccountRepository
 ) => {
   execute(params: {
+    id: string;           // Client-generated UUID v7
     userId: string;
     name: string;
     initialBalanceAmount: number;
     currency: string;
-  }): Promise<Account>;
+  }): Promise<void>;      // Mutations return void
 };
 
 // Implementation
 export const createAccount: CreateAccount = (
   accountRepository
 ) => ({
-  async execute({ userId, name, initialBalanceAmount, currency }) {
-    // 1. Create aggregate (handles value object creation internally)
-    const account = Account.create(userId, name, initialBalanceAmount, currency);
+  async execute({ id, userId, name, initialBalanceAmount, currency }) {
+    // 1. Create aggregate with provided ID
+    const account = Account.create(id, userId, name, initialBalanceAmount, currency);
 
     // 2. Persist
     await accountRepository.save(account);
 
-    // 3. Return domain object
-    return account;
+    // No return - mutations return void
   },
 });
 ```
@@ -92,11 +92,14 @@ type CreateAccount = (params: {
 ## Input/Output Contract
 
 **Input**: Accept primitives (string, number, boolean)
-**Output**: Return domain aggregates or value objects
+**Output**: Queries return domain objects, mutations return void
 
 ```typescript
-// ✅ Good: Primitives in, aggregates out
-execute(userId: string, amount: number): Promise<Account>
+// ✅ Good: Query returns aggregate
+execute(userId: string): Promise<Account[]>
+
+// ✅ Good: Mutation returns void
+execute(id: string, name: string): Promise<void>
 
 // ❌ Bad: Value objects in
 execute(userId: UserId, amount: Money): Promise<Account>
@@ -109,6 +112,47 @@ execute(userId: string): Promise<{ id: string; name: string }>
 - Use cases are the application boundary
 - External systems send primitives (HTTP, CLI, etc.)
 - Validation happens inside the use case
+
+## Mutation Pattern
+
+**All mutations (create, update, delete) return `Promise<void>`.**
+
+For creation use cases, the client generates and provides the entity ID (UUID v7).
+
+```typescript
+// Creation: Client sends ID
+type CreateAccount = (repo: AccountRepository) => {
+  execute(params: {
+    id: string;        // Client-generated
+    userId: string;
+    name: string;
+    // ...
+  }): Promise<void>;
+};
+
+// Update: ID identifies the entity
+type UpdateAccount = (repo: AccountRepository) => {
+  execute(params: {
+    id: string;
+    name: string;
+    // ...
+  }): Promise<void>;
+};
+
+// Delete: ID identifies the entity
+type DeleteAccount = (repo: AccountRepository) => {
+  execute(params: {
+    id: string;
+    userId: string;
+  }): Promise<void>;
+};
+```
+
+**Benefits:**
+- Client always knows the entity ID (no round-trip needed)
+- Bulk operations don't need to track generated IDs
+- No need to return created/updated data (client can fetch if needed)
+- Success indicated by no exception thrown
 
 ## Repository Requirements
 
@@ -171,19 +215,20 @@ export const listAccountsByUser: ListAccountsByUser = (
 });
 ```
 
-**Complex command**:
+**Complex mutation**:
 ```typescript
 export const createTransaction: CreateTransaction = (
   transactionRepository,
   accountRepository
 ) => ({
-  async execute({ accountId, amount, currency, direction, description }) {
+  async execute({ id, accountId, amount, currency, direction, description }) {
     // Get aggregate
     const account = await accountRepository.search(new AccountId(accountId));
     if (!account) throw new AccountNotFoundError(accountId);
 
-    // Create transaction (using static factory method)
+    // Create transaction with provided ID
     const transaction = Transaction.create(
+      id,
       account.id,
       amount,
       currency,
@@ -198,7 +243,7 @@ export const createTransaction: CreateTransaction = (
     await transactionRepository.save(transaction);
     await accountRepository.save(account);
 
-    return transaction;
+    // Mutations return void
   },
 });
 ```
