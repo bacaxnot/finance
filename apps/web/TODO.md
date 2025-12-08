@@ -2,6 +2,53 @@
 
 > Historias de usuario y tareas de desarrollo frontend para la aplicación de finanzas personales.
 > Basado en el documento de planificación del negocio.
+> Nota de diseño: evitar componentes tipo "card"; usar superficies planas, listas y paneles simples.
+
+---
+
+## 🚨 Plan de resolución – Hallazgos QA (Severidad Alta)
+
+### 1. Página raíz muestra boilerplate (Issue #1)
+- [ ] **Redirección/Remplazo de `/`**  
+  - Definir si `/` debe redirigir permanentemente a `/landing` o renderizar el landing directamente.  
+  - Ajustar `app/page.tsx` o configurar middleware/redirect según la decisión.
+- [ ] **Revisar navegación global**  
+  - Verificar que cualquier enlace al home (navbar, footer, etc.) lleve al destino correcto tras el cambio.
+- [ ] **Smoke test**  
+  - Levantar la app y confirmar que visitar `/` muestra la landing real sin errores.
+
+### 2. Filtros “All” no funcionan (Issue #3)
+- [ ] **Integrar botón de filtros en el header de Accounts**  
+  - Revisar `apps/web/src/app/(auth)/(dashboard)/accounts/page.tsx` y definir la nueva estructura del header para que el ícono de filtros conviva con el botón Back/título, tanto en desktop como en mobile.  
+  - Crear un `Button` solamente con el ícono `Filter`, con `aria-label` y tamaño ≥44px, y elevar el estado de apertura/cierre del panel de filtros al nivel de `AccountsPage`.
+- [ ] **Actualizar `AccountFilters` para ser controlado externamente**  
+  - Añadir props (`isOpen`, `onOpenChange`, `triggerHidden`, etc.) para que el sheet móvil pueda abrirse desde el nuevo botón del header y ocultar el trigger interno cuando no sea necesario.  
+  - Mantener el layout inline en desktop y asegurarse de que las opciones “All” usen `""` → `undefined` al guardarse en los handlers.
+- [ ] **Resincronizar estado y limpiar valores**  
+  - Implementar `useEffect` para que `localFilters` refleje cualquier cambio realizado desde `AccountsPage` (botón Clear, combinaciones de filtros).  
+  - Normalizar los handlers para evitar que el string `"all"` llegue al API (convertir a `undefined` antes de guardar).
+- [ ] **QA y accesibilidad**  
+  - Probar en mobile/desktop que el nuevo botón abre/cierra el panel correctamente, combinando filtros, usando el botón Clear y aplicando los cambios.  
+  - Validar focus management (teclado/esc) y lectura por screen reader del nuevo botón.
+
+### 3. Modal de edición no persiste cambios (Issue #5)
+- [ ] **Integrar `useUpdateAccount`**  
+  - Conectar el formulario de edición con la mutación y manejar estados de carga/error.  
+  - Invalidate queries necesarias tras éxito (ya gestionado por el hook).
+- [ ] **Reset de formulario al cambiar de cuenta**  
+  - Usar `form.reset` o key única para evitar valores obsoletos.
+- [ ] **Pruebas manuales**  
+  - Editar múltiples cuentas para validar que los cambios se reflejan en lista y tabla.
+
+### 4. API de actualización no modifica `balance` (Issue #7)
+- [ ] **Actualizar `accountsApi.updateAccount`**  
+  - Mapear `input.initialBalance` hacia `balance` (o cambiar el schema para editar `balance`).  
+  - Garantizar que las fechas `updatedAt` se mantengan correctas.
+- [ ] **Alinear tipos/DTOs**  
+  - Revisar `UpdateAccountInput` para que represente los campos realmente editables.  
+  - Ajustar `AccountForm` si es necesario (por ejemplo, renombrar campo a `balance`).
+- [ ] **Regresión**  
+  - Crear y editar cuentas verificando que los balances actuales cambian y se reflejan en la vista consolidada.
 
 ---
 
@@ -67,7 +114,7 @@
 
 **Componentes a crear:**
 - `AccountList.tsx`
-- `AccountCard.tsx`
+- `AccountListItem.tsx` (layout plano sin cards)
 - `AccountForm.tsx` (crear/editar)
 - `AccountTypeIcon.tsx`
 - `ArchiveAccountModal.tsx`
@@ -81,7 +128,7 @@
 **Frontend Tasks:**
 
 - [ ] **Dashboard Principal**
-  - Cards para métricas principales:
+  - Bloques horizontales sin cards para métricas principales:
     - Total Cash & Liquid Assets
     - Total Debt
     - Total Receivables (dinero que me deben)
@@ -97,7 +144,7 @@
 
 **Componentes a crear:**
 - `Dashboard.tsx`
-- `MetricCard.tsx`
+- `MetricStat.tsx` (unidad visual sin card styles)
 - `AccountBreakdown.tsx`
 - `BalanceChart.tsx`
 
@@ -147,7 +194,7 @@
   - Columnas: date, description, account, category, amount
   - Sorting por cualquier columna
   - Row highlighting al hover
-  - Mobile-optimized card view
+  - Mobile view con filas apiladas (sin cards)
 
 - [ ] **Smart Search/Filter Input**
   - Input único que filtra inteligentemente
@@ -167,7 +214,7 @@
 - `SmartSearchInput.tsx`
 - `FilterChips.tsx`
 - `TransactionRow.tsx` (desktop)
-- `TransactionCard.tsx` (mobile)
+- `TransactionListItemMobile.tsx`
 
 **Prioridad:** 🔴 Crítica
 
@@ -409,7 +456,7 @@
 **Frontend Tasks:**
 
 - [ ] **Loans List Page**
-  - Cards/Table con: borrower, principal, paid, accrued interest, remaining, last payment
+  - Tabla/lista plana (sin cards) con: borrower, principal, paid, accrued interest, remaining, last payment
   - Filter: active vs. fully repaid
   - Sort por: amount, date, borrower name
   - Click en loan para ver detalle
@@ -422,7 +469,7 @@
 
 **Componentes a crear:**
 - `LoansListPage.tsx`
-- `LoanCard.tsx`
+- `LoanListItem.tsx`
 - `LoanDetailPage.tsx`
 - `PaymentTimeline.tsx`
 
@@ -467,12 +514,12 @@
   - Sortable columns
   - Sticky header
   - Row selection
-  - Responsive (mobile card view)
+  - Responsive (mobile stacked view sin cards)
   - Loading skeleton
 
-- [ ] **Card**
-  - Base card con header, body, footer
-  - Variants: default, bordered, elevated
+- [ ] **Surface/Panel**
+  - Contenedor simple sin estética de card
+  - Variantes: flat, bordered suave
 
 - [ ] **Badge**
   - Status indicators
@@ -606,7 +653,7 @@
 
 ### Sprint 1 (2 semanas) - Foundation
 - Setup proyecto Next.js + TailwindCSS
-- Componentes base (Button, Input, Modal, Card)
+- Componentes base (Button, Input, Modal, Surface)
 - Layout principal + navegación
 - Auth UI (login/logout)
 - Protected routes

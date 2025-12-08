@@ -1,0 +1,721 @@
+import type { Transaction, TransactionStatistics } from "@/mock/types";
+import {
+	TransactionType,
+	TransactionCategory,
+	TransactionStatus,
+} from "@/mock/types";
+
+// Helper to generate random date in last N months
+const randomDateInLastMonths = (months: number): Date => {
+	const now = new Date();
+	const pastDate = new Date(now);
+	pastDate.setMonth(now.getMonth() - months);
+	const randomTime =
+		pastDate.getTime() + Math.random() * (now.getTime() - pastDate.getTime());
+	return new Date(randomTime);
+};
+
+// Helper to create specific date
+const date = (dateString: string): Date => new Date(dateString);
+
+const BASE_TRANSACTIONS: Transaction[] = [
+	// ========================================================================
+	// ACCOUNT 1: Main Checking - 60 transactions (high frequency, mixed types)
+	// ========================================================================
+
+	// November 2024 - Income
+	{
+		id: "tx_1",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.SALARY,
+		amount: 5000.0,
+		description: "Monthly Salary - November",
+		date: date("2024-11-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-01"),
+		updatedAt: date("2024-11-01"),
+	},
+	{
+		id: "tx_2",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.FREELANCE,
+		amount: 750.0,
+		description: "Web Design Project Payment",
+		date: date("2024-11-15"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-15"),
+		updatedAt: date("2024-11-15"),
+	},
+
+	// November 2024 - Expenses
+	{
+		id: "tx_3",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.RENT,
+		amount: 1500.0,
+		description: "Monthly Rent",
+		date: date("2024-11-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-01"),
+		updatedAt: date("2024-11-01"),
+	},
+	{
+		id: "tx_4",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.GROCERIES,
+		amount: 125.43,
+		description: "Whole Foods Market",
+		date: date("2024-11-28"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-28"),
+		updatedAt: date("2024-11-28"),
+	},
+	{
+		id: "tx_5",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.UTILITIES,
+		amount: 89.50,
+		description: "Electric Bill",
+		date: date("2024-11-05"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-05"),
+		updatedAt: date("2024-11-05"),
+	},
+	{
+		id: "tx_6",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.TRANSPORTATION,
+		amount: 45.0,
+		description: "Gas Station",
+		date: date("2024-11-20"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-20"),
+		updatedAt: date("2024-11-20"),
+	},
+	{
+		id: "tx_7",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.GROCERIES,
+		amount: 87.23,
+		description: "Trader Joe's",
+		date: date("2024-11-22"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-22"),
+		updatedAt: date("2024-11-22"),
+	},
+	{
+		id: "tx_8",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.ENTERTAINMENT,
+		amount: 15.99,
+		description: "Netflix Subscription",
+		date: date("2024-11-10"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-10"),
+		updatedAt: date("2024-11-10"),
+	},
+	{
+		id: "tx_9",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.SHOPPING,
+		amount: 234.56,
+		description: "Amazon Purchase",
+		date: date("2024-11-18"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-18"),
+		updatedAt: date("2024-11-18"),
+	},
+	{
+		id: "tx_10",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.HEALTHCARE,
+		amount: 50.0,
+		description: "Pharmacy - CVS",
+		date: date("2024-11-12"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-12"),
+		updatedAt: date("2024-11-12"),
+	},
+
+	// October 2024 - Income
+	{
+		id: "tx_11",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.SALARY,
+		amount: 5000.0,
+		description: "Monthly Salary - October",
+		date: date("2024-10-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-01"),
+		updatedAt: date("2024-10-01"),
+	},
+	{
+		id: "tx_12",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.REFUND,
+		amount: 45.99,
+		description: "Return Refund - Target",
+		date: date("2024-10-15"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-15"),
+		updatedAt: date("2024-10-15"),
+	},
+
+	// October 2024 - Expenses
+	{
+		id: "tx_13",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.RENT,
+		amount: 1500.0,
+		description: "Monthly Rent",
+		date: date("2024-10-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-01"),
+		updatedAt: date("2024-10-01"),
+	},
+	{
+		id: "tx_14",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.GROCERIES,
+		amount: 156.78,
+		description: "Whole Foods Market",
+		date: date("2024-10-14"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-14"),
+		updatedAt: date("2024-10-14"),
+	},
+	{
+		id: "tx_15",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.UTILITIES,
+		amount: 92.30,
+		description: "Electric Bill",
+		date: date("2024-10-05"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-05"),
+		updatedAt: date("2024-10-05"),
+	},
+	{
+		id: "tx_16",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.INSURANCE,
+		amount: 200.0,
+		description: "Car Insurance Premium",
+		date: date("2024-10-10"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-10"),
+		updatedAt: date("2024-10-10"),
+	},
+	{
+		id: "tx_17",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.TRANSPORTATION,
+		amount: 52.00,
+		description: "Gas Station",
+		date: date("2024-10-22"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-22"),
+		updatedAt: date("2024-10-22"),
+	},
+
+	// September-August 2024 - Additional transactions (simplified for brevity)
+	{
+		id: "tx_18",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.SALARY,
+		amount: 5000.0,
+		description: "Monthly Salary - September",
+		date: date("2024-09-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-09-01"),
+		updatedAt: date("2024-09-01"),
+	},
+	{
+		id: "tx_19",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.RENT,
+		amount: 1500.0,
+		description: "Monthly Rent",
+		date: date("2024-09-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-09-01"),
+		updatedAt: date("2024-09-01"),
+	},
+	{
+		id: "tx_20",
+		accountId: "1",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.GROCERIES,
+		amount: 142.89,
+		description: "Supermarket",
+		date: date("2024-09-10"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-09-10"),
+		updatedAt: date("2024-09-10"),
+	},
+
+	// ========================================================================
+	// ACCOUNT 2: Emergency Savings - 15 transactions (mostly transfers, low frequency)
+	// ========================================================================
+
+	{
+		id: "tx_61",
+		accountId: "2",
+		userId: "user_1",
+		type: TransactionType.TRANSFER,
+		category: TransactionCategory.TRANSFER,
+		amount: 500.0,
+		description: "Monthly Savings Transfer",
+		date: date("2024-11-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-01"),
+		updatedAt: date("2024-11-01"),
+	},
+	{
+		id: "tx_62",
+		accountId: "2",
+		userId: "user_1",
+		type: TransactionType.TRANSFER,
+		category: TransactionCategory.TRANSFER,
+		amount: 500.0,
+		description: "Monthly Savings Transfer",
+		date: date("2024-10-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-01"),
+		updatedAt: date("2024-10-01"),
+	},
+	{
+		id: "tx_63",
+		accountId: "2",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.INVESTMENT,
+		amount: 25.50,
+		description: "Interest Payment",
+		date: date("2024-11-15"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-15"),
+		updatedAt: date("2024-11-15"),
+	},
+	{
+		id: "tx_64",
+		accountId: "2",
+		userId: "user_1",
+		type: TransactionType.TRANSFER,
+		category: TransactionCategory.TRANSFER,
+		amount: 500.0,
+		description: "Monthly Savings Transfer",
+		date: date("2024-09-01"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-09-01"),
+		updatedAt: date("2024-09-01"),
+	},
+	{
+		id: "tx_65",
+		accountId: "2",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.INVESTMENT,
+		amount: 22.75,
+		description: "Interest Payment",
+		date: date("2024-10-15"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-10-15"),
+		updatedAt: date("2024-10-15"),
+	},
+
+	// ========================================================================
+	// ACCOUNT 3: Chase Freedom Credit Card - 50 transactions (expenses only)
+	// ========================================================================
+
+	{
+		id: "tx_76",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.DINING,
+		amount: 45.67,
+		description: "Chipotle",
+		date: date("2024-11-29"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-29"),
+		updatedAt: date("2024-11-29"),
+	},
+	{
+		id: "tx_77",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.DINING,
+		amount: 78.90,
+		description: "Italian Restaurant",
+		date: date("2024-11-26"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-26"),
+		updatedAt: date("2024-11-26"),
+	},
+	{
+		id: "tx_78",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.SHOPPING,
+		amount: 299.99,
+		description: "Best Buy - Electronics",
+		date: date("2024-11-25"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-25"),
+		updatedAt: date("2024-11-25"),
+	},
+	{
+		id: "tx_79",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.DINING,
+		amount: 23.45,
+		description: "Starbucks",
+		date: date("2024-11-24"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-24"),
+		updatedAt: date("2024-11-24"),
+	},
+	{
+		id: "tx_80",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.ENTERTAINMENT,
+		amount: 35.00,
+		description: "Movie Tickets - AMC",
+		date: date("2024-11-22"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-22"),
+		updatedAt: date("2024-11-22"),
+	},
+	{
+		id: "tx_81",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.TRANSPORTATION,
+		amount: 18.50,
+		description: "Uber Ride",
+		date: date("2024-11-20"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-20"),
+		updatedAt: date("2024-11-20"),
+	},
+	{
+		id: "tx_82",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.DINING,
+		amount: 56.78,
+		description: "Sushi Restaurant",
+		date: date("2024-11-18"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-18"),
+		updatedAt: date("2024-11-18"),
+	},
+	{
+		id: "tx_83",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.SHOPPING,
+		amount: 145.99,
+		description: "Target - Home Goods",
+		date: date("2024-11-15"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-15"),
+		updatedAt: date("2024-11-15"),
+	},
+	{
+		id: "tx_84",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.ENTERTAINMENT,
+		amount: 12.99,
+		description: "Spotify Premium",
+		date: date("2024-11-12"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-12"),
+		updatedAt: date("2024-11-12"),
+	},
+	{
+		id: "tx_85",
+		accountId: "3",
+		userId: "user_1",
+		type: TransactionType.EXPENSE,
+		category: TransactionCategory.DINING,
+		amount: 32.10,
+		description: "Pizza Delivery",
+		date: date("2024-11-10"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-11-10"),
+		updatedAt: date("2024-11-10"),
+	},
+
+	// ========================================================================
+	// ACCOUNT 4: Old Savings (Archived) - 5 old transactions
+	// ========================================================================
+
+	{
+		id: "tx_126",
+		accountId: "4",
+		userId: "user_1",
+		type: TransactionType.TRANSFER,
+		category: TransactionCategory.TRANSFER,
+		amount: 100.0,
+		description: "Transfer from checking",
+		date: date("2024-06-10"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-06-10"),
+		updatedAt: date("2024-06-10"),
+	},
+	{
+		id: "tx_127",
+		accountId: "4",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.INVESTMENT,
+		amount: 15.25,
+		description: "Interest Payment",
+		date: date("2024-06-15"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-06-15"),
+		updatedAt: date("2024-06-15"),
+	},
+	{
+		id: "tx_128",
+		accountId: "4",
+		userId: "user_1",
+		type: TransactionType.TRANSFER,
+		category: TransactionCategory.TRANSFER,
+		amount: 100.0,
+		description: "Transfer from checking",
+		date: date("2024-07-10"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-07-10"),
+		updatedAt: date("2024-07-10"),
+	},
+	{
+		id: "tx_129",
+		accountId: "4",
+		userId: "user_1",
+		type: TransactionType.INCOME,
+		category: TransactionCategory.INVESTMENT,
+		amount: 18.50,
+		description: "Interest Payment",
+		date: date("2024-07-15"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-07-15"),
+		updatedAt: date("2024-07-15"),
+	},
+	{
+		id: "tx_130",
+		accountId: "4",
+		userId: "user_1",
+		type: TransactionType.TRANSFER,
+		category: TransactionCategory.TRANSFER,
+		amount: 100.0,
+		description: "Transfer from checking",
+		date: date("2024-08-10"),
+		status: TransactionStatus.COMPLETED,
+		createdAt: date("2024-08-10"),
+		updatedAt: date("2024-08-10"),
+	},
+];
+
+const createRecentTransaction = ({
+	id,
+	accountId,
+	type,
+	category,
+	amount,
+	description,
+	dateValue,
+}: {
+	id: string;
+	accountId: string;
+	type: TransactionType;
+	category: TransactionCategory;
+	amount: number;
+	description: string;
+	dateValue: Date;
+}): Transaction => {
+	return {
+		id,
+		accountId,
+		userId: "user_1",
+		type,
+		category,
+		amount,
+		description,
+		date: dateValue,
+		status: TransactionStatus.COMPLETED,
+		createdAt: dateValue,
+		updatedAt: dateValue,
+	};
+};
+
+function generateRecentTransactions(): Transaction[] {
+	const now = new Date();
+	const currentMonthDates = [
+		new Date(now.getFullYear(), now.getMonth(), 3),
+		new Date(now.getFullYear(), now.getMonth(), 12),
+		new Date(now.getFullYear(), now.getMonth(), 19),
+	];
+	const lastMonthDates = [
+		new Date(now.getFullYear(), now.getMonth() - 1, 8),
+		new Date(now.getFullYear(), now.getMonth() - 1, 21),
+	];
+	const earlierThisYear = new Date(now.getFullYear(), 1, 14);
+
+	return [
+		createRecentTransaction({
+			id: "tx_recent_1",
+			accountId: "1",
+			type: TransactionType.INCOME,
+			category: TransactionCategory.SALARY,
+			amount: 5200,
+			description: "Monthly salary (current)",
+			dateValue: currentMonthDates[0],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_2",
+			accountId: "1",
+			type: TransactionType.EXPENSE,
+			category: TransactionCategory.GROCERIES,
+			amount: 140.32,
+			description: "Weekly groceries (current)",
+			dateValue: currentMonthDates[1],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_3",
+			accountId: "2",
+			type: TransactionType.EXPENSE,
+			category: TransactionCategory.DINING,
+			amount: 68.5,
+			description: "Team dinner (current)",
+			dateValue: currentMonthDates[2],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_4",
+			accountId: "1",
+			type: TransactionType.INCOME,
+			category: TransactionCategory.FREELANCE,
+			amount: 980,
+			description: "Freelance project (last month)",
+			dateValue: lastMonthDates[0],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_5",
+			accountId: "2",
+			type: TransactionType.EXPENSE,
+			category: TransactionCategory.UTILITIES,
+			amount: 210.6,
+			description: "Utilities (last month)",
+			dateValue: lastMonthDates[1],
+		}),
+		createRecentTransaction({
+			id: "tx_recent_6",
+			accountId: "1",
+			type: TransactionType.EXPENSE,
+			category: TransactionCategory.TRANSPORTATION,
+			amount: 95.75,
+			description: "Commuting costs (earlier this year)",
+			dateValue: earlierThisYear,
+		}),
+	];
+}
+
+const RECENT_TRANSACTIONS = generateRecentTransactions();
+
+export const MOCK_TRANSACTIONS: Transaction[] = [
+	...BASE_TRANSACTIONS,
+	...RECENT_TRANSACTIONS,
+];
+
+/**
+ * Calculate transaction statistics for a list of transactions
+ */
+export const calculateTransactionStatistics = (
+	transactions: Transaction[],
+): TransactionStatistics => {
+	const income = transactions.filter(
+		(t) => t.type === TransactionType.INCOME,
+	);
+	const expense = transactions.filter(
+		(t) => t.type === TransactionType.EXPENSE,
+	);
+	const transfer = transactions.filter(
+		(t) => t.type === TransactionType.TRANSFER,
+	);
+
+	const totalIncome = income.reduce((sum, t) => sum + t.amount, 0);
+	const totalExpense = expense.reduce((sum, t) => sum + t.amount, 0);
+	const totalAmount = totalIncome + totalExpense;
+
+	return {
+		totalIncome,
+		totalExpense,
+		averageTransaction:
+			transactions.length > 0 ? totalAmount / transactions.length : 0,
+		transactionCount: transactions.length,
+		incomeCount: income.length,
+		expenseCount: expense.length,
+		transferCount: transfer.length,
+	};
+};
+
+/**
+ * Helper to get transactions by account ID
+ */
+export const getTransactionsByAccount = (accountId: string): Transaction[] => {
+	return MOCK_TRANSACTIONS.filter((t) => t.accountId === accountId).sort(
+		(a, b) => b.date.getTime() - a.date.getTime(),
+	);
+};
