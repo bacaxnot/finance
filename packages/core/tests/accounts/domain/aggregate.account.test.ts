@@ -1,19 +1,22 @@
 import { describe, test, expect } from "bun:test";
 import { Account } from "~/accounts/domain/aggregate.account";
+import { v7 as uuidv7 } from "uuid";
 
 describe("Account", () => {
   const validUserId = "01936d8f-5e27-7b3a-9c4e-123456789abc";
 
   describe("create", () => {
     test("creates account with valid parameters", () => {
-      const account = Account.create(
-        validUserId,
-        "Checking Account",
-        1000,
-        "COP"
-      );
+      const accountId = uuidv7();
+      const account = Account.create({
+        id: accountId,
+        userId: validUserId,
+        name: "Checking Account",
+        initialBalance: { amount: 1000, currency: "COP" },
+      });
       const primitives = account.toPrimitives();
 
+      expect(primitives.id).toBe(accountId);
       expect(primitives.userId).toBe(validUserId);
       expect(primitives.name).toBe("Checking Account");
       expect(primitives.initialBalance).toEqual({
@@ -27,14 +30,32 @@ describe("Account", () => {
     });
 
     test("generates unique account ID", () => {
-      const account1 = Account.create(validUserId, "Checking", 1000, "COP");
-      const account2 = Account.create(validUserId, "Savings", 2000, "COP");
+      const id1 = uuidv7();
+      const id2 = uuidv7();
+
+      const account1 = Account.create({
+        id: id1,
+        userId: validUserId,
+        name: "Checking",
+        initialBalance: { amount: 1000, currency: "COP" },
+      });
+      const account2 = Account.create({
+        id: id2,
+        userId: validUserId,
+        name: "Savings",
+        initialBalance: { amount: 2000, currency: "COP" },
+      });
 
       expect(account1.toPrimitives().id).not.toBe(account2.toPrimitives().id);
     });
 
     test("accepts zero initial balance", () => {
-      const account = Account.create(validUserId, "New Account", 0, "COP");
+      const account = Account.create({
+        id: uuidv7(),
+        userId: validUserId,
+        name: "New Account",
+        initialBalance: { amount: 0, currency: "COP" },
+      });
       const primitives = account.toPrimitives();
 
       expect(primitives.initialBalance).toEqual({ amount: 0, currency: "COP" });
@@ -42,7 +63,12 @@ describe("Account", () => {
     });
 
     test("accepts decimal initial balance", () => {
-      const account = Account.create(validUserId, "Savings", 1000.5, "COP");
+      const account = Account.create({
+        id: uuidv7(),
+        userId: validUserId,
+        name: "Savings",
+        initialBalance: { amount: 1000.5, currency: "COP" },
+      });
       const primitives = account.toPrimitives();
 
       expect(primitives.initialBalance.amount).toBe(1000.5);
@@ -51,19 +77,34 @@ describe("Account", () => {
 
     test("throws error for negative initial balance", () => {
       expect(() =>
-        Account.create(validUserId, "Checking", -100, "COP")
+        Account.create({
+          id: uuidv7(),
+          userId: validUserId,
+          name: "Checking",
+          initialBalance: { amount: -100, currency: "COP" },
+        })
       ).toThrow("Amount must be non-negative");
     });
 
     test("throws error for invalid currency", () => {
       expect(() =>
-        Account.create(validUserId, "Checking", 1000, "USD")
+        Account.create({
+          id: uuidv7(),
+          userId: validUserId,
+          name: "Checking",
+          initialBalance: { amount: 1000, currency: "USD" },
+        })
       ).toThrow("Invalid currency code");
     });
 
     test("throws error for invalid user ID", () => {
       expect(() =>
-        Account.create("invalid-uuid", "Checking", 1000, "COP")
+        Account.create({
+          id: uuidv7(),
+          userId: "invalid-uuid",
+          name: "Checking",
+          initialBalance: { amount: 1000, currency: "COP" },
+        })
       ).toThrow("Invalid UUID format");
     });
 
@@ -178,7 +219,12 @@ describe("Account", () => {
 
   describe("toPrimitives", () => {
     test("returns primitive representation with all fields", () => {
-      const account = Account.create(validUserId, "Checking", 1000, "COP");
+      const account = Account.create({
+        id: uuidv7(),
+        userId: validUserId,
+        name: "Checking",
+        initialBalance: { amount: 1000, currency: "COP" },
+      });
       const primitives = account.toPrimitives();
 
       expect(primitives.id).toBeDefined();
@@ -200,7 +246,12 @@ describe("Account", () => {
     });
 
     test("returns correct balance primitives", () => {
-      const account = Account.create(validUserId, "Savings", 5000.75, "COP");
+      const account = Account.create({
+        id: uuidv7(),
+        userId: validUserId,
+        name: "Savings",
+        initialBalance: { amount: 5000.75, currency: "COP" },
+      });
       const primitives = account.toPrimitives();
 
       expect(primitives.initialBalance).toEqual({

@@ -5,6 +5,7 @@ import { categories, users } from "@repo/db/schema";
 import { Category } from "~/categories/domain/aggregate.category";
 import { CategoryRepositoryPostgres } from "~/categories/infrastructure/repository.category.postgres";
 import { CategoryId } from "~/categories/domain/value-object.category-id";
+import { v7 as uuidv7 } from "uuid";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 
@@ -35,7 +36,11 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const category = Category.create(testUserId, "Groceries");
+      const category = Category.create({
+        id: uuidv7(),
+        userId: testUserId,
+        name: "Groceries",
+      });
       const primitives = category.toPrimitives();
       createdCategoryIds.push(primitives.id);
 
@@ -65,7 +70,11 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const category = Category.create(testUserId, "Entertainment");
+      const category = Category.create({
+        id: uuidv7(),
+        userId: testUserId,
+        name: "Entertainment",
+      });
       const primitives = category.toPrimitives();
       createdCategoryIds.push(primitives.id);
 
@@ -101,7 +110,11 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const category = Category.create(testUserId, "Transportation");
+      const category = Category.create({
+        id: uuidv7(),
+        userId: testUserId,
+        name: "Transportation",
+      });
       const primitives = category.toPrimitives();
       createdCategoryIds.push(primitives.id);
 

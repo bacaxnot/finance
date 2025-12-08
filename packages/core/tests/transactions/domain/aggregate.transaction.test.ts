@@ -281,7 +281,7 @@ describe("Transaction", () => {
       const transaction = Transaction.fromPrimitives(primitives);
       const result = transaction.toPrimitives();
 
-      expect(result.notes).toBeUndefined();
+      expect(result.notes).toBeNull();
     });
 
     test("throws error for invalid transaction ID in primitives", () => {

@@ -1,21 +1,39 @@
 import { describe, test, expect } from "bun:test";
 import { Category } from "~/categories/domain/aggregate.category";
+import { v7 as uuidv7 } from "uuid";
 
 describe("Category", () => {
   const validUserId = "01936d8f-5e27-7b3a-9c4e-123456789abc";
 
   describe("create", () => {
     test("creates category with valid parameters", () => {
-      const category = Category.create(validUserId, "Groceries");
+      const categoryId = uuidv7();
+      const category = Category.create({
+        id: categoryId,
+        userId: validUserId,
+        name: "Groceries",
+      });
       const primitives = category.toPrimitives();
 
+      expect(primitives.id).toBe(categoryId);
       expect(primitives.userId).toBe(validUserId);
       expect(primitives.name).toBe("Groceries");
     });
 
     test("generates unique category ID", () => {
-      const category1 = Category.create(validUserId, "Groceries");
-      const category2 = Category.create(validUserId, "Entertainment");
+      const id1 = uuidv7();
+      const id2 = uuidv7();
+
+      const category1 = Category.create({
+        id: id1,
+        userId: validUserId,
+        name: "Groceries",
+      });
+      const category2 = Category.create({
+        id: id2,
+        userId: validUserId,
+        name: "Entertainment",
+      });
 
       expect(category1.toPrimitives().id).not.toBe(
         category2.toPrimitives().id
@@ -24,9 +42,13 @@ describe("Category", () => {
 
 
     test("throws error for invalid user ID", () => {
-      expect(() => Category.create("invalid-uuid", "Groceries")).toThrow(
-        "Invalid UUID format"
-      );
+      expect(() =>
+        Category.create({
+          id: uuidv7(),
+          userId: "invalid-uuid",
+          name: "Groceries",
+        })
+      ).toThrow("Invalid UUID format");
     });
 
   });
@@ -96,7 +118,11 @@ describe("Category", () => {
 
   describe("toPrimitives", () => {
     test("returns primitive representation with all fields", () => {
-      const category = Category.create(validUserId, "Groceries");
+      const category = Category.create({
+        id: uuidv7(),
+        userId: validUserId,
+        name: "Groceries",
+      });
       const primitives = category.toPrimitives();
 
       expect(primitives.id).toBeDefined();
