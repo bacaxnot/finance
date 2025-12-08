@@ -43,6 +43,15 @@ export class Category {
     );
   }
 
+  belongsTo(userId: string): boolean {
+    return this.userId.value === userId;
+  }
+
+  update(name: string): void {
+    this.name = new CategoryName(name);
+    this.updatedAt = new Date();
+  }
+
   toPrimitives(): CategoryPrimitives {
     return {
       id: this.id.value,

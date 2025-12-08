@@ -4,6 +4,7 @@ import { Category } from "../domain/aggregate.category";
 import { eq } from "@repo/db/orm";
 import { CategoryRepository } from "../domain/repository.category";
 import { CategoryId } from "../domain/value-object.category-id";
+import { UserId } from "~/users/domain/value-object.user-id";
 
 export class CategoryRepositoryPostgres implements CategoryRepository {
   async save(category: Category): Promise<void> {
@@ -47,5 +48,26 @@ export class CategoryRepositoryPostgres implements CategoryRepository {
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });
+  }
+
+  async searchByUserId(userId: UserId): Promise<Category[]> {
+    const result = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.userId, userId.value));
+
+    return result.map((row) =>
+      Category.fromPrimitives({
+        id: row.id,
+        userId: row.userId,
+        name: row.name,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+      })
+    );
+  }
+
+  async delete(id: CategoryId): Promise<void> {
+    await db.delete(categories).where(eq(categories.id, id.value));
   }
 }
