@@ -1,7 +1,7 @@
 import { UserId } from "~/users/domain/value-object.user-id";
 import { Money } from "~/_shared/domain/value-object.money";
-import { AccountId } from "./value-object.account-id";
-import { AccountName } from "./value-object.account-name";
+import { AccountId } from "~/accounts/domain/value-object.account-id";
+import { AccountName } from "~/accounts/domain/value-object.account-name";
 
 export type AccountPrimitives = {
   id: string;
@@ -65,6 +65,34 @@ export class Account {
       primitives.createdAt,
       primitives.updatedAt
     );
+  }
+
+  belongsTo(userId: string): boolean {
+    return this.userId.value === userId;
+  }
+
+  hasCurrency(currency: string): boolean {
+    return this.currentBalance.toPrimitives().currency === currency;
+  }
+
+  applyTransaction(amount: number, currency: string, direction: "inbound" | "outbound"): void {
+    const money = new Money(amount, currency);
+    if (direction === "inbound") {
+      this.currentBalance = this.currentBalance.add(money);
+    } else {
+      this.currentBalance = this.currentBalance.subtract(money);
+    }
+    this.updatedAt = new Date();
+  }
+
+  reverseTransaction(amount: number, currency: string, direction: "inbound" | "outbound"): void {
+    const money = new Money(amount, currency);
+    if (direction === "inbound") {
+      this.currentBalance = this.currentBalance.subtract(money);
+    } else {
+      this.currentBalance = this.currentBalance.add(money);
+    }
+    this.updatedAt = new Date();
   }
 
   toPrimitives(): AccountPrimitives {
