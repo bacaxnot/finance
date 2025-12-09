@@ -6,12 +6,12 @@ import type { ReactNode } from "react";
 import { queryClient } from "./query-client";
 
 export function QueryProvider({ children }: { children: ReactNode }) {
-	return (
-		<QueryClientProvider client={queryClient}>
-			{children}
-			{process.env.NODE_ENV === "development" && (
-				<ReactQueryDevtools initialIsOpen={false} />
-			)}
-		</QueryClientProvider>
-	);
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      {process.env.NODE_ENV === "development" && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
+    </QueryClientProvider>
+  );
 }

@@ -7,8 +7,8 @@ import { accountsApi } from "@/lib/api";
 export const ACCOUNTS_QUERY_KEY = "accounts";
 
 export function useAccounts(filters?: AccountFilters) {
-	return useQuery({
-		queryKey: [ACCOUNTS_QUERY_KEY, filters],
-		queryFn: () => accountsApi.getAccounts(filters),
-	});
+  return useQuery({
+    queryKey: [ACCOUNTS_QUERY_KEY, filters],
+    queryFn: () => accountsApi.getAccounts(filters),
+  });
 }
