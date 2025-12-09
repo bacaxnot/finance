@@ -1,10 +1,10 @@
 "use client";
 
-import type { Transaction } from "@/mock/types";
-import { TransactionType, TransactionCategory } from "@/mock/types";
 import { Badge } from "@/components/ui/badge";
-import { TransactionCategoryIcon } from "./TransactionCategoryIcon";
 import { cn } from "@/lib/utils";
+import type { Transaction } from "@/mock/types";
+import { type TransactionCategory, TransactionType } from "@/mock/types";
+import { TransactionCategoryIcon } from "./TransactionCategoryIcon";
 
 interface TransactionCardProps {
   transaction: Transaction;

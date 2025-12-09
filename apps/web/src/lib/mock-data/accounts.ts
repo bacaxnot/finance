@@ -1,5 +1,5 @@
 import type { Account, ConsolidatedAccountView } from "@/mock/types";
-import { AccountType, AccountStatus, Currency } from "@/mock/types";
+import { AccountStatus, AccountType, Currency } from "@/mock/types";
 
 export const MOCK_ACCOUNTS: Account[] = [
   {

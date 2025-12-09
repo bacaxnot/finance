@@ -1,8 +1,8 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 interface FeatureCardProps {
   icon: LucideIcon;

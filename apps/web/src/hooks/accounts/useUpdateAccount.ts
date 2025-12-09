@@ -1,12 +1,12 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { UpdateAccountInput, Account } from "@/mock/types";
-import { accountsApi } from "@/lib/api";
-import { ACCOUNTS_QUERY_KEY } from "./useAccounts";
-import { ACCOUNT_QUERY_KEY } from "./useAccount";
-import { CONSOLIDATED_VIEW_QUERY_KEY } from "./useConsolidatedView";
 import { toast } from "sonner";
+import { accountsApi } from "@/lib/api";
+import type { Account, UpdateAccountInput } from "@/mock/types";
+import { ACCOUNT_QUERY_KEY } from "./useAccount";
+import { ACCOUNTS_QUERY_KEY } from "./useAccounts";
+import { CONSOLIDATED_VIEW_QUERY_KEY } from "./useConsolidatedView";
 
 interface UpdateAccountVariables {
   accountId: string;

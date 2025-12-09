@@ -1,7 +1,7 @@
-import { Wallet, PiggyBank, CreditCard, type LucideIcon } from "lucide-react";
+import { CreditCard, type LucideIcon, PiggyBank, Wallet } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { AccountType } from "@/mock/types";
 import { AccountType as AccountTypeEnum } from "@/mock/types";
-import { cn } from "@/lib/utils";
 
 interface AccountTypeIconProps {
   type: AccountType;

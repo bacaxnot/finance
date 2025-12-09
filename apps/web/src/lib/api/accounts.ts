@@ -1,17 +1,17 @@
+import {
+  getMockConsolidatedView,
+  MOCK_ACCOUNTS,
+} from "@/lib/mock-data/accounts";
 import type {
   Account,
-  AccountListResponse,
   AccountDetailResponse,
+  AccountFilters,
+  AccountListResponse,
   ConsolidatedAccountView,
   CreateAccountInput,
   UpdateAccountInput,
-  AccountFilters,
 } from "@/mock/types";
 import { AccountStatus } from "@/mock/types";
-import {
-  MOCK_ACCOUNTS,
-  getMockConsolidatedView,
-} from "@/lib/mock-data/accounts";
 
 // Simulate API delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

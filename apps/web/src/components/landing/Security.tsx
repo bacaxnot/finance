@@ -1,8 +1,8 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Eye, Shield, ShieldCheck, ShieldOff } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { SectionWrapper } from "./SectionWrapper";
 
 const securityFeatures = [

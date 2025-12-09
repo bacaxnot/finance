@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { AccountFilters } from "@/mock/types";
 import { accountsApi } from "@/lib/api";
+import type { AccountFilters } from "@/mock/types";
 
 export const ACCOUNTS_QUERY_KEY = "accounts";
 

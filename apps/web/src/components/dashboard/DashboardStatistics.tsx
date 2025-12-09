@@ -1,8 +1,8 @@
 "use client";
 
-import type { Currency } from "@/mock/types";
 import { Badge } from "@/components/ui/badge";
 import { useFitText } from "@/hooks/useFitText";
+import type { Currency } from "@/mock/types";
 
 interface DashboardStatisticsProps {
   totalBalance: number;

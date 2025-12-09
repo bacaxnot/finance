@@ -1,19 +1,19 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useConsolidatedView, useAccounts } from "@/hooks/accounts";
-import { useConsolidatedTransactions } from "@/hooks/transactions";
+import { AlertCircle, Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { AccountSelector } from "@/components/dashboard/AccountSelector";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { DashboardStatistics } from "@/components/dashboard/DashboardStatistics";
 import { QuickFilters } from "@/components/transactions/QuickFilters";
-import { AccountSelector } from "@/components/dashboard/AccountSelector";
-import { TransactionList } from "@/components/transactions/TransactionList";
 import { TransactionCard } from "@/components/transactions/TransactionCard";
-import { TransactionTable } from "@/components/transactions/TransactionTable";
+import { TransactionList } from "@/components/transactions/TransactionList";
 import { TransactionSkeleton } from "@/components/transactions/TransactionSkeleton";
-import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
+import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
+import { useAccounts, useConsolidatedView } from "@/hooks/accounts";
+import { useConsolidatedTransactions } from "@/hooks/transactions";
 import type { TransactionFilters } from "@/mock/types";
 
 // Helper function to get date range based on period

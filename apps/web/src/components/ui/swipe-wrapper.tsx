@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode, type TouchEvent } from "react";
+import { type ReactNode, type TouchEvent, useRef } from "react";
 
 interface SwipeWrapperProps {
   children: ReactNode;

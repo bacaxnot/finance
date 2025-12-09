@@ -1,11 +1,11 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CreateAccountInput } from "@/mock/types";
+import { toast } from "sonner";
 import { accountsApi } from "@/lib/api";
+import type { CreateAccountInput } from "@/mock/types";
 import { ACCOUNTS_QUERY_KEY } from "./useAccounts";
 import { CONSOLIDATED_VIEW_QUERY_KEY } from "./useConsolidatedView";
-import { toast } from "sonner";
 
 export function useCreateAccount() {
   const queryClient = useQueryClient();

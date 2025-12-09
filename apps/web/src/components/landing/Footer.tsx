@@ -1,6 +1,6 @@
-import { Separator } from "@/components/ui/separator";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 const footerLinks = {
   product: [

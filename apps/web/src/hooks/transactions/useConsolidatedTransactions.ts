@@ -1,8 +1,8 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import type { TransactionFilters } from "@/mock/types";
 import { transactionsApi } from "@/lib/api";
+import type { TransactionFilters } from "@/mock/types";
 
 export const CONSOLIDATED_TRANSACTIONS_QUERY_KEY = "consolidatedTransactions";
 
