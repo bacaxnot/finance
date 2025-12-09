@@ -1,16 +1,12 @@
 "use client";
 
-import { AlertCircle, Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { AccountSelector } from "@/components/dashboard/AccountSelector";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { DashboardStatistics } from "@/components/dashboard/DashboardStatistics";
+import { InfiniteTransactionList } from "@/components/transactions/InfiniteTransactionList";
 import { QuickFilters } from "@/components/transactions/QuickFilters";
-import { TransactionCard } from "@/components/transactions/TransactionCard";
 import { TransactionList } from "@/components/transactions/TransactionList";
-import { TransactionSkeleton } from "@/components/transactions/TransactionSkeleton";
-import { TransactionTable } from "@/components/transactions/TransactionTable";
-import { Button } from "@/components/ui/button";
 import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
 import { useAccounts, useConsolidatedView } from "@/hooks/accounts";
 import { useConsolidatedTransactions } from "@/hooks/transactions";
@@ -69,11 +65,8 @@ export default function DashboardPage() {
   };
 
   // Get transactions based on selected account
-  const { data: transactionsData } = useConsolidatedTransactions(
-    selectedAccountId === "all"
-      ? filters
-      : { ...filters, accountId: selectedAccountId },
-  );
+  const consolidatedQueryResult = useConsolidatedTransactions(filters);
+  const { data: transactionsData } = consolidatedQueryResult;
 
   const statistics = transactionsData?.pages[0]?.statistics;
 
@@ -117,151 +110,20 @@ export default function DashboardPage() {
 
         {/* Lista de transacciones sin título */}
         {selectedAccountId === "all" ? (
-          <ConsolidatedTransactionList filters={filters} />
+          <InfiniteTransactionList
+            queryResult={consolidatedQueryResult}
+            filters={filters}
+            emptyMessage={{
+              noTransactions: "You don't have any transactions yet.",
+              noResults:
+                "No transactions match your current filters. Try adjusting your search criteria.",
+            }}
+          />
         ) : (
           <TransactionList accountId={selectedAccountId} filters={filters} />
         )}
       </div>
     </SwipeWrapper>
-  );
-}
-
-function ConsolidatedTransactionList({
-  filters,
-}: {
-  filters: Omit<TransactionFilters, "accountId">;
-}) {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    error,
-    refetch,
-  } = useConsolidatedTransactions(filters);
-
-  const observerTarget = useRef<HTMLDivElement>(null);
-
-  // Infinite scroll with Intersection Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
-    }
-
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // Flatten all pages into single array
-  const allTransactions =
-    data?.pages.flatMap((page) => page.transactions) ?? [];
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="md:hidden space-y-2">
-          <TransactionSkeleton variant="card" count={5} />
-        </div>
-        <div className="hidden md:block">
-          <div className="rounded-md border">
-            <table className="w-full">
-              <thead className="border-b">
-                <tr>
-                  <th className="h-12 px-4 text-left">Date</th>
-                  <th className="h-12 px-4 text-left">Description</th>
-                  <th className="h-12 px-4 text-left">Category</th>
-                  <th className="h-12 px-4 text-left">Type</th>
-                  <th className="h-12 px-4 text-right">Amount</th>
-                  <th className="h-12 px-4 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <TransactionSkeleton variant="table" count={5} />
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center py-8 text-center">
-        <AlertCircle className="size-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">
-          Failed to load transactions
-        </h3>
-        <p className="text-muted-foreground mb-4 max-w-sm">
-          There was an error loading your transactions. Please try again.
-        </p>
-        <Button onClick={() => refetch()} variant="outline">
-          Retry
-        </Button>
-      </div>
-    );
-  }
-
-  // Empty state
-  if (allTransactions.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="rounded-full bg-muted p-6 mb-4">
-          <AlertCircle className="size-12 text-muted-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold mb-2">No transactions found</h3>
-        <p className="text-muted-foreground mb-6 max-w-sm">
-          {filters?.search ||
-          filters?.type ||
-          filters?.category ||
-          filters?.dateFrom
-            ? "No transactions match your current filters. Try adjusting your search criteria."
-            : "You don't have any transactions yet."}
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4 gap-2">
-      {/* Mobile: Card View */}
-      <div className="md:hidden border-t border-border">
-        {allTransactions.map((transaction) => (
-          <TransactionCard key={transaction.id} transaction={transaction} />
-        ))}
-      </div>
-
-      {/* Desktop: Table View */}
-      <div className="hidden md:block">
-        <TransactionTable transactions={allTransactions} />
-      </div>
-
-      {/* Infinite scroll trigger */}
-      <div ref={observerTarget} className="flex justify-center py-4">
-        {isFetchingNextPage && (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Loader2 className="size-5 animate-spin" />
-            <span className="text-sm">Loading more transactions...</span>
-          </div>
-        )}
-        {!hasNextPage && allTransactions.length > 0 && (
-          <p className="text-sm text-muted-foreground">
-            No more transactions to load
-          </p>
-        )}
-      </div>
-    </div>
   );
 }
 
