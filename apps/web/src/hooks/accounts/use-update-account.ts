@@ -4,9 +4,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { accountsApi } from "@/lib/api";
 import type { Account, UpdateAccountInput } from "@/mock/types";
-import { ACCOUNT_QUERY_KEY } from "./useAccount";
-import { ACCOUNTS_QUERY_KEY } from "./useAccounts";
-import { CONSOLIDATED_VIEW_QUERY_KEY } from "./useConsolidatedView";
+import { ACCOUNT_QUERY_KEY } from "./use-account";
+import { ACCOUNTS_QUERY_KEY } from "./use-accounts";
+import { CONSOLIDATED_VIEW_QUERY_KEY } from "./use-consolidated-view";
 
 interface UpdateAccountVariables {
   accountId: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { useFitText } from "@/hooks/useFitText";
+import { useFitText } from "@/hooks/use-fit-text";
 import type { Currency } from "@/mock/types";
 
 interface DashboardStatisticsProps {

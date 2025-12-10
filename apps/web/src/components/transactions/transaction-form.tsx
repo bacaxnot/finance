@@ -29,7 +29,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useFitText } from "@/hooks/useFitText";
+import { useFitText } from "@/hooks/use-fit-text";
 import { CATEGORY_LABELS, getCategoriesForType } from "@/lib/categories";
 import { cn } from "@/lib/utils";
 import type { Account } from "@/mock/types";

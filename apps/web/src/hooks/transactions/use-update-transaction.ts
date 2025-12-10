@@ -4,10 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { transactionsApi } from "@/lib/api";
 import type { UpdateTransactionInput } from "@/mock/types";
-import { ACCOUNT_TRANSACTIONS_QUERY_KEY } from "./useAccountTransactions";
-import { CONSOLIDATED_TRANSACTIONS_QUERY_KEY } from "./useConsolidatedTransactions";
-import { ACCOUNTS_QUERY_KEY } from "@/hooks/accounts/useAccounts";
-import { CONSOLIDATED_VIEW_QUERY_KEY } from "@/hooks/accounts/useConsolidatedView";
+import { ACCOUNT_TRANSACTIONS_QUERY_KEY } from "./use-account-transactions";
+import { CONSOLIDATED_TRANSACTIONS_QUERY_KEY } from "./use-consolidated-transactions";
+import { ACCOUNTS_QUERY_KEY } from "@/hooks/accounts/use-accounts";
+import { CONSOLIDATED_VIEW_QUERY_KEY } from "@/hooks/accounts/use-consolidated-view";
 
 export function useUpdateTransaction() {
   const queryClient = useQueryClient();

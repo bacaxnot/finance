@@ -3,19 +3,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { transactionsApi } from "@/lib/api";
-import type { CreateTransactionInput } from "@/mock/types";
-import { ACCOUNT_TRANSACTIONS_QUERY_KEY } from "./useAccountTransactions";
-import { CONSOLIDATED_TRANSACTIONS_QUERY_KEY } from "./useConsolidatedTransactions";
-import { ACCOUNTS_QUERY_KEY } from "@/hooks/accounts/useAccounts";
-import { CONSOLIDATED_VIEW_QUERY_KEY } from "@/hooks/accounts/useConsolidatedView";
+import { ACCOUNT_TRANSACTIONS_QUERY_KEY } from "./use-account-transactions";
+import { CONSOLIDATED_TRANSACTIONS_QUERY_KEY } from "./use-consolidated-transactions";
+import { ACCOUNTS_QUERY_KEY } from "@/hooks/accounts/use-accounts";
+import { CONSOLIDATED_VIEW_QUERY_KEY } from "@/hooks/accounts/use-consolidated-view";
 
-export function useCreateTransaction() {
+export function useDeleteTransaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: CreateTransactionInput) =>
-      transactionsApi.createTransaction(input),
-    onSuccess: (newTransaction) => {
+    mutationFn: (id: string) => transactionsApi.deleteTransaction(id),
+    onSuccess: () => {
       // Invalidate transaction queries
       queryClient.invalidateQueries({
         queryKey: [ACCOUNT_TRANSACTIONS_QUERY_KEY],
@@ -30,12 +28,10 @@ export function useCreateTransaction() {
         queryKey: [CONSOLIDATED_VIEW_QUERY_KEY],
       });
 
-      toast.success("Transacción creada", {
-        description: newTransaction.description,
-      });
+      toast.success("Transacción eliminada");
     },
     onError: (error) => {
-      toast.error("Error al crear transacción", {
+      toast.error("Error al eliminar transacción", {
         description:
           error instanceof Error ? error.message : "Ocurrió un error",
       });
