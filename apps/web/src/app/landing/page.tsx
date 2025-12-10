@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { CTA } from "@/components/landing/CTA";
-import { Features } from "@/components/landing/Features";
-import { Footer } from "@/components/landing/Footer";
-import { Hero } from "@/components/landing/Hero";
-import { HowItWorks } from "@/components/landing/HowItWorks";
-import { LandingNavbar } from "@/components/landing/LandingNavbar";
-import { Security } from "@/components/landing/Security";
+import { CTA } from "@/components/landing/c-t-a";
+import { Features } from "@/components/landing/features";
+import { Footer } from "@/components/landing/footer";
+import { Hero } from "@/components/landing/hero";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { LandingNavbar } from "@/components/landing/landing-navbar";
+import { Security } from "@/components/landing/security";
 
 export const metadata: Metadata = {
   title: "Finance App - Take Control of Your Financial Life",

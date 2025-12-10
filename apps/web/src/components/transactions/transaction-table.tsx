@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { Transaction } from "@/mock/types";
 import { type TransactionCategory, TransactionType } from "@/mock/types";
-import { TransactionCategoryIcon } from "./TransactionCategoryIcon";
+import { TransactionCategoryIcon } from "./transaction-category-icon";
 
 interface TransactionTableProps {
   transactions: Transaction[];

@@ -8,9 +8,9 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import type { TransactionFilters, TransactionListResponse } from "@/mock/types";
-import { TransactionCard } from "./TransactionCard";
-import { TransactionSkeleton } from "./TransactionSkeleton";
-import { TransactionTable } from "./TransactionTable";
+import { TransactionCard } from "./transaction-card";
+import { TransactionSkeleton } from "./transaction-skeleton";
+import { TransactionTable } from "./transaction-table";
 
 interface InfiniteTransactionListProps {
   queryResult: UseInfiniteQueryResult<

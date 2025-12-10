@@ -2,7 +2,7 @@
 
 import { useAccountTransactions } from "@/hooks/transactions";
 import type { TransactionFilters } from "@/mock/types";
-import { InfiniteTransactionList } from "./InfiniteTransactionList";
+import { InfiniteTransactionList } from "./infinite-transaction-list";
 
 interface TransactionListProps {
   accountId: string;

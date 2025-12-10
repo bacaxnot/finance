@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { AccountSelector } from "@/components/dashboard/AccountSelector";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { DashboardStatistics } from "@/components/dashboard/DashboardStatistics";
-import { InfiniteTransactionList } from "@/components/transactions/InfiniteTransactionList";
-import { QuickFilters } from "@/components/transactions/QuickFilters";
-import { TransactionList } from "@/components/transactions/TransactionList";
-import { CreateTransactionModal } from "@/components/transactions/CreateTransactionModal";
+import { AccountSelector } from "@/components/dashboard/account-selector";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardStatistics } from "@/components/dashboard/dashboard-statistics";
+import { InfiniteTransactionList } from "@/components/transactions/infinite-transaction-list";
+import { QuickFilters } from "@/components/transactions/quick-filters";
+import { TransactionList } from "@/components/transactions/transaction-list";
+import { CreateTransactionModal } from "@/components/transactions/create-transaction-modal";
 import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
 import { Button } from "@/components/ui/button";
 import { useAccounts, useConsolidatedView } from "@/hooks/accounts";

@@ -7,7 +7,7 @@ import { useAccounts } from "@/hooks/accounts";
 import { useCreateTransaction } from "@/hooks/transactions";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import type { CreateTransactionInput } from "@/mock/types";
-import { TransactionForm } from "./TransactionForm";
+import { TransactionForm } from "./transaction-form";
 import type { TransactionFormValues } from "./transaction-form-schema";
 
 interface CreateTransactionModalProps {

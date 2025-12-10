@@ -34,7 +34,7 @@ import { CATEGORY_LABELS, getCategoriesForType } from "@/lib/categories";
 import { cn } from "@/lib/utils";
 import type { Account } from "@/mock/types";
 import { TransactionType } from "@/mock/types";
-import { CategoryPill } from "./CategoryPill";
+import { CategoryPill } from "./category-pill";
 import {
 	type TransactionFormValues,
 	transactionFormSchema,
