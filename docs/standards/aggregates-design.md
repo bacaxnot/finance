@@ -62,6 +62,8 @@ export class Account extends AggregateRoot {
 }
 ```
 
+> **Note:** Domain events (like `AccountCreatedDomainEvent`, `DepositMadeDomainEvent`) are not currently supported in our codebase. The examples above are for reference and illustrate the complete pattern. You can omit `record()` calls in your implementations for now.
+
 ### Value Objects
 
 Value objects are **thin semantic wrappers** that provide type safety:

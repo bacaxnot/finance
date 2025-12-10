@@ -232,6 +232,8 @@ return account.toPrimitives();
 
 ### 2. Event Publishing Happens in Use Case
 
+> **Note:** Domain events and event publishing are not currently supported in our codebase. The examples below are for reference and illustrate the complete pattern. You can omit event-related code (`EventBus`, `pullDomainEvents()`) in your implementations for now.
+
 Domain events are published **after** persistence, in the application layer.
 
 ```typescript
@@ -352,7 +354,7 @@ async execute(params: Parameters): Promise<ReturnType> {
     // 3. SAVE - Persist changes
     await this.repository.save(aggregate);
 
-    // 4. PUBLISH - Emit domain events
+    // 4. PUBLISH - Emit domain events (not yet supported, omit for now)
     await this.eventBus.publish(aggregate.pullDomainEvents());
 
     // Optional: return primitives for queries
@@ -438,7 +440,7 @@ export class UpdateAccountUseCase {
     constructor(
         private readonly finder: FindAccount,
         private readonly repository: AccountRepository,
-        private readonly eventBus: EventBus,
+        private readonly eventBus: EventBus,  // Not yet supported, omit for now
     ) {}
 
     async execute(params: {
@@ -450,7 +452,7 @@ export class UpdateAccountUseCase {
         account.rename(params.name);
 
         await this.repository.save(account);
-        await this.eventBus.publish(account.pullDomainEvents());
+        await this.eventBus.publish(account.pullDomainEvents());  // Omit for now
     }
 }
 ```
@@ -498,5 +500,5 @@ Use cases coordinate domain operations:
 - Update pattern: Finder + Repository
 - Query pattern: Repository + toPrimitives
 - Public API uses primitives only
-- Events published after persistence
-- Orchestrate: fetch → call → save → publish
+- Events published after persistence (not yet supported)
+- Orchestrate: fetch → call → save → publish (omit publish step for now)
