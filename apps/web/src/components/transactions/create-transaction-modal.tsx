@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAccounts } from "@/hooks/accounts";
 import { useCreateTransaction } from "@/hooks/transactions";
@@ -90,9 +95,9 @@ function ModalContent({
 		<div className="flex flex-col h-full">
 			{/* Header */}
 			<div className="flex items-center justify-center h-14 px-4 md:px-6 border-b shrink-0">
-				<h2 className="text-sm font-medium text-muted-foreground">
+				<DialogTitle className="text-sm font-medium text-muted-foreground">
 					New Transaction
-				</h2>
+				</DialogTitle>
 			</div>
 
 			{/* Form Content */}
