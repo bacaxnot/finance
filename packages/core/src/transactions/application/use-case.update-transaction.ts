@@ -75,7 +75,8 @@ export class UpdateTransaction {
     if (!currency) return;
     if (account.hasCurrency(currency)) return;
     throw new CurrencyMismatchException(
-      "Transaction currency must match account currency"
+      account.getCurrency(),
+      currency
     );
   }
 }

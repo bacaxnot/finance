@@ -27,9 +27,7 @@ export class DeleteCategory {
     categoryId: string
   ): asserts category is Category {
     if (category) return;
-    throw new CategoryNotFoundException(
-      `Category with ID ${categoryId} not found`
-    );
+    throw new CategoryNotFoundException(categoryId);
   }
 
   private ensureCategoryBelongsToUser(

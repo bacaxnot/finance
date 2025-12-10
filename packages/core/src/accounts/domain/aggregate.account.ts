@@ -75,6 +75,10 @@ export class Account {
     return this.currentBalance.toPrimitives().currency === currency;
   }
 
+  getCurrency(): string {
+    return this.currentBalance.toPrimitives().currency;
+  }
+
   applyTransaction(amount: number, currency: string, direction: "inbound" | "outbound"): void {
     const money = new Money(amount, currency);
     if (direction === "inbound") {

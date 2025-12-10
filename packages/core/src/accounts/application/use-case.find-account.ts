@@ -11,7 +11,7 @@ export class FindAccount {
     const account = await this.repository.search(accountId);
 
     if (!account) {
-      throw new AccountNotFoundException(`Account not found: ${params.id}`);
+      throw new AccountNotFoundException(params.id);
     }
 
     return account;

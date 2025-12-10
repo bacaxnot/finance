@@ -11,7 +11,7 @@ export class FindTransaction {
     const transaction = await this.repository.search(transactionId);
 
     if (!transaction) {
-      throw new TransactionNotFoundException(`Transaction not found: ${params.id}`);
+      throw new TransactionNotFoundException(params.id);
     }
 
     return transaction;

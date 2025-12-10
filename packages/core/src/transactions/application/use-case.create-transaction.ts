@@ -60,7 +60,8 @@ export class CreateTransaction {
   private ensureCurrencyMatches(account: Account, currency: string): void {
     if (account.hasCurrency(currency)) return;
     throw new CurrencyMismatchException(
-      "Transaction currency must match account currency"
+      account.getCurrency(),
+      currency
     );
   }
 }
