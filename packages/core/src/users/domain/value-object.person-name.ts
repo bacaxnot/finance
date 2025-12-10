@@ -1,4 +1,4 @@
-import { InvalidArgumentException } from "~/_shared/domain/exceptions";
+import { InvalidArgumentError } from "~/_shared/domain/domain-error";
 
 const MAX_NAME_LENGTH = 100;
 export class PersonName {
@@ -13,7 +13,7 @@ export class PersonName {
 
   private ensureIsNotEmpty(value: string): void {
     if (value && value.trim() !== "") return;
-    throw new InvalidArgumentException("Name cannot be empty");
+    throw new InvalidArgumentError("Name cannot be empty");
   }
 
   private ensureHasValidCharacters(value: string): void {
@@ -21,12 +21,12 @@ export class PersonName {
     // Handles international names: "María", "O'Brien", "Jean-Claude", etc.
     const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/;
     if (nameRegex.test(value)) return;
-    throw new InvalidArgumentException("Name contains invalid characters");
+    throw new InvalidArgumentError("Name contains invalid characters");
   }
 
   private ensureHasValidLength(value: string): void {
     if (value.trim().length <= MAX_NAME_LENGTH) return;
-    throw new InvalidArgumentException(
+    throw new InvalidArgumentError(
       `Name is too long (max ${MAX_NAME_LENGTH} characters)`
     );
   }

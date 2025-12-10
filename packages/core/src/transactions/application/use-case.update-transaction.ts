@@ -1,20 +1,18 @@
 import { Account } from "~/accounts/domain/aggregate.account";
 import { AccountRepository } from "~/accounts/domain/repository.account";
-import { FindAccount } from "~/accounts/application/use-case.find-account";
+import { FindAccountUseCase } from "~/accounts/application/use-case.find-account";
 import { Transaction, UpdateTransactionPrimitives } from "../domain/aggregate.transaction";
 import { TransactionRepository } from "../domain/repository.transaction";
 import { TransactionDirectionType } from "../domain/value-object.transaction-direction";
-import { FindTransaction } from "./use-case.find-transaction";
-import {
-  CurrencyMismatchException,
-} from "../domain/exceptions";
+import { FindTransactionUseCase } from "./use-case.find-transaction";
+import { CurrencyMismatchError } from "../domain/error.currency-mismatch";
 
-export class UpdateTransaction {
+export class UpdateTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
-    private readonly findAccount: FindAccount,
-    private readonly findTransaction: FindTransaction
+    private readonly findAccount: FindAccountUseCase,
+    private readonly findTransaction: FindTransactionUseCase
   ) {}
 
   async execute(params: UpdateTransactionPrimitives & { id: string}): Promise<void> {
@@ -33,8 +31,8 @@ export class UpdateTransaction {
   }
 
   private getTransactionAccount(transaction: Transaction): Promise<Account> {
-    const accountId = transaction.getAccountId();
-    return this.findAccount.execute({ id: accountId });
+    const transactionPrimitives = transaction.toPrimitives();
+    return this.findAccount.execute({ id: transactionPrimitives.accountId });
   }
 
   private getTransaction(id: string): Promise<Transaction> {
@@ -57,8 +55,9 @@ export class UpdateTransaction {
       direction?: TransactionDirectionType;
     }
   ): Promise<void> {
-    const oldAmount = transaction.getAmount();
-    const oldDirection = transaction.getDirection();
+    const transactionPrimitives = transaction.toPrimitives();
+    const oldAmount = transactionPrimitives.amount;
+    const oldDirection = transactionPrimitives.direction;
 
     account.reverseTransaction(oldAmount.amount, oldAmount.currency, oldDirection);
 
@@ -74,8 +73,9 @@ export class UpdateTransaction {
   private ensureCurrencyMatches(account: Account, currency?: string): void {
     if (!currency) return;
     if (account.hasCurrency(currency)) return;
-    throw new CurrencyMismatchException(
-      account.getCurrency(),
+    const accountPrimitives = account.toPrimitives();
+    throw new CurrencyMismatchError(
+      accountPrimitives.currentBalance.currency,
       currency
     );
   }

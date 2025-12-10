@@ -1,12 +1,9 @@
 import { Category } from "../domain/aggregate.category";
 import { CategoryRepository } from "../domain/repository.category";
 import { CategoryId } from "../domain/value-object.category-id";
-import {
-  CategoryNotFoundException,
-  UnauthorizedCategoryAccessException,
-} from "../domain/exceptions";
+import { CategoryDoesNotExistError } from "../domain/error.category-does-not-exist";
 
-export class UpdateCategory {
+export class UpdateCategoryUseCase {
   constructor(private readonly repository: CategoryRepository) {}
 
   async execute(params: {
@@ -30,7 +27,7 @@ export class UpdateCategory {
     categoryId: string
   ): asserts category is Category {
     if (category) return;
-    throw new CategoryNotFoundException(categoryId);
+    throw new CategoryDoesNotExistError(categoryId);
   }
 
   private ensureCategoryBelongsToUser(
@@ -38,8 +35,7 @@ export class UpdateCategory {
     userId: string
   ): void {
     if (category.belongsTo(userId)) return;
-    throw new UnauthorizedCategoryAccessException(
-      "Category does not belong to user"
-    );
+    // TODO: Authorization pattern to be defined
+    throw new Error("Category does not belong to user");
   }
 }

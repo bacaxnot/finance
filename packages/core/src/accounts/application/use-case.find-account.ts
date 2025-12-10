@@ -1,9 +1,9 @@
 import { Account } from "../domain/aggregate.account";
 import { AccountRepository } from "../domain/repository.account";
 import { AccountId } from "../domain/value-object.account-id";
-import { AccountNotFoundException } from "../domain/exceptions";
+import { AccountDoesNotExistError } from "../domain/error.account-does-not-exist";
 
-export class FindAccount {
+export class FindAccountUseCase {
   constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: { id: string }): Promise<Account> {
@@ -11,7 +11,7 @@ export class FindAccount {
     const account = await this.repository.search(accountId);
 
     if (!account) {
-      throw new AccountNotFoundException(params.id);
+      throw new AccountDoesNotExistError(params.id);
     }
 
     return account;

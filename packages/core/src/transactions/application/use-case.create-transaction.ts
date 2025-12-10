@@ -1,18 +1,17 @@
 
 import { Account } from "~/accounts/domain/aggregate.account";
 import { AccountRepository } from "~/accounts/domain/repository.account";
-import { FindAccount } from "~/accounts/application/use-case.find-account";
-import { UnauthorizedAccountAccessException } from "~/accounts/domain/exceptions";
+import { FindAccountUseCase } from "~/accounts/application/use-case.find-account";
 import { TransactionRepository } from "../domain/repository.transaction";
 import { Transaction } from "../domain/aggregate.transaction";
 import { TransactionDirectionType } from "../domain/value-object.transaction-direction";
-import { CurrencyMismatchException } from "../domain/exceptions";
+import { CurrencyMismatchError } from "../domain/error.currency-mismatch";
 
-export class CreateTransaction {
+export class CreateTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
-    private readonly findAccount: FindAccount,
+    private readonly findAccount: FindAccountUseCase,
   ) {}
 
   async execute(params: {
@@ -52,15 +51,15 @@ export class CreateTransaction {
 
   private ensureAccountBelongsToUser(account: Account, userId: string): void {
     if (account.belongsTo(userId)) return;
-    throw new UnauthorizedAccountAccessException(
-      "Account does not belong to user"
-    );
+    // TODO: Authorization pattern to be defined
+    throw new Error("Account does not belong to user");
   }
 
   private ensureCurrencyMatches(account: Account, currency: string): void {
     if (account.hasCurrency(currency)) return;
-    throw new CurrencyMismatchException(
-      account.getCurrency(),
+    const accountPrimitives = account.toPrimitives();
+    throw new CurrencyMismatchError(
+      accountPrimitives.currentBalance.currency,
       currency
     );
   }

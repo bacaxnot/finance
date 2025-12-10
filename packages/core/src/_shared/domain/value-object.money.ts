@@ -1,4 +1,4 @@
-import { InvalidArgumentException } from "./exceptions";
+import { InvalidArgumentError } from "./domain-error";
 import { Currency } from "./value-object.currency";
 
 export class Money {
@@ -13,12 +13,12 @@ export class Money {
 
   private ensureAmountIsNotNegative(amount: number): void {
     if (amount >= 0) return;
-    throw new InvalidArgumentException("Amount must be non-negative");
+    throw new InvalidArgumentError("Amount must be non-negative");
   }
 
   private ensureSameCurrency(other: Money): void {
     if (this.currency.equals(other.currency)) return;
-    throw new InvalidArgumentException(
+    throw new InvalidArgumentError(
       "Cannot perform operation with different currencies"
     );
   }
