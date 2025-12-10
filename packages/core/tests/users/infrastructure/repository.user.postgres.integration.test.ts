@@ -5,6 +5,7 @@ import { users } from "@repo/db/schema";
 import { User } from "~/users/domain/aggregate.user";
 import { UserRepositoryPostgres } from "~/users/infrastructure/repository.user.postgres";
 import { UserId } from "~/users/domain/value-object.user-id";
+import { v7 as uuidv7 } from "uuid";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 
@@ -20,7 +21,11 @@ describe.skipIf(skipIntegration)("UserRepositoryPostgres - Integration", () => {
   });
 
   test("save creates a new user in the database", async () => {
-    const user = User.create("John", "Doe");
+    const user = User.create({
+      id: uuidv7(),
+      firstName: "John",
+      lastName: "Doe",
+    });
     const primitives = user.toPrimitives();
     createdUserIds.push(primitives.id);
 
@@ -39,7 +44,11 @@ describe.skipIf(skipIntegration)("UserRepositoryPostgres - Integration", () => {
   });
 
   test("save updates an existing user in the database", async () => {
-    const user = User.create("Jane", "Smith");
+    const user = User.create({
+      id: uuidv7(),
+      firstName: "Jane",
+      lastName: "Smith",
+    });
     const primitives = user.toPrimitives();
     createdUserIds.push(primitives.id);
 
@@ -66,7 +75,11 @@ describe.skipIf(skipIntegration)("UserRepositoryPostgres - Integration", () => {
   });
 
   test("search returns a user by id", async () => {
-    const user = User.create("Alice", "Brown");
+    const user = User.create({
+      id: uuidv7(),
+      firstName: "Alice",
+      lastName: "Brown",
+    });
     const primitives = user.toPrimitives();
     createdUserIds.push(primitives.id);
 

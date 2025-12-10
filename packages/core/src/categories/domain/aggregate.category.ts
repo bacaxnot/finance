@@ -19,9 +19,13 @@ export class Category {
     private updatedAt: Date
   ) {}
 
-  static create(userId: string, name: string): Category {
+  static create({
+    id,
+    userId,
+    name,
+  }: Omit<CategoryPrimitives, "createdAt" | "updatedAt">): Category {
     return new Category(
-      new CategoryId(),
+      new CategoryId(id),
       new UserId(userId),
       new CategoryName(name),
       new Date(),
@@ -37,6 +41,15 @@ export class Category {
       primitives.createdAt,
       primitives.updatedAt
     );
+  }
+
+  belongsTo(userId: string): boolean {
+    return this.userId.value === userId;
+  }
+
+  update(name: string): void {
+    this.name = new CategoryName(name);
+    this.updatedAt = new Date();
   }
 
   toPrimitives(): CategoryPrimitives {

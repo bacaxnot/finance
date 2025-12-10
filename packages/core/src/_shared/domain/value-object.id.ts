@@ -1,5 +1,5 @@
 import { v7 as uuidv7, validate as uuidValidate } from "uuid";
-import { InvalidArgumentException } from "./exceptions";
+import { InvalidArgumentError } from "./domain-error";
 
 export class Id {
   public readonly value: string;
@@ -19,7 +19,7 @@ export class Id {
 
   private ensureIsValidUuid(value: string): void {
     if (uuidValidate(value)) return;
-    throw new InvalidArgumentException("Invalid UUID format");
+    throw new InvalidArgumentError("Invalid UUID format");
   }
 
   equals(other: Id): boolean {

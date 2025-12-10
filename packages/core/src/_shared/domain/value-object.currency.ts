@@ -1,4 +1,4 @@
-import { InvalidArgumentException } from "./exceptions";
+import { InvalidArgumentError } from "./domain-error";
 
 // ISO 4217 currency codes - COP for MVP, expandable later
 export const ALLOWED_CURRENCIES = ["COP"] as const;
@@ -10,7 +10,7 @@ export class Currency {
 
   private ensureIsValidCode(value: string): void {
     if (ALLOWED_CURRENCIES.includes(value as any)) return;
-    throw new InvalidArgumentException(
+    throw new InvalidArgumentError(
       `Invalid currency code. Allowed currencies: ${ALLOWED_CURRENCIES.join(", ")}`
     );
   }

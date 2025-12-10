@@ -5,6 +5,7 @@ import { accounts, users } from "@repo/db/schema";
 import { Account } from "~/accounts/domain/aggregate.account";
 import { AccountRepositoryPostgres } from "~/accounts/infrastructure/repository.account.postgres";
 import { AccountId } from "~/accounts/domain/value-object.account-id";
+import { v7 as uuidv7 } from "uuid";
 
 const skipIntegration = !process.env.RUN_INTEGRATION_TESTS;
 
@@ -35,7 +36,12 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const account = Account.create(testUserId, "Checking Account", 1000, "COP");
+      const account = Account.create({
+        id: uuidv7(),
+        userId: testUserId,
+        name: "Checking Account",
+        initialBalance: { amount: 1000, currency: "COP" },
+      });
       const primitives = account.toPrimitives();
       createdAccountIds.push(primitives.id);
 
@@ -68,7 +74,12 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const account = Account.create(testUserId, "Savings Account", 5000, "COP");
+      const account = Account.create({
+        id: uuidv7(),
+        userId: testUserId,
+        name: "Savings Account",
+        initialBalance: { amount: 5000, currency: "COP" },
+      });
       const primitives = account.toPrimitives();
       createdAccountIds.push(primitives.id);
 
@@ -107,7 +118,12 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const account = Account.create(testUserId, "Investment Account", 10000, "COP");
+      const account = Account.create({
+        id: uuidv7(),
+        userId: testUserId,
+        name: "Investment Account",
+        initialBalance: { amount: 10000, currency: "COP" },
+      });
       const primitives = account.toPrimitives();
       createdAccountIds.push(primitives.id);
 

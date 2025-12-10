@@ -1,4 +1,4 @@
-import { InvalidArgumentException } from "~/_shared/domain/exceptions";
+import { InvalidArgumentError } from "~/_shared/domain/domain-error";
 
 export class TransactionDate {
   constructor(public readonly value: Date) {
@@ -8,7 +8,7 @@ export class TransactionDate {
   private ensureDateIsNotInFuture(date: Date): void {
     const now = new Date();
     if (date <= now) return;
-    throw new InvalidArgumentException("Transaction date cannot be in the future");
+    throw new InvalidArgumentError("Transaction date cannot be in the future");
   }
 
   equals(other: TransactionDate): boolean {

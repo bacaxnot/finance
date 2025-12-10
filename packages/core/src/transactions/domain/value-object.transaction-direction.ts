@@ -1,4 +1,4 @@
-import { InvalidArgumentException } from "~/_shared/domain/exceptions";
+import { InvalidArgumentError } from "~/_shared/domain/domain-error";
 
 export type TransactionDirectionType = "inbound" | "outbound";
 
@@ -9,7 +9,7 @@ export class TransactionDirection {
 
   private ensureIsValidDirection(value: string): void {
     if (value === "inbound" || value === "outbound") return;
-    throw new InvalidArgumentException(
+    throw new InvalidArgumentError(
       'Transaction direction must be either "inbound" or "outbound"'
     );
   }

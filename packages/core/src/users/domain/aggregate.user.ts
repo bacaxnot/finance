@@ -18,9 +18,13 @@ export class User {
     private updatedAt: Date
   ) {}
 
-  static create(firstName: string, lastName: string): User {
+  static create({
+    id,
+    firstName,
+    lastName,
+  }: Omit<UserPrimitives, "createdAt" | "updatedAt">): User {
     return new User(
-      new UserId(),
+      new UserId(id),
       new PersonName(firstName),
       new PersonName(lastName),
       new Date(),

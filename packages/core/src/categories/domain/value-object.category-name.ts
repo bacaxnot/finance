@@ -1,4 +1,4 @@
-import { InvalidArgumentException } from "~/_shared/domain/exceptions";
+import { InvalidArgumentError } from "~/_shared/domain/domain-error";
 
 const MAX_NAME_LENGTH = 50;
 
@@ -13,12 +13,12 @@ export class CategoryName {
 
   private ensureIsNotEmpty(value: string): void {
     if (value && value.trim() !== "") return;
-    throw new InvalidArgumentException("Category name cannot be empty");
+    throw new InvalidArgumentError("Category name cannot be empty");
   }
 
   private ensureHasValidLength(value: string): void {
     if (value.trim().length <= MAX_NAME_LENGTH) return;
-    throw new InvalidArgumentException(
+    throw new InvalidArgumentError(
       `Category name is too long (max ${MAX_NAME_LENGTH} characters)`
     );
   }

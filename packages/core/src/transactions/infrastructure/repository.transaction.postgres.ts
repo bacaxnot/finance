@@ -63,7 +63,7 @@ export class TransactionRepositoryPostgres implements TransactionRepository {
       direction: row.direction,
       description: row.description,
       transactionDate: row.transactionDate.toISOString(),
-      notes: row.notes || undefined,
+      notes: row.notes,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });

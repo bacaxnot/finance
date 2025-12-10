@@ -1,4 +1,4 @@
-import { InvalidArgumentException } from "~/_shared/domain/exceptions";
+import { InvalidArgumentError } from "~/_shared/domain/domain-error";
 
 const MAX_NAME_LENGTH = 100;
 
@@ -13,12 +13,12 @@ export class AccountName {
 
   private ensureIsNotEmpty(value: string): void {
     if (value && value.trim() !== "") return;
-    throw new InvalidArgumentException("Account name cannot be empty");
+    throw new InvalidArgumentError("Account name cannot be empty");
   }
 
   private ensureHasValidLength(value: string): void {
     if (value.trim().length <= MAX_NAME_LENGTH) return;
-    throw new InvalidArgumentException(
+    throw new InvalidArgumentError(
       `Account name is too long (max ${MAX_NAME_LENGTH} characters)`
     );
   }

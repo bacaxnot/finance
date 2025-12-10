@@ -64,19 +64,20 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const transaction = Transaction.create(
-        testUserId,
-        testAccountId,
-        testCategoryId,
-        500,
-        "COP",
-        "inbound",
-        "Salary payment",
-        "2024-01-01T10:00:00.000Z",
-        "Monthly salary"
-      );
+      const transactionId = "01936d8f-5e27-7b3a-9c4e-111111111111";
+      const transaction = Transaction.create({
+        id: transactionId,
+        userId: testUserId,
+        accountId: testAccountId,
+        categoryId: testCategoryId,
+        amount: { amount: 500, currency: "COP" },
+        direction: "inbound",
+        description: "Salary payment",
+        transactionDate: "2024-01-01T10:00:00.000Z",
+        notes: "Monthly salary",
+      });
       const primitives = transaction.toPrimitives();
-      createdTransactionIds.push(primitives.id);
+      createdTransactionIds.push(transactionId);
 
       await repository.save(transaction);
 
@@ -135,16 +136,17 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const transaction = Transaction.create(
-        testUserId,
-        testAccountId,
-        testCategoryId,
-        300,
-        "COP",
-        "outbound",
-        "Groceries",
-        "2024-01-01T10:00:00.000Z"
-      );
+      const transaction = Transaction.create({
+        id: "01936d8f-5e27-7b3a-9c4e-111111111111",
+        userId: testUserId,
+        accountId: testAccountId,
+        categoryId: testCategoryId,
+        amount: { amount: 300, currency: "COP" },
+        direction: "outbound",
+        description: "Groceries",
+        transactionDate: "2024-01-01T10:00:00.000Z",
+        notes: null,
+      });
       const primitives = transaction.toPrimitives();
       createdTransactionIds.push(primitives.id);
 
@@ -209,17 +211,17 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const transaction = Transaction.create(
-        testUserId,
-        testAccountId,
-        testCategoryId,
-        200,
-        "COP",
-        "inbound",
-        "Freelance work",
-        "2024-01-15T14:30:00.000Z",
-        "Project payment"
-      );
+      const transaction = Transaction.create({
+        id: "01936d8f-5e27-7b3a-9c4e-111111111111",
+        userId: testUserId,
+        accountId: testAccountId,
+        categoryId: testCategoryId,
+        amount: { amount: 200, currency: "COP" },
+        direction: "inbound",
+        description: "Freelance work",
+        transactionDate: "2024-01-15T14:30:00.000Z",
+        notes: "Project payment",
+      });
       const primitives = transaction.toPrimitives();
       createdTransactionIds.push(primitives.id);
 
@@ -285,16 +287,17 @@ describe.skipIf(skipIntegration)(
         })
         .onConflictDoNothing();
 
-      const transaction = Transaction.create(
-        testUserId,
-        testAccountId,
-        testCategoryId,
-        100,
-        "COP",
-        "outbound",
-        "Coffee",
-        "2024-01-01T10:00:00.000Z"
-      );
+      const transaction = Transaction.create({
+        id: "01936d8f-5e27-7b3a-9c4e-111111111111",
+        userId: testUserId,
+        accountId: testAccountId,
+        categoryId: testCategoryId,
+        amount: { amount: 100, currency: "COP" },
+        direction: "outbound",
+        description: "Coffee",
+        transactionDate: "2024-01-01T10:00:00.000Z",
+        notes: null,
+      });
       const primitives = transaction.toPrimitives();
       createdTransactionIds.push(primitives.id);
 
