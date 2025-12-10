@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { AccountSelector } from "@/components/dashboard/AccountSelector";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { DashboardStatistics } from "@/components/dashboard/DashboardStatistics";
 import { InfiniteTransactionList } from "@/components/transactions/InfiniteTransactionList";
 import { QuickFilters } from "@/components/transactions/QuickFilters";
 import { TransactionList } from "@/components/transactions/TransactionList";
+import { CreateTransactionModal } from "@/components/transactions/CreateTransactionModal";
 import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
+import { Button } from "@/components/ui/button";
 import { useAccounts, useConsolidatedView } from "@/hooks/accounts";
 import { useConsolidatedTransactions } from "@/hooks/transactions";
 import type { TransactionFilters } from "@/mock/types";
@@ -80,7 +83,7 @@ export default function DashboardPage() {
 
   return (
     <SwipeWrapper onSwipeRight={() => {}}>
-      <div className="space-y-6">
+      <div className="space-y-6 relative">
         {/* Header simplificado */}
         <DashboardHeader />
 
@@ -122,6 +125,19 @@ export default function DashboardPage() {
         ) : (
           <TransactionList accountId={selectedAccountId} filters={filters} />
         )}
+
+        {/* Floating New Transaction Button */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <CreateTransactionModal>
+            <Button
+              size="lg"
+              className="size-14 rounded-full shadow-lg"
+              aria-label="New Transaction"
+            >
+              <Plus className="size-6" />
+            </Button>
+          </CreateTransactionModal>
+        </div>
       </div>
     </SwipeWrapper>
   );
