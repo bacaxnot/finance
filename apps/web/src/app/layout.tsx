@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
-import { QueryProvider } from "@/lib/query";
+import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { QueryProvider } from "@/lib/query";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({

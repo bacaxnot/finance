@@ -1,301 +1,179 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useConsolidatedView, useAccounts } from "@/hooks/accounts";
-import { useConsolidatedTransactions } from "@/hooks/transactions";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { DashboardStatistics } from "@/components/dashboard/DashboardStatistics";
-import { QuickFilters } from "@/components/transactions/QuickFilters";
-import { AccountSelector } from "@/components/dashboard/AccountSelector";
-import { TransactionList } from "@/components/transactions/TransactionList";
-import { TransactionCard } from "@/components/transactions/TransactionCard";
-import { TransactionTable } from "@/components/transactions/TransactionTable";
-import { TransactionSkeleton } from "@/components/transactions/TransactionSkeleton";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { AccountSelector } from "@/components/dashboard/account-selector";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardStatistics } from "@/components/dashboard/dashboard-statistics";
+import { InfiniteTransactionList } from "@/components/transactions/infinite-transaction-list";
+import { QuickFilters } from "@/components/transactions/quick-filters";
+import { TransactionList } from "@/components/transactions/transaction-list";
+import { CreateTransactionModal } from "@/components/transactions/create-transaction-modal";
 import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { useAccounts, useConsolidatedView } from "@/hooks/accounts";
+import { useConsolidatedTransactions } from "@/hooks/transactions";
 import type { TransactionFilters } from "@/mock/types";
 
 // Helper function to get date range based on period
 function getPeriodDateRange(period: string): {
-	dateFrom?: Date;
-	dateTo?: Date;
+  dateFrom?: Date;
+  dateTo?: Date;
 } {
-	const now = new Date();
-	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-	switch (period) {
-		case "this-month": {
-			const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-			return { dateFrom: startOfMonth, dateTo: undefined };
-		}
-		case "last-month": {
-			const startOfLastMonth = new Date(
-				now.getFullYear(),
-				now.getMonth() - 1,
-				1,
-			);
-			const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-			return { dateFrom: startOfLastMonth, dateTo: endOfLastMonth };
-		}
-		case "this-year": {
-			const startOfYear = new Date(now.getFullYear(), 0, 1);
-			return { dateFrom: startOfYear, dateTo: undefined };
-		}
-		case "all":
-		default:
-			return {};
-	}
+  switch (period) {
+    case "this-month": {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      return { dateFrom: startOfMonth, dateTo: undefined };
+    }
+    case "last-month": {
+      const startOfLastMonth = new Date(
+        now.getFullYear(),
+        now.getMonth() - 1,
+        1,
+      );
+      const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      return { dateFrom: startOfLastMonth, dateTo: endOfLastMonth };
+    }
+    case "this-year": {
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      return { dateFrom: startOfYear, dateTo: undefined };
+    }
+    case "all":
+    default:
+      return {};
+  }
 }
 
 export default function DashboardPage() {
-	const { data: consolidatedData, isLoading: isLoadingView } =
-		useConsolidatedView();
-	const { data: accountsData } = useAccounts();
-	const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
-	const [selectedPeriod, setSelectedPeriod] = useState<string>("this-month");
-	const [filters, setFilters] = useState<Omit<TransactionFilters, "accountId">>(
-		() => {
-			const periodRange = getPeriodDateRange("this-month");
-			return periodRange;
-		},
-	);
+  const { data: consolidatedData, isLoading: isLoadingView } =
+    useConsolidatedView();
+  const { data: accountsData } = useAccounts();
+  const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("this-month");
+  const [filters, setFilters] = useState<Omit<TransactionFilters, "accountId">>(
+    () => {
+      const periodRange = getPeriodDateRange("this-month");
+      return periodRange;
+    },
+  );
 
-	// Update filters when period changes
-	const handlePeriodChange = (period: string) => {
-		setSelectedPeriod(period);
-		const periodRange = getPeriodDateRange(period);
-		setFilters(periodRange);
-	};
+  // Update filters when period changes
+  const handlePeriodChange = (period: string) => {
+    setSelectedPeriod(period);
+    const periodRange = getPeriodDateRange(period);
+    setFilters(periodRange);
+  };
 
-	// Get transactions based on selected account
-	const { data: transactionsData } = useConsolidatedTransactions(
-		selectedAccountId === "all"
-			? filters
-			: { ...filters, accountId: selectedAccountId },
-	);
+  // Get transactions based on selected account
+  const consolidatedQueryResult = useConsolidatedTransactions(filters);
+  const { data: transactionsData } = consolidatedQueryResult;
 
-	const statistics = transactionsData?.pages[0]?.statistics;
+  const statistics = transactionsData?.pages[0]?.statistics;
 
-	if (isLoadingView) {
-		return <DashboardLoadingSkeleton />;
-	}
+  if (isLoadingView) {
+    return <DashboardLoadingSkeleton />;
+  }
 
-	if (!consolidatedData) return null;
+  if (!consolidatedData) return null;
 
-	const accounts = accountsData?.accounts || [];
+  const accounts = accountsData?.accounts || [];
 
-	return (
-		<SwipeWrapper onSwipeRight={() => {}}>
-			<div className="space-y-6">
-				{/* Header simplificado */}
-				<DashboardHeader />
+  return (
+    <SwipeWrapper onSwipeRight={() => {}}>
+      <div className="space-y-6 relative">
+        {/* Header simplificado */}
+        <DashboardHeader />
 
-				{/* Statistics con balance y badges */}
-				{statistics && (
-					<DashboardStatistics
-						totalBalance={consolidatedData.totalBalance}
-						totalIncome={statistics.totalIncome}
-						totalExpense={statistics.totalExpense}
-						currency={consolidatedData.currency}
-					/>
-				)}
+        {/* Statistics con balance y badges */}
+        {statistics && (
+          <DashboardStatistics
+            totalBalance={consolidatedData.totalBalance}
+            totalIncome={statistics.totalIncome}
+            totalExpense={statistics.totalExpense}
+            currency={consolidatedData.currency}
+          />
+        )}
 
-				{/* Filtros rápidos con selector de cuenta */}
-				<div className="flex items-center gap-1 text-sm">
-					<QuickFilters
-						value={selectedPeriod}
-						onPeriodChange={handlePeriodChange}
-					/>
-					<span className="text-muted-foreground">·</span>
-					<AccountSelector
-						accounts={accounts}
-						selectedAccountId={selectedAccountId}
-						onAccountChange={setSelectedAccountId}
-					/>
-				</div>
+        {/* Filtros rápidos con selector de cuenta */}
+        <div className="flex items-center gap-1 text-sm">
+          <QuickFilters
+            value={selectedPeriod}
+            onPeriodChange={handlePeriodChange}
+          />
+          <span className="text-muted-foreground">·</span>
+          <AccountSelector
+            accounts={accounts}
+            selectedAccountId={selectedAccountId}
+            onAccountChange={setSelectedAccountId}
+          />
+        </div>
 
-				{/* Lista de transacciones sin título */}
-				{selectedAccountId === "all" ? (
-					<ConsolidatedTransactionList filters={filters} />
-				) : (
-					<TransactionList accountId={selectedAccountId} filters={filters} />
-				)}
-			</div>
-		</SwipeWrapper>
-	);
-}
+        {/* Lista de transacciones sin título */}
+        {selectedAccountId === "all" ? (
+          <InfiniteTransactionList
+            queryResult={consolidatedQueryResult}
+            filters={filters}
+            emptyMessage={{
+              noTransactions: "You don't have any transactions yet.",
+              noResults:
+                "No transactions match your current filters. Try adjusting your search criteria.",
+            }}
+          />
+        ) : (
+          <TransactionList accountId={selectedAccountId} filters={filters} />
+        )}
 
-function ConsolidatedTransactionList({
-	filters,
-}: {
-	filters: Omit<TransactionFilters, "accountId">;
-}) {
-	const {
-		data,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
-		isLoading,
-		error,
-		refetch,
-	} = useConsolidatedTransactions(filters);
-
-	const observerTarget = useRef<HTMLDivElement>(null);
-
-	// Infinite scroll with Intersection Observer
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-					fetchNextPage();
-				}
-			},
-			{ threshold: 0.1 },
-		);
-
-		if (observerTarget.current) {
-			observer.observe(observerTarget.current);
-		}
-
-		return () => observer.disconnect();
-	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-	// Flatten all pages into single array
-	const allTransactions =
-		data?.pages.flatMap((page) => page.transactions) ?? [];
-
-	// Loading state
-	if (isLoading) {
-		return (
-			<div className="space-y-4">
-				<div className="md:hidden space-y-2">
-					<TransactionSkeleton variant="card" count={5} />
-				</div>
-				<div className="hidden md:block">
-					<div className="rounded-md border">
-						<table className="w-full">
-							<thead className="border-b">
-								<tr>
-									<th className="h-12 px-4 text-left">Date</th>
-									<th className="h-12 px-4 text-left">Description</th>
-									<th className="h-12 px-4 text-left">Category</th>
-									<th className="h-12 px-4 text-left">Type</th>
-									<th className="h-12 px-4 text-right">Amount</th>
-									<th className="h-12 px-4 text-left">Status</th>
-								</tr>
-							</thead>
-							<tbody>
-								<TransactionSkeleton variant="table" count={5} />
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		);
-	}
-
-	// Error state
-	if (error) {
-		return (
-			<div className="flex flex-col items-center justify-center py-8 text-center">
-				<AlertCircle className="size-12 text-muted-foreground mb-4" />
-				<h3 className="text-lg font-semibold mb-2">
-					Failed to load transactions
-				</h3>
-				<p className="text-muted-foreground mb-4 max-w-sm">
-					There was an error loading your transactions. Please try again.
-				</p>
-				<Button onClick={() => refetch()} variant="outline">
-					Retry
-				</Button>
-			</div>
-		);
-	}
-
-	// Empty state
-	if (allTransactions.length === 0) {
-		return (
-			<div className="flex flex-col items-center justify-center py-12 text-center">
-				<div className="rounded-full bg-muted p-6 mb-4">
-					<AlertCircle className="size-12 text-muted-foreground" />
-				</div>
-				<h3 className="text-lg font-semibold mb-2">No transactions found</h3>
-				<p className="text-muted-foreground mb-6 max-w-sm">
-					{filters?.search ||
-					filters?.type ||
-					filters?.category ||
-					filters?.dateFrom
-						? "No transactions match your current filters. Try adjusting your search criteria."
-						: "You don't have any transactions yet."}
-				</p>
-			</div>
-		);
-	}
-
-	return (
-		<div className="space-y-4 gap-2">
-			{/* Mobile: Card View */}
-			<div className="md:hidden border-t border-border">
-				{allTransactions.map((transaction) => (
-					<TransactionCard key={transaction.id} transaction={transaction} />
-				))}
-			</div>
-
-			{/* Desktop: Table View */}
-			<div className="hidden md:block">
-				<TransactionTable transactions={allTransactions} />
-			</div>
-
-			{/* Infinite scroll trigger */}
-			<div ref={observerTarget} className="flex justify-center py-4">
-				{isFetchingNextPage && (
-					<div className="flex items-center gap-2 text-muted-foreground">
-						<Loader2 className="size-5 animate-spin" />
-						<span className="text-sm">Loading more transactions...</span>
-					</div>
-				)}
-				{!hasNextPage && allTransactions.length > 0 && (
-					<p className="text-sm text-muted-foreground">
-						No more transactions to load
-					</p>
-				)}
-			</div>
-		</div>
-	);
+        {/* Floating New Transaction Button */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <CreateTransactionModal>
+            <Button
+              size="lg"
+              className="size-14 rounded-full shadow-lg"
+              aria-label="New Transaction"
+            >
+              <Plus className="size-6" />
+            </Button>
+          </CreateTransactionModal>
+        </div>
+      </div>
+    </SwipeWrapper>
+  );
 }
 
 function DashboardLoadingSkeleton() {
-	return (
-		<div className="space-y-6">
-			{/* Header skeleton */}
-			<header className="flex items-start justify-between">
-				<div className="h-5 w-16 bg-muted animate-pulse rounded" />
-				<div className="size-11 bg-muted animate-pulse rounded" />
-			</header>
+  return (
+    <div className="space-y-6">
+      {/* Header skeleton */}
+      <header className="flex items-start justify-between">
+        <div className="h-5 w-16 bg-muted animate-pulse rounded" />
+        <div className="size-11 bg-muted animate-pulse rounded" />
+      </header>
 
-			{/* Balance skeleton */}
-			<div className="space-y-4">
-				<div className="h-16 w-64 bg-muted animate-pulse rounded" />
-				<div className="flex items-center gap-2">
-					<div className="h-10 w-32 bg-muted animate-pulse rounded-full" />
-					<div className="h-10 w-32 bg-muted animate-pulse rounded-full" />
-				</div>
-			</div>
+      {/* Balance skeleton */}
+      <div className="space-y-4">
+        <div className="h-16 w-64 bg-muted animate-pulse rounded" />
+        <div className="flex items-center gap-2">
+          <div className="h-10 w-32 bg-muted animate-pulse rounded-full" />
+          <div className="h-10 w-32 bg-muted animate-pulse rounded-full" />
+        </div>
+      </div>
 
-			{/* Quick filters skeleton */}
-			<div className="flex items-center gap-2">
-				<div className="h-9 w-28 bg-muted animate-pulse rounded-full" />
-				<div className="h-4 w-6 bg-muted animate-pulse rounded" />
-				<div className="h-9 w-36 bg-muted animate-pulse rounded-full" />
-			</div>
+      {/* Quick filters skeleton */}
+      <div className="flex items-center gap-2">
+        <div className="h-9 w-28 bg-muted animate-pulse rounded-full" />
+        <div className="h-4 w-6 bg-muted animate-pulse rounded" />
+        <div className="h-9 w-36 bg-muted animate-pulse rounded-full" />
+      </div>
 
-			{/* Transactions skeleton */}
-			<div className="space-y-3">
-				{[1, 2, 3, 4, 5].map((i) => (
-					<div key={i} className="h-20 bg-muted animate-pulse rounded" />
-				))}
-			</div>
-		</div>
-	);
+      {/* Transactions skeleton */}
+      <div className="space-y-3">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="h-20 bg-muted animate-pulse rounded" />
+        ))}
+      </div>
+    </div>
+  );
 }
