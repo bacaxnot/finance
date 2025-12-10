@@ -232,7 +232,9 @@ class Account {
 // Use case
 async execute(accountId: string, amount: number): Promise<void> {
     // ✅ Reconstitute from repository
-    const account = await this.repository.find(accountId);
+    const account = await this.repository.find(
+        new AccountId(accountId)
+    );
 
     // ✅ Business operation (primitives as arguments)
     account.deposit(amount);
