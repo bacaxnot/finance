@@ -49,10 +49,11 @@ export abstract class DomainError extends Error {
 ```typescript
 export class AccountDoesNotExistError extends DomainError {
     readonly type = "AccountDoesNotExistError";
-    readonly message = `The account ${this.accountId} does not exist`;
+    readonly message: string;
 
-    constructor(public readonly value: string) {
+    constructor(public readonly accountId: string) {
         super();
+        this.message = `The account ${this.accountId} does not exist`;
     }
 }
 ```
@@ -60,13 +61,14 @@ export class AccountDoesNotExistError extends DomainError {
 ```typescript
 export class CurrencyMismatchError extends DomainError {
     readonly type = "CurrencyMismatchError";
-    readonly message = `Currency mismatch: expected ${this.expected}, got ${this.actual}`;
+    readonly message: string;
 
     constructor(
         public readonly expected: string,
         public readonly actual: string,
     ) {
         super();
+        this.message = `Currency mismatch: expected ${this.expected}, got ${this.actual}`;
     }
 }
 ```
@@ -108,10 +110,12 @@ The `message` property **computes** from constructor data using template literal
 
 ```typescript
 export class AccountDoesNotExistError extends DomainError {
-    readonly message = `Account ${this.accountId} does not exist`;
+    readonly type = "AccountDoesNotExistError";
+    readonly message: string;
 
     constructor(public readonly accountId: string) {
         super();
+        this.message = `Account ${this.accountId} does not exist`;
     }
 }
 
@@ -183,13 +187,14 @@ The `toPrimitives()` method automatically extracts all constructor properties:
 ```typescript
 export class CurrencyMismatchError extends DomainError {
     readonly type = "CurrencyMismatchError";
-    readonly message = `Currency mismatch: expected ${this.expected}, got ${this.actual}`;
+    readonly message: string;
 
     constructor(
         public readonly expected: string,
         public readonly actual: string,
     ) {
         super();
+        this.message = `Currency mismatch: expected ${this.expected}, got ${this.actual}`;
     }
 }
 
@@ -240,10 +245,11 @@ src/
 // accounts/domain/error.account-does-not-exist.ts
 export class AccountDoesNotExistError extends DomainError {
     readonly type = "AccountDoesNotExistError";
-    readonly message = `Account ${this.accountId} does not exist`;
+    readonly message: string;
 
     constructor(public readonly accountId: string) {
         super();
+        this.message = `Account ${this.accountId} does not exist`;
     }
 }
 
