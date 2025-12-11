@@ -46,3 +46,19 @@ type ValueObjectValue<T> =
 export type Primitives<T> = {
     [key in keyof Properties<T>]: ValueObjectValue<T[key]>;
 };
+
+/**
+ * Converts an ISODateTime string to a Date object
+ * Use in fromPrimitives() methods when reconstituting aggregates from primitives
+ */
+export function dateFromPrimitive(isoString: ISODateTime): Date {
+    return new Date(isoString);
+}
+
+/**
+ * Converts a Date object to an ISODateTime string
+ * Use in toPrimitives() methods when serializing aggregates to primitives
+ */
+export function dateToPrimitive(date: Date): ISODateTime {
+    return date.toISOString() as ISODateTime;
+}
