@@ -1,9 +1,9 @@
 import { db } from "@repo/db";
 import { users } from "@repo/db/schema";
-import { User } from "../domain/aggregate.user";
+import { User } from "../domain/user";
 import { eq } from "@repo/db/orm";
-import { UserRepository } from "../domain/repository.user";
-import { UserId } from "../domain/value-object.user-id";
+import { UserRepository } from "../domain/user-repository";
+import { UserId } from "../domain/user-id";
 
 export class UserRepositoryPostgres implements UserRepository {
   async save(user: User): Promise<void> {

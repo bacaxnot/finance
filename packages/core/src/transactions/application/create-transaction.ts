@@ -1,17 +1,17 @@
 
-import { Account } from "~/accounts/domain/aggregate.account";
-import { AccountRepository } from "~/accounts/domain/repository.account";
-import { FindAccountUseCase } from "~/accounts/application/use-case.find-account";
-import { TransactionRepository } from "../domain/repository.transaction";
-import { Transaction } from "../domain/aggregate.transaction";
-import { TransactionDirectionType } from "../domain/value-object.transaction-direction";
-import { CurrencyMismatchError } from "../domain/error.currency-mismatch";
+import { Account } from "~/accounts/domain/account";
+import { AccountRepository } from "~/accounts/domain/account-repository";
+import { FindAccount } from "~/accounts/application/find-account";
+import { TransactionRepository } from "../domain/transaction-repository";
+import { Transaction } from "../domain/transaction";
+import { TransactionDirectionType } from "../domain/transaction-direction";
+import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
 
 export class CreateTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
-    private readonly findAccount: FindAccountUseCase,
+    private readonly findAccount: FindAccount,
   ) {}
 
   async execute(params: {
@@ -36,10 +36,10 @@ export class CreateTransactionUseCase {
       userId: params.userId,
       accountId: params.accountId,
       categoryId: params.categoryId,
-      amount: { value: params.amount, currency: params.currency },
+      amount: { amount: params.amount, currency: params.currency },
       direction: params.direction,
       description: params.description,
-      date: params.transactionDate,
+      date: params.transactionDate as `${number}${number}${number}${number}-${number}${number}-${number}${number}T${number}${number}:${number}${number}:${number}${number}.${number}${number}${number}Z`,
       notes: params.notes,
     });
 

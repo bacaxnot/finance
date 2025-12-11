@@ -1,6 +1,6 @@
-import { UserId } from "~/users/domain/value-object.user-id";
-import { TransactionRepository } from "../domain/repository.transaction";
-import { Transaction } from "../domain/aggregate.transaction";
+import { UserId } from "~/users/domain/user-id";
+import { TransactionRepository } from "../domain/transaction-repository";
+import { Transaction } from "../domain/transaction";
 
 export class ListTransactionsByUser {
   constructor(private readonly repository: TransactionRepository) {}

@@ -242,7 +242,7 @@ src/
 ## Complete Example
 
 ```typescript
-// accounts/domain/error.account-does-not-exist.ts
+// accounts/domain/account-does-not-exist-error.ts
 export class AccountDoesNotExistError extends DomainError {
     readonly type = "AccountDoesNotExistError";
     readonly message: string;
@@ -253,8 +253,8 @@ export class AccountDoesNotExistError extends DomainError {
     }
 }
 
-// accounts/application/use-case.update-account.ts
-export class UpdateAccountUseCase {
+// accounts/application/update-account.ts
+export class UpdateAccount {
     async execute(params: {
         accountId: string;
         name: string;

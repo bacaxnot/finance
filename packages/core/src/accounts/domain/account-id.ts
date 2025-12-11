@@ -1,4 +1,4 @@
-import { Id } from "~/_shared/domain/value-object.id";
+import { Id } from "~/_shared/domain/id";
 
 export class AccountId extends Id {
   constructor(value?: string) {

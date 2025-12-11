@@ -1,6 +1,6 @@
-import { UserId } from "~/users/domain/value-object.user-id";
-import { CategoryId } from "./value-object.category-id";
-import { CategoryName } from "./value-object.category-name";
+import { UserId } from "~/users/domain/user-id";
+import { CategoryId } from "./category-id";
+import { CategoryName } from "./category-name";
 import { dateFromPrimitive, dateToPrimitive, Primitives } from "~/_shared/domain/primitives";
 import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 

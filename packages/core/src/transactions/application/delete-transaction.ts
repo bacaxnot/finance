@@ -1,16 +1,16 @@
-import { AccountRepository } from "~/accounts/domain/repository.account";
-import { FindAccountUseCase } from "~/accounts/application/use-case.find-account";
-import { Transaction } from "~/transactions/domain/aggregate.transaction";
-import { TransactionRepository } from "~/transactions/domain/repository.transaction";
-import { TransactionId } from "~/transactions/domain/value-object.transaction-id";
-import { FindTransactionUseCase } from "~/transactions/application/use-case.find-transaction";
-import { Account } from "~/accounts/domain/aggregate.account";
+import { AccountRepository } from "~/accounts/domain/account-repository";
+import { FindAccount } from "~/accounts/application/find-account";
+import { Transaction } from "~/transactions/domain/transaction";
+import { TransactionRepository } from "~/transactions/domain/transaction-repository";
+import { TransactionId } from "~/transactions/domain/transaction-id";
+import { FindTransactionUseCase } from "~/transactions/application/find-transaction";
+import { Account } from "~/accounts/domain/account";
 
 export class DeleteTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
-    private readonly findAccount: FindAccountUseCase,
+    private readonly findAccount: FindAccount,
     private readonly findTransaction: FindTransactionUseCase
   ) {}
 
@@ -23,7 +23,7 @@ export class DeleteTransactionUseCase {
 
     const transactionPrimitives = transaction.toPrimitives();
     account.reverseTransaction(
-      transactionPrimitives.amount.value,
+      transactionPrimitives.amount.amount,
       transactionPrimitives.amount.currency,
       transactionPrimitives.direction
     );

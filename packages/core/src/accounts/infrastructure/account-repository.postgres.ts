@@ -2,10 +2,10 @@ import { eq } from "@repo/db/orm";
 import { accounts } from "@repo/db/schema";
 import { dateToPrimitive } from "~/_shared/domain/primitives";
 import { DrizzlePostgresRepository } from "~/_shared/infrastructure/drizzle-postgres-repository";
-import type { UserId } from "~/users/domain/value-object.user-id";
-import { Account } from "../domain/aggregate.account";
-import type { AccountRepository } from "../domain/repository.account";
-import type { AccountId } from "../domain/value-object.account-id";
+import type { UserId } from "~/users/domain/user-id";
+import { Account } from "../domain/account";
+import type { AccountRepository } from "../domain/account-repository";
+import type { AccountId } from "../domain/account-id";
 
 export class AccountRepositoryPostgres
 	extends DrizzlePostgresRepository<Account>

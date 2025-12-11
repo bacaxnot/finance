@@ -1,14 +1,15 @@
-import { Category } from "../domain/aggregate.category";
-import { CategoryRepository } from "../domain/repository.category";
-import { CategoryId } from "../domain/value-object.category-id";
-import { CategoryDoesNotExistError } from "../domain/error.category-does-not-exist";
+import { Category } from "../domain/category";
+import { CategoryRepository } from "../domain/category-repository";
+import { CategoryId } from "../domain/category-id";
+import { CategoryDoesNotExistError } from "../domain/category-does-not-exist-error";
 
-export class DeleteCategoryUseCase {
+export class UpdateCategoryUseCase {
   constructor(private readonly repository: CategoryRepository) {}
 
   async execute(params: {
     userId: string;
     categoryId: string;
+    name: string;
   }): Promise<void> {
     const categoryId = new CategoryId(params.categoryId);
     const category = await this.repository.search(categoryId);
@@ -16,7 +17,9 @@ export class DeleteCategoryUseCase {
     this.ensureCategoryExists(category, params.categoryId);
     this.ensureCategoryBelongsToUser(category, params.userId);
 
-    await this.repository.delete(categoryId);
+    category.update(params.name);
+
+    await this.repository.save(category);
   }
 
   private ensureCategoryExists(

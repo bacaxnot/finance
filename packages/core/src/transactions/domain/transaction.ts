@@ -1,14 +1,14 @@
-import { UserId } from "~/users/domain/value-object.user-id";
-import { AccountId } from "~/accounts/domain/value-object.account-id";
-import { CategoryId } from "~/categories/domain/value-object.category-id";
-import { Money } from "~/_shared/domain/value-object.money";
-import { TransactionId } from "./value-object.transaction-id";
+import { UserId } from "~/users/domain/user-id";
+import { AccountId } from "~/accounts/domain/account-id";
+import { CategoryId } from "~/categories/domain/category-id";
+import { Money } from "~/_shared/domain/money";
+import { TransactionId } from "./transaction-id";
 import {
   TransactionDirection,
   TransactionDirectionType,
-} from "./value-object.transaction-direction";
-import { TransactionDescription } from "./value-object.transaction-description";
-import { TransactionDate } from "./value-object.transaction-date";
+} from "./transaction-direction";
+import { TransactionDescription } from "./transaction-description";
+import { TransactionDate } from "./transaction-date";
 import { dateFromPrimitive, dateToPrimitive, Primitives } from "~/_shared/domain/primitives";
 import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 
@@ -55,7 +55,7 @@ export class Transaction extends AggregateRoot {
       new UserId(userId),
       new AccountId(accountId),
       categoryId ? new CategoryId(categoryId) : null,
-      new Money(amount.value, amount.currency),
+      new Money(amount.amount, amount.currency),
       new TransactionDirection(direction),
       new TransactionDescription(description),
       new TransactionDate(dateFromPrimitive(date)),
@@ -71,7 +71,7 @@ export class Transaction extends AggregateRoot {
       new UserId(primitives.userId),
       new AccountId(primitives.accountId),
       primitives.categoryId ? new CategoryId(primitives.categoryId) : null,
-      new Money(primitives.amount.value, primitives.amount.currency),
+      new Money(primitives.amount.amount, primitives.amount.currency),
       new TransactionDirection(primitives.direction),
       new TransactionDescription(primitives.description),
       new TransactionDate(dateFromPrimitive(primitives.date)),

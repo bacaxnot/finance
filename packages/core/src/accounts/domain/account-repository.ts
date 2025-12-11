@@ -1,6 +1,6 @@
-import { UserId } from "~/users/domain/value-object.user-id";
-import { Account } from "./aggregate.account";
-import { AccountId } from "./value-object.account-id";
+import { UserId } from "~/users/domain/user-id";
+import { Account } from "./account";
+import { AccountId } from "./account-id";
 
 export abstract class AccountRepository {
   abstract save(account: Account): Promise<void>;

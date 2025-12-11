@@ -1,5 +1,5 @@
-import { Category } from "../domain/aggregate.category";
-import { CategoryRepository } from "../domain/repository.category";
+import { Category } from "../domain/category";
+import { CategoryRepository } from "../domain/category-repository";
 
 export class CreateCategory {
   constructor(private readonly repository: CategoryRepository) {}

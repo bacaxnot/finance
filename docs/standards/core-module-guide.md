@@ -25,17 +25,17 @@ packages/core/
 ```
 packages/core/src/<module-name>/
 ├── domain/
-│   ├── aggregate.<name>.ts
-│   ├── value-object.<name>.ts
-│   └── repository.<name>.ts
+│   ├── <name>.ts                    # Aggregate root
+│   ├── <name>-id.ts                 # Value objects
+│   └── <name>-repository.ts         # Repository interface
 │
 ├── application/
-│   ├── use-case.<name>.ts
+│   ├── <action>-<name>.ts           # Use cases
 │   ├── dto.<name>.ts
 │   └── dto.<name>.ts
 │
 └── infrastructure/
-    └── repository.<name>.postgres.ts
+    └── <name>-repository.postgres.ts # Repository implementation
 ```
 
 ### Example: Users Module
@@ -43,19 +43,19 @@ packages/core/src/<module-name>/
 ```
 packages/core/src/users/
 ├── domain/
-│   ├── aggregate.user.ts
-│   ├── value-object.user-id.ts
-│   └── repository.user.ts
+│   ├── user.ts
+│   ├── user-id.ts
+│   └── user-repository.ts
 │
 ├── application/
-│   ├── use-case.create-user.ts
-│   ├── use-case.update-user-profile.ts
-│   ├── use-case.get-user.ts
+│   ├── create-user.ts
+│   ├── update-user-profile.ts
+│   ├── get-user.ts
 │   ├── dto.create-user.ts
 │   └── dto.user-response.ts
 │
 └── infrastructure/
-    └── repository.user.postgres.ts
+    └── user-repository.postgres.ts
 ```
 
 ## Layer Responsibilities
@@ -79,9 +79,9 @@ packages/core/src/users/
 
 **Example files:**
 
-- `aggregate.user.ts` - User aggregate root with business methods
-- `value-object.user-id.ts` - Strongly-typed user ID
-- `repository.user.ts` - Repository interface (port)
+- `user.ts` - User aggregate root with business methods
+- `user-id.ts` - Strongly-typed user ID
+- `user-repository.ts` - Repository interface (port)
 
 ### Application Layer (Orchestration)
 
@@ -100,7 +100,7 @@ packages/core/src/users/
 
 **Example files:**
 
-- `use-case.create-user.ts` - Orchestrates user creation
+- `create-user.ts` - Orchestrates user creation
 - `dto.create-user.ts` - Input data structure
 - `dto.user-response.ts` - Output data structure
 
@@ -120,7 +120,7 @@ packages/core/src/users/
 
 **Example files:**
 
-- `repository.user.postgres.ts` - Concrete PostgreSQL repository
+- `user-repository.postgres.ts` - Concrete PostgreSQL repository
 
 ## Database Schemas
 
@@ -136,7 +136,7 @@ packages/core/src/users/
 ### Usage in Infrastructure:
 
 ```typescript
-// packages/core/users/infrastructure/repository.user.postgres.ts
+// packages/core/users/infrastructure/user-repository.postgres.ts
 import { users } from "@repo/db/schema";
 
 export class UserRepositoryPostgres implements UserRepository {
@@ -146,20 +146,22 @@ export class UserRepositoryPostgres implements UserRepository {
 
 ## File Naming Conventions
 
-**Use prefix-first naming for visual grouping and better tooling:**
+**Use kebab-case with descriptive names matching the exported class:**
 
-- Aggregates: `aggregate.<name>.ts` (e.g., `aggregate.user.ts`)
-- Value Objects: `value-object.<name>.ts` (e.g., `value-object.user-id.ts`)
-- Repository Interfaces: `repository.<name>.ts` (e.g., `repository.user.ts`)
-- Repository Implementations: `repository.<name>.postgres.ts` (e.g., `repository.user.postgres.ts`)
-- Use Cases: `use-case.<name>.ts` (e.g., `use-case.create-user.ts`)
+- Aggregates: `<name>.ts` (e.g., `user.ts` exports `User`)
+- Value Objects: `<name>.ts` or `<name>-<property>.ts` (e.g., `user-id.ts` exports `UserId`)
+- Repository Interfaces: `<name>-repository.ts` (e.g., `user-repository.ts` exports `UserRepository`)
+- Repository Implementations: `<name>-repository.postgres.ts` (e.g., `user-repository.postgres.ts` exports `UserRepositoryPostgres`)
+- Use Cases: `<action>-<name>.ts` (e.g., `create-user.ts` exports `CreateUser`)
+- Errors: `<name>-error.ts` (e.g., `user-not-found-error.ts` exports `UserNotFoundError`)
 - DTOs: `dto.<name>.ts` (e.g., `dto.create-user.ts`)
 
 **Benefits:**
 
-- Files group by type when sorted alphabetically
-- Better IDE autocomplete (type `use-case.` to see all use cases)
-- More scannable in large folders
+- File names directly match exported class names (in kebab-case)
+- Clean, simple naming without prefixes
+- Type suffixes (`-repository`, `-error`) provide context where needed
+- More intuitive for developers familiar with modern conventions
 
 ## What We Don't Use
 
@@ -177,11 +179,11 @@ The `_shared/` folder contains code used by **3 or more modules**. The underscor
 ```
 packages/core/src/_shared/
 ├── domain/
-│   ├── value-object.id.ts       # Base for UUID IDs
-│   ├── value-object.string.ts   # Base for string value objects
-│   ├── aggregate.mixins.ts      # Timestamp, soft-delete mixins
-│   ├── domain-event.base.ts     # Base DomainEvent
-│   └── money.value-object.ts    # Money VO (if 3+ modules need it)
+│   ├── id.ts                    # Base for UUID IDs
+│   ├── string-value-object.ts   # Base for string value objects
+│   ├── aggregate-root.ts        # Base aggregate with domain events
+│   ├── domain-event.ts          # Base DomainEvent
+│   └── money.ts                 # Money VO (if 3+ modules need it)
 ├── application/
 │   └── result.ts                # Result<T, E> for exception handling
 └── utils/
@@ -192,10 +194,10 @@ packages/core/src/_shared/
 
 **`_shared/domain/`** - Domain-level abstractions
 
-- Value object bases (`value-object.id.ts`, `value-object.string.ts`)
-- Aggregate mixins for composition (`aggregate.mixins.ts`)
-- Domain event infrastructure (`domain-event.base.ts`)
-- Shared value objects (`money.value-object.ts`) if used across 3+ modules
+- Value object bases (`id.ts`, `string-value-object.ts`)
+- Aggregate root base class (`aggregate-root.ts`)
+- Domain event infrastructure (`domain-event.ts`)
+- Shared value objects (`money.ts`) if used across 3+ modules
 
 **`_shared/application/`** - Application-level abstractions
 
@@ -229,9 +231,9 @@ packages/core/src/_shared/
 ### Example Usage:
 
 ```typescript
-// src/_shared/domain/value-object.id.ts
+// src/_shared/domain/id.ts
 import { v7 as uuidv7, validate as uuidValidate } from "uuid";
-import { InvalidArgumentException } from "./exception.invalid-argument";
+import { InvalidArgumentException } from "./invalid-argument-exception";
 
 export class Id {
   public readonly value: string;
@@ -259,8 +261,8 @@ export class Id {
   }
 }
 
-// src/users/domain/value-object.user-id.ts
-import { Id } from "~/_shared/domain/value-object.id";
+// src/users/domain/user-id.ts
+import { Id } from "~/_shared/domain/id";
 
 export class UserId extends Id {
   constructor(value?: string) {
@@ -282,10 +284,10 @@ Modules can import from other modules' **domain layers only**:
 
 ```typescript
 // ✅ Good: Importing domain types
-import { UserId } from "users/domain/value-object.user-id";
+import { UserId } from "users/domain/user-id";
 
 // ❌ Bad: Importing infrastructure
-import { UserRepositoryPostgres } from "users/infrastructure/repository.user.postgres";
+import { UserRepositoryPostgres } from "users/infrastructure/user-repository.postgres";
 ```
 
 ### No Cross-Module Helpers

@@ -1,7 +1,7 @@
-import { UserId } from "~/users/domain/value-object.user-id";
-import { Money } from "~/_shared/domain/value-object.money";
-import { AccountId } from "~/accounts/domain/value-object.account-id";
-import { AccountName } from "~/accounts/domain/value-object.account-name";
+import { UserId } from "~/users/domain/user-id";
+import { Money } from "~/_shared/domain/money";
+import { AccountId } from "~/accounts/domain/account-id";
+import { AccountName } from "~/accounts/domain/account-name";
 import { dateFromPrimitive, dateToPrimitive, Primitives } from "~/_shared/domain/primitives";
 import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 

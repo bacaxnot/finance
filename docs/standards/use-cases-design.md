@@ -378,36 +378,36 @@ async execute(params: Parameters): Promise<Primitives<Aggregate>> {
 src/
 ├── accounts/
 │   ├── application/
-│   │   ├── use-case.create-account.ts
-│   │   ├── use-case.update-account.ts
-│   │   ├── use-case.delete-account.ts
-│   │   ├── use-case.find-account.ts
-│   │   └── use-case.list-accounts-by-user.ts
+│   │   ├── create-account.ts
+│   │   ├── update-account.ts
+│   │   ├── delete-account.ts
+│   │   └── list-accounts-by-user.ts
 │   └── domain/
-│       ├── Account.ts
-│       ├── repository.account.ts
-│       └── finder.account.ts
+│       ├── account.ts
+│       ├── account-repository.ts
+│       └── find-account.ts
 ```
 
 ### Naming Convention
 
-**Pattern:** `use-case.{action}-{aggregate}.ts`
+**Pattern:** `{action}-{aggregate}.ts`
 
 ```typescript
-use-case.create-account.ts        // CreateAccountUseCase
-use-case.update-account.ts        // UpdateAccountUseCase
-use-case.delete-account.ts        // DeleteAccountUseCase
-use-case.find-account.ts          // FindAccountUseCase
-use-case.list-accounts-by-user.ts // ListAccountsByUserUseCase
+create-account.ts        // CreateAccount
+update-account.ts        // UpdateAccount
+delete-account.ts        // DeleteAccount
+list-accounts-by-user.ts // ListAccountsByUser
 ```
+
+File names use kebab-case and directly match the exported class name.
 
 ## Complete Examples
 
 ### Create Use Case
 
 ```typescript
-// accounts/application/use-case.create-account.ts
-export class CreateAccountUseCase {
+// accounts/application/create-account.ts
+export class CreateAccount {
     constructor(private readonly repository: AccountRepository) {}
 
     async execute(params: {
@@ -435,8 +435,8 @@ export class CreateAccountUseCase {
 ### Update Use Case
 
 ```typescript
-// accounts/application/use-case.update-account.ts
-export class UpdateAccountUseCase {
+// accounts/application/update-account.ts
+export class UpdateAccount {
     constructor(
         private readonly finder: FindAccount,
         private readonly repository: AccountRepository,
@@ -460,8 +460,8 @@ export class UpdateAccountUseCase {
 ### Query Use Case
 
 ```typescript
-// accounts/application/use-case.list-accounts-by-user.ts
-export class ListAccountsByUserUseCase {
+// accounts/application/list-accounts-by-user.ts
+export class ListAccountsByUser {
     constructor(private readonly repository: AccountRepository) {}
 
     async execute(params: {

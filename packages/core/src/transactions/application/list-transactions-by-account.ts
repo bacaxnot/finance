@@ -1,6 +1,6 @@
-import { AccountId } from "~/accounts/domain/value-object.account-id";
-import { TransactionRepository } from "../domain/repository.transaction";
-import { Transaction } from "../domain/aggregate.transaction";
+import { AccountId } from "~/accounts/domain/account-id";
+import { TransactionRepository } from "../domain/transaction-repository";
+import { Transaction } from "../domain/transaction";
 
 export class ListTransactionsByAccount {
   constructor(private readonly repository: TransactionRepository) {}

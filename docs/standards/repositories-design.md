@@ -343,40 +343,42 @@ src/
 │       └── DrizzlePostgresRepository.ts
 ├── accounts/
 │   ├── domain/
-│   │   ├── Account.ts
-│   │   ├── repository.account.ts          # Abstract class
-│   │   └── finder.account.ts              # Finder (optional)
+│   │   ├── account.ts
+│   │   ├── account-repository.ts          # Abstract class
+│   │   └── find-account.ts                # Finder (optional)
 │   └── infrastructure/
-│       └── repository.account.postgres.ts  # Implementation
+│       └── account-repository.postgres.ts  # Implementation
 └── categories/
     ├── domain/
-    │   ├── Category.ts
-    │   ├── repository.category.ts
-    │   └── finder.category.ts
+    │   ├── category.ts
+    │   ├── category-repository.ts
+    │   └── find-category.ts
     └── infrastructure/
-        └── repository.category.postgres.ts
+        └── category-repository.postgres.ts
 ```
 
 ### Naming Convention
 
-**Pattern:** `repository.{aggregate}.ts` for abstract, `repository.{aggregate}.{storage}.ts` for implementation
+**Pattern:** `{aggregate}-repository.ts` for abstract, `{aggregate}-repository.{storage}.ts` for implementation
 
 ```typescript
 // Domain
-repository.account.ts         // AccountRepository abstract class
-finder.account.ts             // FindAccount finder class
+account-repository.ts         // AccountRepository abstract class
+find-account.ts               // FindAccount finder class
 
 // Infrastructure
-repository.account.postgres.ts   // AccountRepositoryPostgres implementation
-repository.account.memory.ts     // AccountRepositoryMemory (for tests)
+account-repository.postgres.ts   // AccountRepositoryPostgres implementation
+account-repository.memory.ts     // AccountRepositoryMemory (for tests)
 ```
+
+File names use kebab-case and place the type suffix (`-repository`) at the end.
 
 ## Complete Example
 
 ### Domain Repository
 
 ```typescript
-// accounts/domain/repository.account.ts
+// accounts/domain/account-repository.ts
 export abstract class AccountRepository {
     abstract save(account: Account): Promise<void>;
     abstract search(id: AccountId): Promise<Account | null>;
@@ -388,7 +390,7 @@ export abstract class AccountRepository {
 ### Domain Finder
 
 ```typescript
-// accounts/domain/finder.account.ts
+// accounts/domain/find-account.ts
 export class FindAccount {
     constructor(private readonly repository: AccountRepository) {}
 
@@ -407,7 +409,7 @@ export class FindAccount {
 ### Infrastructure Implementation
 
 ```typescript
-// accounts/infrastructure/repository.account.postgres.ts
+// accounts/infrastructure/account-repository.postgres.ts
 export class AccountRepositoryPostgres
     extends DrizzlePostgresRepository<Account>
     implements AccountRepository {

@@ -1,17 +1,17 @@
-import { Account } from "~/accounts/domain/aggregate.account";
-import { AccountRepository } from "~/accounts/domain/repository.account";
-import { FindAccountUseCase } from "~/accounts/application/use-case.find-account";
-import { Transaction, UpdateTransactionPrimitives } from "../domain/aggregate.transaction";
-import { TransactionRepository } from "../domain/repository.transaction";
-import { TransactionDirectionType } from "../domain/value-object.transaction-direction";
-import { FindTransactionUseCase } from "./use-case.find-transaction";
-import { CurrencyMismatchError } from "../domain/error.currency-mismatch";
+import { Account } from "~/accounts/domain/account";
+import { AccountRepository } from "~/accounts/domain/account-repository";
+import { FindAccount } from "~/accounts/application/find-account";
+import { Transaction, UpdateTransactionPrimitives } from "../domain/transaction";
+import { TransactionRepository } from "../domain/transaction-repository";
+import { TransactionDirectionType } from "../domain/transaction-direction";
+import { FindTransactionUseCase } from "./find-transaction";
+import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
 
 export class UpdateTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
-    private readonly findAccount: FindAccountUseCase,
+    private readonly findAccount: FindAccount,
     private readonly findTransaction: FindTransactionUseCase
   ) {}
 
@@ -59,9 +59,9 @@ export class UpdateTransactionUseCase {
     const oldAmount = transactionPrimitives.amount;
     const oldDirection = transactionPrimitives.direction;
 
-    account.reverseTransaction(oldAmount.value, oldAmount.currency, oldDirection);
+    account.reverseTransaction(oldAmount.amount, oldAmount.currency, oldDirection);
 
-    const newAmount = params.amount !== undefined ? params.amount : oldAmount.value;
+    const newAmount = params.amount !== undefined ? params.amount : oldAmount.amount;
     const newCurrency = params.currency !== undefined ? params.currency : oldAmount.currency;
     const newDirection = params.direction !== undefined ? params.direction : oldDirection;
 

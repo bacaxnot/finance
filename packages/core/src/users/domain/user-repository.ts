@@ -1,5 +1,5 @@
-import { User } from "./aggregate.user";
-import { UserId } from "./value-object.user-id";
+import { User } from "./user";
+import { UserId } from "./user-id";
 
 export interface UserRepository {
   save(user: User): Promise<void>;
