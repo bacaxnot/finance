@@ -1,6 +1,6 @@
-import { UserId } from "~/users/domain/user-id";
-import { Account } from "./account";
-import { AccountId } from "./account-id";
+import type { UserId } from "~/users/domain/user-id";
+import type { Account } from "./account";
+import type { AccountId } from "./account-id";
 
 export abstract class AccountRepository {
   abstract save(account: Account): Promise<void>;

@@ -2,11 +2,11 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ACCOUNTS_QUERY_KEY } from "@/hooks/accounts/use-accounts";
+import { CONSOLIDATED_VIEW_QUERY_KEY } from "@/hooks/accounts/use-consolidated-view";
 import { transactionsApi } from "@/lib/api";
 import { ACCOUNT_TRANSACTIONS_QUERY_KEY } from "./use-account-transactions";
 import { CONSOLIDATED_TRANSACTIONS_QUERY_KEY } from "./use-consolidated-transactions";
-import { ACCOUNTS_QUERY_KEY } from "@/hooks/accounts/use-accounts";
-import { CONSOLIDATED_VIEW_QUERY_KEY } from "@/hooks/accounts/use-consolidated-view";
 
 export function useDeleteTransaction() {
   const queryClient = useQueryClient();

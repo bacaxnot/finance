@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { Plus } from "lucide-react";
+import { useState } from "react";
 import { AccountSelector } from "@/components/dashboard/account-selector";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardStatistics } from "@/components/dashboard/dashboard-statistics";
+import { CreateTransactionModal } from "@/components/transactions/create-transaction-modal";
 import { InfiniteTransactionList } from "@/components/transactions/infinite-transaction-list";
 import { QuickFilters } from "@/components/transactions/quick-filters";
 import { TransactionList } from "@/components/transactions/transaction-list";
-import { CreateTransactionModal } from "@/components/transactions/create-transaction-modal";
-import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
 import { Button } from "@/components/ui/button";
+import { SwipeWrapper } from "@/components/ui/swipe-wrapper";
 import { useAccounts, useConsolidatedView } from "@/hooks/accounts";
 import { useConsolidatedTransactions } from "@/hooks/transactions";
 import type { TransactionFilters } from "@/mock/types";

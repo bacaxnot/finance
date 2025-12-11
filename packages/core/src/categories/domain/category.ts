@@ -1,12 +1,12 @@
-import { UserId } from "~/users/domain/user-id";
-import { CategoryId } from "./category-id";
-import { CategoryName } from "./category-name";
+import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 import {
   dateFromPrimitive,
   dateToPrimitive,
-  Primitives,
+  type Primitives,
 } from "~/_shared/domain/primitives";
-import { AggregateRoot } from "~/_shared/domain/aggregate-root";
+import { UserId } from "~/users/domain/user-id";
+import { CategoryId } from "./category-id";
+import { CategoryName } from "./category-name";
 
 export class Category extends AggregateRoot {
   constructor(

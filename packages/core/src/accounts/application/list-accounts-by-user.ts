@@ -1,6 +1,6 @@
+import type { Account } from "~/accounts/domain/account";
+import type { AccountRepository } from "~/accounts/domain/account-repository";
 import { UserId } from "~/users/domain/user-id";
-import { Account } from "~/accounts/domain/account";
-import { AccountRepository } from "~/accounts/domain/account-repository";
 
 export class ListAccountsByUser {
   constructor(private readonly accountRepository: AccountRepository) {}

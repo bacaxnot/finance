@@ -5,8 +5,8 @@ import { DrizzlePostgresRepository } from "~/_shared/infrastructure/drizzle-post
 import type { AccountId } from "~/accounts/domain/account-id";
 import type { UserId } from "~/users/domain/user-id";
 import { Transaction } from "../domain/transaction";
-import type { TransactionRepository } from "../domain/transaction-repository";
 import type { TransactionId } from "../domain/transaction-id";
+import type { TransactionRepository } from "../domain/transaction-repository";
 
 export class TransactionRepositoryPostgres
   extends DrizzlePostgresRepository<Transaction>

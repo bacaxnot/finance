@@ -1,5 +1,5 @@
-import { User } from "./user";
-import { UserId } from "./user-id";
+import type { User } from "./user";
+import type { UserId } from "./user-id";
 
 export interface UserRepository {
   save(user: User): Promise<void>;

@@ -1,7 +1,7 @@
-import { Category } from "../domain/category";
-import { CategoryRepository } from "../domain/category-repository";
-import { CategoryId } from "../domain/category-id";
+import type { Category } from "../domain/category";
 import { CategoryDoesNotExistError } from "../domain/category-does-not-exist-error";
+import { CategoryId } from "../domain/category-id";
+import type { CategoryRepository } from "../domain/category-repository";
 
 export class UpdateCategoryUseCase {
   constructor(private readonly repository: CategoryRepository) {}

@@ -1,5 +1,5 @@
-import { UserId } from "./user-id";
 import { PersonName } from "./person-name";
+import { UserId } from "./user-id";
 
 export type UserPrimitives = {
   id: string;

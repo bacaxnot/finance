@@ -1,13 +1,13 @@
-import { UserId } from "~/users/domain/user-id";
+import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 import { Money } from "~/_shared/domain/money";
-import { AccountId } from "~/accounts/domain/account-id";
-import { AccountName } from "~/accounts/domain/account-name";
 import {
   dateFromPrimitive,
   dateToPrimitive,
-  Primitives,
+  type Primitives,
 } from "~/_shared/domain/primitives";
-import { AggregateRoot } from "~/_shared/domain/aggregate-root";
+import { AccountId } from "~/accounts/domain/account-id";
+import { AccountName } from "~/accounts/domain/account-name";
+import { UserId } from "~/users/domain/user-id";
 
 export class Account extends AggregateRoot {
   constructor(

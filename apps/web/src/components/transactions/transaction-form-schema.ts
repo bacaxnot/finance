@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
-  transactionTypeSchema,
-  transactionCategorySchema,
   TransactionType,
+  transactionCategorySchema,
+  transactionTypeSchema,
 } from "@/mock/types";
 
 /**

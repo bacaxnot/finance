@@ -1,6 +1,6 @@
 import { AccountId } from "~/accounts/domain/account-id";
-import { TransactionRepository } from "../domain/transaction-repository";
-import { Transaction } from "../domain/transaction";
+import type { Transaction } from "../domain/transaction";
+import type { TransactionRepository } from "../domain/transaction-repository";
 
 export class ListTransactionsByAccount {
   constructor(private readonly repository: TransactionRepository) {}

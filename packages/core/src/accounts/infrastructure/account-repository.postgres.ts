@@ -4,8 +4,8 @@ import { dateToPrimitive } from "~/_shared/domain/primitives";
 import { DrizzlePostgresRepository } from "~/_shared/infrastructure/drizzle-postgres-repository";
 import type { UserId } from "~/users/domain/user-id";
 import { Account } from "../domain/account";
-import type { AccountRepository } from "../domain/account-repository";
 import type { AccountId } from "../domain/account-id";
+import type { AccountRepository } from "../domain/account-repository";
 
 export class AccountRepositoryPostgres
   extends DrizzlePostgresRepository<Account>

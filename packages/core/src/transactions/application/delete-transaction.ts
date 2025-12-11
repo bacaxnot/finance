@@ -1,17 +1,17 @@
-import { AccountRepository } from "~/accounts/domain/account-repository";
-import { FindAccount } from "~/accounts/application/find-account";
-import { Transaction } from "~/transactions/domain/transaction";
-import { TransactionRepository } from "~/transactions/domain/transaction-repository";
+import type { FindAccount } from "~/accounts/application/find-account";
+import type { Account } from "~/accounts/domain/account";
+import type { AccountRepository } from "~/accounts/domain/account-repository";
+import type { FindTransaction } from "~/transactions/application/find-transaction";
+import type { Transaction } from "~/transactions/domain/transaction";
 import { TransactionId } from "~/transactions/domain/transaction-id";
-import { FindTransactionUseCase } from "~/transactions/application/find-transaction";
-import { Account } from "~/accounts/domain/account";
+import type { TransactionRepository } from "~/transactions/domain/transaction-repository";
 
 export class DeleteTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
     private readonly findAccount: FindAccount,
-    private readonly findTransaction: FindTransactionUseCase,
+    private readonly findTransaction: FindTransaction,
   ) {}
 
   async execute(params: { id: string; userId: string }): Promise<void> {

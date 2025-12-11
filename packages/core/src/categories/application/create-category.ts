@@ -1,5 +1,5 @@
 import { Category } from "../domain/category";
-import { CategoryRepository } from "../domain/category-repository";
+import type { CategoryRepository } from "../domain/category-repository";
 
 export class CreateCategory {
   constructor(private readonly repository: CategoryRepository) {}

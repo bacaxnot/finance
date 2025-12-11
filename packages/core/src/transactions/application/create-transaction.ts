@@ -1,10 +1,10 @@
-import { Account } from "~/accounts/domain/account";
-import { AccountRepository } from "~/accounts/domain/account-repository";
-import { FindAccount } from "~/accounts/application/find-account";
-import { TransactionRepository } from "../domain/transaction-repository";
-import { Transaction } from "../domain/transaction";
-import { TransactionDirectionType } from "../domain/transaction-direction";
+import type { FindAccount } from "~/accounts/application/find-account";
+import type { Account } from "~/accounts/domain/account";
+import type { AccountRepository } from "~/accounts/domain/account-repository";
 import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
+import { Transaction } from "../domain/transaction";
+import type { TransactionDirectionType } from "../domain/transaction-direction";
+import type { TransactionRepository } from "../domain/transaction-repository";
 
 export class CreateTransactionUseCase {
   constructor(

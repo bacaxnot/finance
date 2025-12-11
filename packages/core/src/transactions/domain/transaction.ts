@@ -1,20 +1,20 @@
-import { UserId } from "~/users/domain/user-id";
-import { AccountId } from "~/accounts/domain/account-id";
-import { CategoryId } from "~/categories/domain/category-id";
+import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 import { Money } from "~/_shared/domain/money";
-import { TransactionId } from "./transaction-id";
-import {
-  TransactionDirection,
-  TransactionDirectionType,
-} from "./transaction-direction";
-import { TransactionDescription } from "./transaction-description";
-import { TransactionDate } from "./transaction-date";
 import {
   dateFromPrimitive,
   dateToPrimitive,
-  Primitives,
+  type Primitives,
 } from "~/_shared/domain/primitives";
-import { AggregateRoot } from "~/_shared/domain/aggregate-root";
+import { AccountId } from "~/accounts/domain/account-id";
+import { CategoryId } from "~/categories/domain/category-id";
+import { UserId } from "~/users/domain/user-id";
+import { TransactionDate } from "./transaction-date";
+import { TransactionDescription } from "./transaction-description";
+import {
+  TransactionDirection,
+  type TransactionDirectionType,
+} from "./transaction-direction";
+import { TransactionId } from "./transaction-id";
 
 export type UpdateTransactionPrimitives = Partial<{
   categoryId: string | null;

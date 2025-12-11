@@ -1,21 +1,21 @@
-import { Account } from "~/accounts/domain/account";
-import { AccountRepository } from "~/accounts/domain/account-repository";
-import { FindAccount } from "~/accounts/application/find-account";
-import {
+import type { FindAccount } from "~/accounts/application/find-account";
+import type { Account } from "~/accounts/domain/account";
+import type { AccountRepository } from "~/accounts/domain/account-repository";
+import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
+import type {
   Transaction,
   UpdateTransactionPrimitives,
 } from "../domain/transaction";
-import { TransactionRepository } from "../domain/transaction-repository";
-import { TransactionDirectionType } from "../domain/transaction-direction";
-import { FindTransactionUseCase } from "./find-transaction";
-import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
+import type { TransactionDirectionType } from "../domain/transaction-direction";
+import type { TransactionRepository } from "../domain/transaction-repository";
+import type { FindTransaction } from "./find-transaction";
 
 export class UpdateTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
     private readonly findAccount: FindAccount,
-    private readonly findTransaction: FindTransactionUseCase,
+    private readonly findTransaction: FindTransaction,
   ) {}
 
   async execute(

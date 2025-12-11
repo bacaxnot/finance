@@ -3,7 +3,7 @@ import { TransactionDoesNotExistError } from "../domain/transaction-does-not-exi
 import { TransactionId } from "../domain/transaction-id";
 import type { TransactionRepository } from "../domain/transaction-repository";
 
-export class FindTransactionUseCase {
+export class FindTransaction {
   constructor(private readonly repository: TransactionRepository) {}
 
   async execute(params: { id: string }): Promise<Transaction> {
