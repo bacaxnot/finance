@@ -59,9 +59,9 @@ export class UpdateTransactionUseCase {
     const oldAmount = transactionPrimitives.amount;
     const oldDirection = transactionPrimitives.direction;
 
-    account.reverseTransaction(oldAmount.amount, oldAmount.currency, oldDirection);
+    account.reverseTransaction(oldAmount.value, oldAmount.currency, oldDirection);
 
-    const newAmount = params.amount !== undefined ? params.amount : oldAmount.amount;
+    const newAmount = params.amount !== undefined ? params.amount : oldAmount.value;
     const newCurrency = params.currency !== undefined ? params.currency : oldAmount.currency;
     const newDirection = params.direction !== undefined ? params.direction : oldDirection;
 

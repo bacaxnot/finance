@@ -36,10 +36,10 @@ export class CreateTransactionUseCase {
       userId: params.userId,
       accountId: params.accountId,
       categoryId: params.categoryId,
-      amount: { amount: params.amount, currency: params.currency },
+      amount: { value: params.amount, currency: params.currency },
       direction: params.direction,
       description: params.description,
-      transactionDate: params.transactionDate,
+      date: params.transactionDate,
       notes: params.notes,
     });
 

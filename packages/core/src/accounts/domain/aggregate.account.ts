@@ -2,9 +2,10 @@ import { UserId } from "~/users/domain/value-object.user-id";
 import { Money } from "~/_shared/domain/value-object.money";
 import { AccountId } from "~/accounts/domain/value-object.account-id";
 import { AccountName } from "~/accounts/domain/value-object.account-name";
-import { Primitives } from "~/_shared/domain/primitives";
+import { dateFromPrimitive, dateToPrimitive, Primitives } from "~/_shared/domain/primitives";
+import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 
-export class Account {
+export class Account extends AggregateRoot {
   constructor(
     public readonly id: AccountId,
     public name: AccountName,
@@ -13,26 +14,31 @@ export class Account {
     public currentBalance: Money,
     public readonly createdAt: Date,
     public updatedAt: Date
-  ) {}
+  ) {
+    super();
+  }
 
-  static create({
-    id,
-    userId,
-    name,
-    initialBalance,
-  }: Omit<Primitives<Account>, "createdAt" | "updatedAt" | "currentBalance">): Account {
+  static create(params:{
+    id: string,
+    userId: string,
+    name: string,
+    currency: string,
+    initialBalance: number,
+  }): Account {
     const initialBalanceMoney = new Money(
-      initialBalance.amount,
-      initialBalance.currency
+      params.initialBalance,
+        params.currency
     );
+
     const currentBalance = new Money(
-      initialBalance.amount,
-      initialBalance.currency
+      params.initialBalance,
+      params.currency
     );
+
     return new Account(
-      new AccountId(id),
-      new AccountName(name),
-      new UserId(userId),
+      new AccountId(params.id),
+      new AccountName(params.name),
+      new UserId(params.userId),
       initialBalanceMoney,
       currentBalance,
       new Date(),
@@ -45,16 +51,10 @@ export class Account {
       new AccountId(primitives.id),
       new AccountName(primitives.name),
       new UserId(primitives.userId),
-      new Money(
-        primitives.initialBalance.amount,
-        primitives.initialBalance.currency
-      ),
-      new Money(
-        primitives.currentBalance.amount,
-        primitives.currentBalance.currency
-      ),
-      primitives.createdAt,
-      primitives.updatedAt
+      new Money(primitives.initialBalance.amount, primitives.initialBalance.currency),
+      new Money(primitives.currentBalance.amount, primitives.currentBalance.currency),
+      dateFromPrimitive(primitives.createdAt),
+      dateFromPrimitive(primitives.updatedAt)
     );
   }
 
@@ -93,8 +93,8 @@ export class Account {
       userId: this.userId.value,
       initialBalance: this.initialBalance.toPrimitives(),
       currentBalance: this.currentBalance.toPrimitives(),
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      createdAt: dateToPrimitive(this.createdAt),
+      updatedAt: dateToPrimitive(this.updatedAt),
     };
   }
 }

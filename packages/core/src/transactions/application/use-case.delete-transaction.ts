@@ -1,17 +1,17 @@
 import { AccountRepository } from "~/accounts/domain/repository.account";
-import { FindAccount } from "~/accounts/application/use-case.find-account";
+import { FindAccountUseCase } from "~/accounts/application/use-case.find-account";
 import { Transaction } from "~/transactions/domain/aggregate.transaction";
 import { TransactionRepository } from "~/transactions/domain/repository.transaction";
 import { TransactionId } from "~/transactions/domain/value-object.transaction-id";
-import { FindTransaction } from "~/transactions/application/use-case.find-transaction";
+import { FindTransactionUseCase } from "~/transactions/application/use-case.find-transaction";
 import { Account } from "~/accounts/domain/aggregate.account";
 
-export class DeleteTransaction {
+export class DeleteTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
-    private readonly findAccount: FindAccount,
-    private readonly findTransaction: FindTransaction
+    private readonly findAccount: FindAccountUseCase,
+    private readonly findTransaction: FindTransactionUseCase
   ) {}
 
   async execute(params: {
@@ -21,9 +21,12 @@ export class DeleteTransaction {
     const transaction = await this.getTransaction(params.id);
     const account = await this.getTransactionAccount(transaction);
 
-    const amount = transaction.getAmount();
-    const direction = transaction.getDirection();
-    account.reverseTransaction(amount.amount, amount.currency, direction);
+    const transactionPrimitives = transaction.toPrimitives();
+    account.reverseTransaction(
+      transactionPrimitives.amount.value,
+      transactionPrimitives.amount.currency,
+      transactionPrimitives.direction
+    );
 
     await this.accountRepository.save(account);
 
@@ -36,7 +39,7 @@ export class DeleteTransaction {
   }
 
   private getTransactionAccount(transaction: Transaction): Promise<Account> {
-    const accountId = transaction.getAccountId();
-    return this.findAccount.execute({ id: accountId });
+    const transactionPrimitives = transaction.toPrimitives();
+    return this.findAccount.execute({ id: transactionPrimitives.accountId });
   }
 }

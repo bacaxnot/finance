@@ -9,20 +9,8 @@ import {
 } from "./value-object.transaction-direction";
 import { TransactionDescription } from "./value-object.transaction-description";
 import { TransactionDate } from "./value-object.transaction-date";
-
-export type TransactionPrimitives = {
-  id: string;
-  userId: string;
-  accountId: string;
-  categoryId: string | null;
-  amount: { amount: number; currency: string };
-  direction: TransactionDirectionType;
-  description: string;
-  transactionDate: string; // ISO 8601 UTC
-  notes: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { dateFromPrimitive, dateToPrimitive, Primitives } from "~/_shared/domain/primitives";
+import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 
 export type UpdateTransactionPrimitives = Partial<{
   categoryId: string | null;
@@ -34,20 +22,22 @@ export type UpdateTransactionPrimitives = Partial<{
   notes: string | null;
 }>;
 
-export class Transaction {
-  private constructor(
-    private readonly id: TransactionId,
-    private readonly userId: UserId,
-    private readonly accountId: AccountId,
-    private categoryId: CategoryId | null,
-    private amount: Money,
-    private direction: TransactionDirection,
-    private description: TransactionDescription,
-    private date: TransactionDate,
-    private notes: string | null,
-    private readonly createdAt: Date,
-    private updatedAt: Date
-  ) {}
+export class Transaction extends AggregateRoot {
+  constructor(
+    public readonly id: TransactionId,
+    public readonly userId: UserId,
+    public readonly accountId: AccountId,
+    public categoryId: CategoryId | null,
+    public amount: Money,
+    public direction: TransactionDirection,
+    public description: TransactionDescription,
+    public date: TransactionDate,
+    public notes: string | null,
+    public readonly createdAt: Date,
+    public updatedAt: Date
+  ) {
+    super();
+  }
 
   static create({
     id,
@@ -57,41 +47,41 @@ export class Transaction {
     amount,
     direction,
     description,
-    transactionDate,
+    date,
     notes,
-  }: Omit<TransactionPrimitives, "createdAt" | "updatedAt">): Transaction {
+  }: Omit<Primitives<Transaction>, "createdAt" | "updatedAt">): Transaction {
     return new Transaction(
       new TransactionId(id),
       new UserId(userId),
       new AccountId(accountId),
       categoryId ? new CategoryId(categoryId) : null,
-      new Money(amount.amount, amount.currency),
+      new Money(amount.value, amount.currency),
       new TransactionDirection(direction),
       new TransactionDescription(description),
-      new TransactionDate(new Date(transactionDate)),
+      new TransactionDate(dateFromPrimitive(date)),
       notes,
       new Date(),
       new Date()
     );
   }
 
-  static fromPrimitives(primitives: TransactionPrimitives): Transaction {
+  static fromPrimitives(primitives: Primitives<Transaction>): Transaction {
     return new Transaction(
       new TransactionId(primitives.id),
       new UserId(primitives.userId),
       new AccountId(primitives.accountId),
       primitives.categoryId ? new CategoryId(primitives.categoryId) : null,
-      new Money(primitives.amount.amount, primitives.amount.currency),
+      new Money(primitives.amount.value, primitives.amount.currency),
       new TransactionDirection(primitives.direction),
       new TransactionDescription(primitives.description),
-      new TransactionDate(new Date(primitives.transactionDate)),
+      new TransactionDate(dateFromPrimitive(primitives.date)),
       primitives.notes,
-      primitives.createdAt,
-      primitives.updatedAt
+      dateFromPrimitive(primitives.createdAt),
+      dateFromPrimitive(primitives.updatedAt)
     );
   }
 
-  toPrimitives(): TransactionPrimitives {
+  toPrimitives(): Primitives<Transaction> {
     return {
       id: this.id.value,
       userId: this.userId.value,
@@ -100,27 +90,15 @@ export class Transaction {
       amount: this.amount.toPrimitives(),
       direction: this.direction.value,
       description: this.description.value,
-      transactionDate: this.date.value.toISOString(),
+      date: dateToPrimitive(this.date.value),
       notes: this.notes,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      createdAt: dateToPrimitive(this.createdAt),
+      updatedAt: dateToPrimitive(this.updatedAt),
     };
   }
 
   belongsTo(userId: string): boolean {
     return this.userId.value === userId;
-  }
-
-  getAccountId(): string {
-    return this.accountId.value;
-  }
-
-  getAmount(): { amount: number; currency: string } {
-    return this.amount.toPrimitives();
-  }
-
-  getDirection(): "inbound" | "outbound" {
-    return this.direction.value;
   }
 
   update(params: UpdateTransactionPrimitives): void {
