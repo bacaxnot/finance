@@ -2,7 +2,11 @@ import { UserId } from "~/users/domain/user-id";
 import { Money } from "~/_shared/domain/money";
 import { AccountId } from "~/accounts/domain/account-id";
 import { AccountName } from "~/accounts/domain/account-name";
-import { dateFromPrimitive, dateToPrimitive, Primitives } from "~/_shared/domain/primitives";
+import {
+  dateFromPrimitive,
+  dateToPrimitive,
+  Primitives,
+} from "~/_shared/domain/primitives";
 import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 
 export class Account extends AggregateRoot {
@@ -13,27 +17,24 @@ export class Account extends AggregateRoot {
     public readonly initialBalance: Money,
     public currentBalance: Money,
     public readonly createdAt: Date,
-    public updatedAt: Date
+    public updatedAt: Date,
   ) {
     super();
   }
 
-  static create(params:{
-    id: string,
-    userId: string,
-    name: string,
-    currency: string,
-    initialBalance: number,
+  static create(params: {
+    id: string;
+    userId: string;
+    name: string;
+    currency: string;
+    initialBalance: number;
   }): Account {
     const initialBalanceMoney = new Money(
       params.initialBalance,
-        params.currency
+      params.currency,
     );
 
-    const currentBalance = new Money(
-      params.initialBalance,
-      params.currency
-    );
+    const currentBalance = new Money(params.initialBalance, params.currency);
 
     return new Account(
       new AccountId(params.id),
@@ -42,7 +43,7 @@ export class Account extends AggregateRoot {
       initialBalanceMoney,
       currentBalance,
       new Date(),
-      new Date()
+      new Date(),
     );
   }
 
@@ -51,10 +52,16 @@ export class Account extends AggregateRoot {
       new AccountId(primitives.id),
       new AccountName(primitives.name),
       new UserId(primitives.userId),
-      new Money(primitives.initialBalance.amount, primitives.initialBalance.currency),
-      new Money(primitives.currentBalance.amount, primitives.currentBalance.currency),
+      new Money(
+        primitives.initialBalance.amount,
+        primitives.initialBalance.currency,
+      ),
+      new Money(
+        primitives.currentBalance.amount,
+        primitives.currentBalance.currency,
+      ),
       dateFromPrimitive(primitives.createdAt),
-      dateFromPrimitive(primitives.updatedAt)
+      dateFromPrimitive(primitives.updatedAt),
     );
   }
 
@@ -66,7 +73,11 @@ export class Account extends AggregateRoot {
     return this.currentBalance.toPrimitives().currency === currency;
   }
 
-  applyTransaction(amount: number, currency: string, direction: "inbound" | "outbound"): void {
+  applyTransaction(
+    amount: number,
+    currency: string,
+    direction: "inbound" | "outbound",
+  ): void {
     const money = new Money(amount, currency);
     if (direction === "inbound") {
       this.currentBalance = this.currentBalance.add(money);
@@ -76,7 +87,11 @@ export class Account extends AggregateRoot {
     this.updatedAt = new Date();
   }
 
-  reverseTransaction(amount: number, currency: string, direction: "inbound" | "outbound"): void {
+  reverseTransaction(
+    amount: number,
+    currency: string,
+    direction: "inbound" | "outbound",
+  ): void {
     const money = new Money(amount, currency);
     if (direction === "inbound") {
       this.currentBalance = this.currentBalance.subtract(money);

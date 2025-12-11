@@ -16,7 +16,7 @@ export class TransactionDescription {
   private ensureHasValidLength(value: string): void {
     if (value.trim().length <= MAX_DESCRIPTION_LENGTH) return;
     throw new InvalidArgumentError(
-      `Transaction description is too long (max ${MAX_DESCRIPTION_LENGTH} characters)`
+      `Transaction description is too long (max ${MAX_DESCRIPTION_LENGTH} characters)`,
     );
   }
 

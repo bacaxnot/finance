@@ -6,10 +6,7 @@ import { CategoryDoesNotExistError } from "../domain/category-does-not-exist-err
 export class DeleteCategoryUseCase {
   constructor(private readonly repository: CategoryRepository) {}
 
-  async execute(params: {
-    userId: string;
-    categoryId: string;
-  }): Promise<void> {
+  async execute(params: { userId: string; categoryId: string }): Promise<void> {
     const categoryId = new CategoryId(params.categoryId);
     const category = await this.repository.search(categoryId);
 
@@ -21,7 +18,7 @@ export class DeleteCategoryUseCase {
 
   private ensureCategoryExists(
     category: Category | null,
-    categoryId: string
+    categoryId: string,
   ): asserts category is Category {
     if (category) return;
     throw new CategoryDoesNotExistError(categoryId);
@@ -29,7 +26,7 @@ export class DeleteCategoryUseCase {
 
   private ensureCategoryBelongsToUser(
     category: Category,
-    userId: string
+    userId: string,
   ): void {
     if (category.belongsTo(userId)) return;
     // TODO: Authorization pattern to be defined

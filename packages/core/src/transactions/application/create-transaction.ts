@@ -1,4 +1,3 @@
-
 import { Account } from "~/accounts/domain/account";
 import { AccountRepository } from "~/accounts/domain/account-repository";
 import { FindAccount } from "~/accounts/application/find-account";
@@ -60,7 +59,7 @@ export class CreateTransactionUseCase {
     const accountPrimitives = account.toPrimitives();
     throw new CurrencyMismatchError(
       accountPrimitives.currentBalance.currency,
-      currency
+      currency,
     );
   }
 }

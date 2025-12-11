@@ -10,7 +10,7 @@ export class TransactionDirection {
   private ensureIsValidDirection(value: string): void {
     if (value === "inbound" || value === "outbound") return;
     throw new InvalidArgumentError(
-      'Transaction direction must be either "inbound" or "outbound"'
+      'Transaction direction must be either "inbound" or "outbound"',
     );
   }
 

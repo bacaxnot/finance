@@ -7,7 +7,7 @@ export abstract class DomainEvent {
     aggregateId: string,
     eventId: string,
     occurredOn: Date,
-    attributes: DomainEventAttributes
+    attributes: DomainEventAttributes,
   ) => DomainEvent;
 
   public readonly eventId: string;
@@ -17,7 +17,7 @@ export abstract class DomainEvent {
     public readonly eventName: string,
     public readonly aggregateId: string,
     eventId?: string,
-    occurredOn?: Date
+    occurredOn?: Date,
   ) {
     this.eventId = eventId ?? uuidv7();
     this.occurredOn = occurredOn ?? new Date();

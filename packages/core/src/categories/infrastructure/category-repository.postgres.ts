@@ -8,64 +8,64 @@ import type { CategoryRepository } from "../domain/category-repository";
 import type { CategoryId } from "../domain/category-id";
 
 export class CategoryRepositoryPostgres
-	extends DrizzlePostgresRepository<Category>
-	implements CategoryRepository
+  extends DrizzlePostgresRepository<Category>
+  implements CategoryRepository
 {
-	async save(category: Category): Promise<void> {
-		const primitives = category.toPrimitives();
+  async save(category: Category): Promise<void> {
+    const primitives = category.toPrimitives();
 
-		await this.db
-			.insert(categories)
-			.values({
-				id: primitives.id,
-				userId: primitives.userId,
-				name: primitives.name,
-				createdAt: new Date(primitives.createdAt),
-				updatedAt: new Date(primitives.updatedAt),
-			})
-			.onConflictDoUpdate({
-				target: categories.id,
-				set: {
-					name: primitives.name,
-					updatedAt: new Date(primitives.updatedAt),
-				},
-			});
-	}
+    await this.db
+      .insert(categories)
+      .values({
+        id: primitives.id,
+        userId: primitives.userId,
+        name: primitives.name,
+        createdAt: new Date(primitives.createdAt),
+        updatedAt: new Date(primitives.updatedAt),
+      })
+      .onConflictDoUpdate({
+        target: categories.id,
+        set: {
+          name: primitives.name,
+          updatedAt: new Date(primitives.updatedAt),
+        },
+      });
+  }
 
-	async search(id: CategoryId): Promise<Category | null> {
-		const result = await this.db
-			.select()
-			.from(categories)
-			.where(eq(categories.id, id.value))
-			.limit(1);
+  async search(id: CategoryId): Promise<Category | null> {
+    const result = await this.db
+      .select()
+      .from(categories)
+      .where(eq(categories.id, id.value))
+      .limit(1);
 
-		if (result.length === 0) {
-			return null;
-		}
+    if (result.length === 0) {
+      return null;
+    }
 
-		return this.toAggregate(result[0]);
-	}
+    return this.toAggregate(result[0]);
+  }
 
-	async searchByUserId(userId: UserId): Promise<Category[]> {
-		const results = await this.db
-			.select()
-			.from(categories)
-			.where(eq(categories.userId, userId.value));
+  async searchByUserId(userId: UserId): Promise<Category[]> {
+    const results = await this.db
+      .select()
+      .from(categories)
+      .where(eq(categories.userId, userId.value));
 
-		return results.map((row) => this.toAggregate(row));
-	}
+    return results.map((row) => this.toAggregate(row));
+  }
 
-	async delete(id: CategoryId): Promise<void> {
-		await this.db.delete(categories).where(eq(categories.id, id.value));
-	}
+  async delete(id: CategoryId): Promise<void> {
+    await this.db.delete(categories).where(eq(categories.id, id.value));
+  }
 
-	protected toAggregate(row: typeof categories.$inferSelect): Category {
-		return Category.fromPrimitives({
-			id: row.id,
-			userId: row.userId,
-			name: row.name,
-			createdAt: dateToPrimitive(row.createdAt),
-			updatedAt: dateToPrimitive(row.updatedAt),
-		});
-	}
+  protected toAggregate(row: typeof categories.$inferSelect): Category {
+    return Category.fromPrimitives({
+      id: row.id,
+      userId: row.userId,
+      name: row.name,
+      createdAt: dateToPrimitive(row.createdAt),
+      updatedAt: dateToPrimitive(row.updatedAt),
+    });
+  }
 }

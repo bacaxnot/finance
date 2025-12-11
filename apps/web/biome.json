@@ -1,6 +1,15 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "extends": "//",
+  "files": {
+    "includes": ["**", "!.next"]
+  },
+  "css": {
+    "parser": {
+      "cssModules": false,
+      "tailwindDirectives": true
+    }
+  },
   "linter": {
     "rules": {
       "suspicious": {

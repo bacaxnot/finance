@@ -11,10 +11,10 @@ export class ListTransactionsByAccount {
   }): Promise<Transaction[]> {
     const accountId = new AccountId(params.accountId);
 
-    const transactions = await this.repository.searchByAccountId(
-      accountId
-    );
+    const transactions = await this.repository.searchByAccountId(accountId);
 
-    return transactions.filter((transaction) => transaction.belongsTo(params.userId));
+    return transactions.filter((transaction) =>
+      transaction.belongsTo(params.userId),
+    );
   }
 }

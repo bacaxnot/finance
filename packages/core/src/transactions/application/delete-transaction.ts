@@ -11,13 +11,10 @@ export class DeleteTransactionUseCase {
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
     private readonly findAccount: FindAccount,
-    private readonly findTransaction: FindTransactionUseCase
+    private readonly findTransaction: FindTransactionUseCase,
   ) {}
 
-  async execute(params: {
-    id: string;
-    userId: string;
-  }): Promise<void> {
+  async execute(params: { id: string; userId: string }): Promise<void> {
     const transaction = await this.getTransaction(params.id);
     const account = await this.getTransactionAccount(transaction);
 
@@ -25,7 +22,7 @@ export class DeleteTransactionUseCase {
     account.reverseTransaction(
       transactionPrimitives.amount.amount,
       transactionPrimitives.amount.currency,
-      transactionPrimitives.direction
+      transactionPrimitives.direction,
     );
 
     await this.accountRepository.save(account);

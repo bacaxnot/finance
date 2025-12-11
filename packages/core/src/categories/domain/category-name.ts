@@ -19,7 +19,7 @@ export class CategoryName {
   private ensureHasValidLength(value: string): void {
     if (value.trim().length <= MAX_NAME_LENGTH) return;
     throw new InvalidArgumentError(
-      `Category name is too long (max ${MAX_NAME_LENGTH} characters)`
+      `Category name is too long (max ${MAX_NAME_LENGTH} characters)`,
     );
   }
 

@@ -27,7 +27,7 @@ export class PersonName {
   private ensureHasValidLength(value: string): void {
     if (value.trim().length <= MAX_NAME_LENGTH) return;
     throw new InvalidArgumentError(
-      `Name is too long (max ${MAX_NAME_LENGTH} characters)`
+      `Name is too long (max ${MAX_NAME_LENGTH} characters)`,
     );
   }
 

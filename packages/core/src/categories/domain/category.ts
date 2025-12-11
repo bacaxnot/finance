@@ -1,7 +1,11 @@
 import { UserId } from "~/users/domain/user-id";
 import { CategoryId } from "./category-id";
 import { CategoryName } from "./category-name";
-import { dateFromPrimitive, dateToPrimitive, Primitives } from "~/_shared/domain/primitives";
+import {
+  dateFromPrimitive,
+  dateToPrimitive,
+  Primitives,
+} from "~/_shared/domain/primitives";
 import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 
 export class Category extends AggregateRoot {
@@ -10,7 +14,7 @@ export class Category extends AggregateRoot {
     public readonly userId: UserId,
     public name: CategoryName,
     public readonly createdAt: Date,
-    public updatedAt: Date
+    public updatedAt: Date,
   ) {
     super();
   }
@@ -25,7 +29,7 @@ export class Category extends AggregateRoot {
       new UserId(userId),
       new CategoryName(name),
       new Date(),
-      new Date()
+      new Date(),
     );
   }
 
@@ -35,7 +39,7 @@ export class Category extends AggregateRoot {
       new UserId(primitives.userId),
       new CategoryName(primitives.name),
       dateFromPrimitive(primitives.createdAt),
-      dateFromPrimitive(primitives.updatedAt)
+      dateFromPrimitive(primitives.updatedAt),
     );
   }
 

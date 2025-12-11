@@ -15,7 +15,7 @@ export class User {
     private firstName: PersonName,
     private lastName: PersonName,
     private readonly createdAt: Date,
-    private updatedAt: Date
+    private updatedAt: Date,
   ) {}
 
   static create({
@@ -28,7 +28,7 @@ export class User {
       new PersonName(firstName),
       new PersonName(lastName),
       new Date(),
-      new Date()
+      new Date(),
     );
   }
 
@@ -38,7 +38,7 @@ export class User {
       new PersonName(primitives.firstName),
       new PersonName(primitives.lastName),
       primitives.createdAt,
-      primitives.updatedAt
+      primitives.updatedAt,
     );
   }
 

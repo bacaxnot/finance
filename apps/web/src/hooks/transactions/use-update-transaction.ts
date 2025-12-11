@@ -13,8 +13,13 @@ export function useUpdateTransaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, input }: { id: string; input: UpdateTransactionInput }) =>
-      transactionsApi.updateTransaction(id, input),
+    mutationFn: ({
+      id,
+      input,
+    }: {
+      id: string;
+      input: UpdateTransactionInput;
+    }) => transactionsApi.updateTransaction(id, input),
     onSuccess: (updatedTransaction) => {
       // Invalidate transaction queries
       queryClient.invalidateQueries({

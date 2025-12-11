@@ -19,7 +19,7 @@ export class AccountName {
   private ensureHasValidLength(value: string): void {
     if (value.trim().length <= MAX_NAME_LENGTH) return;
     throw new InvalidArgumentError(
-      `Account name is too long (max ${MAX_NAME_LENGTH} characters)`
+      `Account name is too long (max ${MAX_NAME_LENGTH} characters)`,
     );
   }
 

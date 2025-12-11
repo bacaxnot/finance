@@ -9,7 +9,11 @@ import {
 } from "./transaction-direction";
 import { TransactionDescription } from "./transaction-description";
 import { TransactionDate } from "./transaction-date";
-import { dateFromPrimitive, dateToPrimitive, Primitives } from "~/_shared/domain/primitives";
+import {
+  dateFromPrimitive,
+  dateToPrimitive,
+  Primitives,
+} from "~/_shared/domain/primitives";
 import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 
 export type UpdateTransactionPrimitives = Partial<{
@@ -34,7 +38,7 @@ export class Transaction extends AggregateRoot {
     public date: TransactionDate,
     public notes: string | null,
     public readonly createdAt: Date,
-    public updatedAt: Date
+    public updatedAt: Date,
   ) {
     super();
   }
@@ -61,7 +65,7 @@ export class Transaction extends AggregateRoot {
       new TransactionDate(dateFromPrimitive(date)),
       notes,
       new Date(),
-      new Date()
+      new Date(),
     );
   }
 
@@ -77,7 +81,7 @@ export class Transaction extends AggregateRoot {
       new TransactionDate(dateFromPrimitive(primitives.date)),
       primitives.notes,
       dateFromPrimitive(primitives.createdAt),
-      dateFromPrimitive(primitives.updatedAt)
+      dateFromPrimitive(primitives.updatedAt),
     );
   }
 
@@ -128,10 +132,14 @@ export class Transaction extends AggregateRoot {
     this.categoryId = categoryId ? new CategoryId(categoryId) : null;
   }
 
-  private updateAmount(amount: number | undefined, currency: string | undefined): void {
+  private updateAmount(
+    amount: number | undefined,
+    currency: string | undefined,
+  ): void {
     const currentAmount = this.amount.toPrimitives();
     const newAmount = amount !== undefined ? amount : currentAmount.amount;
-    const newCurrency = currency !== undefined ? currency : currentAmount.currency;
+    const newCurrency =
+      currency !== undefined ? currency : currentAmount.currency;
     this.amount = new Money(newAmount, newCurrency);
   }
 

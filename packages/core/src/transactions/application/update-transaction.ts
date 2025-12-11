@@ -1,7 +1,10 @@
 import { Account } from "~/accounts/domain/account";
 import { AccountRepository } from "~/accounts/domain/account-repository";
 import { FindAccount } from "~/accounts/application/find-account";
-import { Transaction, UpdateTransactionPrimitives } from "../domain/transaction";
+import {
+  Transaction,
+  UpdateTransactionPrimitives,
+} from "../domain/transaction";
 import { TransactionRepository } from "../domain/transaction-repository";
 import { TransactionDirectionType } from "../domain/transaction-direction";
 import { FindTransactionUseCase } from "./find-transaction";
@@ -12,10 +15,12 @@ export class UpdateTransactionUseCase {
     private readonly transactionRepository: TransactionRepository,
     private readonly accountRepository: AccountRepository,
     private readonly findAccount: FindAccount,
-    private readonly findTransaction: FindTransactionUseCase
+    private readonly findTransaction: FindTransactionUseCase,
   ) {}
 
-  async execute(params: UpdateTransactionPrimitives & { id: string}): Promise<void> {
+  async execute(
+    params: UpdateTransactionPrimitives & { id: string },
+  ): Promise<void> {
     const transaction = await this.getTransaction(params.id);
     const account = await this.getTransactionAccount(transaction);
 
@@ -25,7 +30,7 @@ export class UpdateTransactionUseCase {
       await this.recalculateBalance(account, transaction, params);
     }
 
-    transaction.update({...params});
+    transaction.update({ ...params });
 
     await this.transactionRepository.save(transaction);
   }
@@ -53,17 +58,24 @@ export class UpdateTransactionUseCase {
       amount?: number;
       currency?: string;
       direction?: TransactionDirectionType;
-    }
+    },
   ): Promise<void> {
     const transactionPrimitives = transaction.toPrimitives();
     const oldAmount = transactionPrimitives.amount;
     const oldDirection = transactionPrimitives.direction;
 
-    account.reverseTransaction(oldAmount.amount, oldAmount.currency, oldDirection);
+    account.reverseTransaction(
+      oldAmount.amount,
+      oldAmount.currency,
+      oldDirection,
+    );
 
-    const newAmount = params.amount !== undefined ? params.amount : oldAmount.amount;
-    const newCurrency = params.currency !== undefined ? params.currency : oldAmount.currency;
-    const newDirection = params.direction !== undefined ? params.direction : oldDirection;
+    const newAmount =
+      params.amount !== undefined ? params.amount : oldAmount.amount;
+    const newCurrency =
+      params.currency !== undefined ? params.currency : oldAmount.currency;
+    const newDirection =
+      params.direction !== undefined ? params.direction : oldDirection;
 
     account.applyTransaction(newAmount, newCurrency, newDirection);
 
@@ -76,7 +88,7 @@ export class UpdateTransactionUseCase {
     const accountPrimitives = account.toPrimitives();
     throw new CurrencyMismatchError(
       accountPrimitives.currentBalance.currency,
-      currency
+      currency,
     );
   }
 }

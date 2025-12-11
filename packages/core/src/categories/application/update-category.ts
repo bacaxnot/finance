@@ -24,7 +24,7 @@ export class UpdateCategoryUseCase {
 
   private ensureCategoryExists(
     category: Category | null,
-    categoryId: string
+    categoryId: string,
   ): asserts category is Category {
     if (category) return;
     throw new CategoryDoesNotExistError(categoryId);
@@ -32,7 +32,7 @@ export class UpdateCategoryUseCase {
 
   private ensureCategoryBelongsToUser(
     category: Category,
-    userId: string
+    userId: string,
   ): void {
     if (category.belongsTo(userId)) return;
     // TODO: Authorization pattern to be defined
