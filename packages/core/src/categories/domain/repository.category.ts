@@ -1,10 +1,10 @@
-import { UserId } from "~/users/domain/value-object.user-id";
-import { Category } from "./aggregate.category";
-import { CategoryId } from "./value-object.category-id";
+import type { UserId } from "~/users/domain/value-object.user-id";
+import type { Category } from "./aggregate.category";
+import type { CategoryId } from "./value-object.category-id";
 
-export interface CategoryRepository {
-  save(category: Category): Promise<void>;
-  search(id: CategoryId): Promise<Category | null>;
-  searchByUserId(userId: UserId): Promise<Category[]>;
-  delete(id: CategoryId): Promise<void>;
+export abstract class CategoryRepository {
+	abstract save(category: Category): Promise<void>;
+	abstract search(id: CategoryId): Promise<Category | null>;
+	abstract searchByUserId(userId: UserId): Promise<Category[]>;
+	abstract delete(id: CategoryId): Promise<void>;
 }
