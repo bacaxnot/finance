@@ -4,6 +4,9 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@repo/core": "workspace:*",
+    "diod": "*",
+    "glob": "^13.0.0",
     "hono": "^4.10.8"
   },
   "devDependencies": {

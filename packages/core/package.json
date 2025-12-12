@@ -8,10 +8,7 @@
     "node": ">=20.0.0"
   },
   "exports": {
-    ".": {
-      "types": "./index.ts",
-      "default": "./index.ts"
-    }
+    "./*": "./src/*.ts"
   },
   "scripts": {
     "integration": "RUN_INTEGRATION_TESTS=1 bun test",
@@ -22,6 +19,7 @@
   },
   "dependencies": {
     "@repo/db": "workspace:*",
+    "diod": "*",
     "uuid": "^13.0.0"
   }
 }
