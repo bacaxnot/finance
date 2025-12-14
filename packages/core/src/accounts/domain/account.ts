@@ -3,11 +3,20 @@ import { Money } from "~/_shared/domain/money";
 import {
   dateFromPrimitive,
   dateToPrimitive,
-  type Primitives,
 } from "~/_shared/domain/primitives";
 import { AccountId } from "~/accounts/domain/account-id";
 import { AccountName } from "~/accounts/domain/account-name";
 import { UserId } from "~/users/domain/user-id";
+
+export type AccountPrimitives = {
+  id: string;
+  name: string;
+  userId: string;
+  initialBalance: { amount: number; currency: string };
+  currentBalance: { amount: number; currency: string };
+  createdAt: string;
+  updatedAt: string;
+};
 
 export class Account extends AggregateRoot {
   constructor(
@@ -29,25 +38,27 @@ export class Account extends AggregateRoot {
     currency: string;
     initialBalance: number;
   }): Account {
-    const initialBalanceMoney = new Money(
-      params.initialBalance,
-      params.currency,
-    );
-
-    const currentBalance = new Money(params.initialBalance, params.currency);
-
-    return new Account(
-      new AccountId(params.id),
-      new AccountName(params.name),
-      new UserId(params.userId),
-      initialBalanceMoney,
+    const now = dateToPrimitive(new Date());
+    const initialBalance = {
+      amount: params.initialBalance,
+      currency: params.currency,
+    };
+    const currentBalance = {
+      amount: params.initialBalance,
+      currency: params.currency,
+    };
+    return Account.fromPrimitives({
+      id: params.id,
+      userId: params.userId,
+      name: params.name,
+      initialBalance,
       currentBalance,
-      new Date(),
-      new Date(),
-    );
+      createdAt: now,
+      updatedAt: now,
+    });
   }
 
-  static fromPrimitives(primitives: Primitives<Account>): Account {
+  static fromPrimitives(primitives: AccountPrimitives): Account {
     return new Account(
       new AccountId(primitives.id),
       new AccountName(primitives.name),
@@ -101,7 +112,7 @@ export class Account extends AggregateRoot {
     this.updatedAt = new Date();
   }
 
-  toPrimitives(): Primitives<Account> {
+  toPrimitives(): AccountPrimitives {
     return {
       id: this.id.value,
       name: this.name.value,

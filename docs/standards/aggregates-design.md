@@ -14,49 +14,72 @@ This design respects **Tell, Don't Ask** and the **Law of Demeter**: aggregates 
 ### Structure
 
 ```typescript
+export type AccountPrimitives = {
+    id: string;
+    name: string;
+    balance: number;
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+};
+
 export class Account extends AggregateRoot {
     constructor(
         public readonly id: AccountId,
         public name: AccountName,
         public balance: AccountBalance,
         public userId: UserId,
+        public readonly createdAt: Date,
+        public updatedAt: Date,
     ) {
         super();
     }
 
-    static fromPrimitives(primitives: Primitives<Account>): Account {
+    static fromPrimitives(primitives: AccountPrimitives): Account {
         return new Account(
             new AccountId(primitives.id),
             new AccountName(primitives.name),
             new AccountBalance(primitives.balance),
             new UserId(primitives.userId),
+            dateFromPrimitive(primitives.createdAt),
+            dateFromPrimitive(primitives.updatedAt),
         );
     }
 
-    static create(id: string, name: string, userId: string): Account {
+    static create(params: {
+        id: string;
+        name: string;
+        userId: string;
+    }): Account {
+        const now = dateToPrimitive(new Date());
         const account = Account.fromPrimitives({
-            id,
-            name,
+            id: params.id,
+            name: params.name,
             balance: 0,
-            userId,
+            userId: params.userId,
+            createdAt: now,
+            updatedAt: now,
         });
 
-        account.record(new AccountCreatedDomainEvent(id, name, userId));
+        account.record(new AccountCreatedDomainEvent(params.id, params.name, params.userId));
 
         return account;
     }
 
     deposit(amount: number): void {
         this.balance = new AccountBalance(this.balance.value + amount);
+        this.updatedAt = new Date();
         this.record(new DepositMadeDomainEvent(this.id.value, amount));
     }
 
-    toPrimitives(): Primitives<Account> {
+    toPrimitives(): AccountPrimitives {
         return {
             id: this.id.value,
             name: this.name.value,
             balance: this.balance.value,
             userId: this.userId.value,
+            createdAt: dateToPrimitive(this.createdAt),
+            updatedAt: dateToPrimitive(this.updatedAt),
         };
     }
 }
@@ -87,7 +110,7 @@ account.rename("New Name");
 
 ### 1. Never Use Constructors Directly
 
-**Why constructor is public:** TypeScript needs it for `Primitives<T>` type inference.
+**Why constructor is public:** TypeScript requires public constructors, but we use factory methods for instantiation.
 
 **Convention:** NEVER call `new Account()` outside the class.
 
@@ -189,91 +212,266 @@ class Account {
 
 ```typescript
 class Account {
-    // For reconstitution (no events)
-    constructor(id, name, balance, userId) { }
+    // Constructor (only used internally by fromPrimitives)
+    constructor(id, name, balance, userId, createdAt, updatedAt) { }
 
-    // For reconstitution from primitives
-    static fromPrimitives(primitives) { }
+    // For reconstitution from database/API
+    static fromPrimitives(primitives: AccountPrimitives): Account {
+        // Converts primitives to domain objects
+        // No domain events
+    }
 
-    // For new instances (with events)
-    static create(id, name, userId) {
-        // Creates account with initial state
+    // For new instances - independent signature
+    static create(params: { id: string; name: string; userId: string }): Account {
+        // Prepares primitives with defaults (balance: 0, timestamps)
+        // Delegates to fromPrimitives for construction
         // Records AccountCreatedDomainEvent
     }
 }
 ```
 
-## The Primitives<T> Pattern
+**Key Points:**
+- `create()` signature is independent from `*Primitives` type
+- `create()` sets defaults and delegates to `fromPrimitives()`
+- This decouples factory API from serialization contract
 
-The `Primitives<T>` type automatically converts between domain and primitive types:
+## The Explicit Primitives Pattern
+
+Each aggregate defines and exports its own explicit `*Primitives` type that represents the serializable contract. This type must be:
+
+1. **Exported** alongside the aggregate class
+2. **Simple types only**: string, number, boolean, null, or nested plain objects
+3. **Self-contained**: Include all data needed for reconstitution
+
+Example:
 
 ```typescript
-// Domain object:
-class Account {
-    id: AccountId;           // StringValueObject
-    name: AccountName;       // StringValueObject
-    balance: AccountBalance; // NumberValueObject
-}
-
-// Primitives<Account> automatically becomes:
-{
+// Each aggregate exports its primitives type
+export type AccountPrimitives = {
     id: string;
     name: string;
     balance: number;
+    userId: string;
+    createdAt: string;  // ISO 8601 date string
+    updatedAt: string;  // ISO 8601 date string
+};
+
+// Domain object with value objects:
+export class Account extends AggregateRoot {
+    id: AccountId;           // StringValueObject
+    name: AccountName;       // StringValueObject
+    balance: AccountBalance; // NumberValueObject
+    userId: UserId;          // StringValueObject
+    createdAt: Date;
+    updatedAt: Date;
 }
 ```
 
 **Benefits:**
-1. No manual DTO classes
-2. Compile-time safety for serialization
-3. Single source of truth for structure
+1. Each aggregate owns its serialization contract
+2. Simple types for API/RPC type inference
+3. Explicit boundaries between domain and primitives
+4. Easy to validate and document
+
+**Date Handling:**
+Use helper functions for date serialization:
+
+```typescript
+import { dateFromPrimitive, dateToPrimitive } from "~/_shared/domain/primitives";
+
+// Converting to primitives
+toPrimitives(): AccountPrimitives {
+    return {
+        // ... other fields
+        createdAt: dateToPrimitive(this.createdAt),  // Date → ISO string
+        updatedAt: dateToPrimitive(this.updatedAt),
+    };
+}
+
+// Converting from primitives
+static fromPrimitives(primitives: AccountPrimitives): Account {
+    return new Account(
+        // ... other fields
+        dateFromPrimitive(primitives.createdAt),  // ISO string → Date
+        dateFromPrimitive(primitives.updatedAt),
+    );
+}
+```
+
+**Complex Value Objects:**
+For value objects like `Money`, use nested objects in primitives:
+
+```typescript
+export type AccountPrimitives = {
+    id: string;
+    initialBalance: { amount: number; currency: string };  // Money as nested object
+    currentBalance: { amount: number; currency: string };
+    // ... other fields
+};
+
+export class Account extends AggregateRoot {
+    initialBalance: Money;  // Value object
+    currentBalance: Money;
+
+    toPrimitives(): AccountPrimitives {
+        return {
+            // ... other fields
+            initialBalance: this.initialBalance.toPrimitives(),
+            currentBalance: this.currentBalance.toPrimitives(),
+        };
+    }
+
+    static fromPrimitives(primitives: AccountPrimitives): Account {
+        return new Account(
+            // ... other fields
+            new Money(primitives.initialBalance.amount, primitives.initialBalance.currency),
+            new Money(primitives.currentBalance.amount, primitives.currentBalance.currency),
+        );
+    }
+}
+```
 
 ## Complete Example
 
+Here's a complete aggregate following all the patterns:
+
+```typescript
+import { AggregateRoot } from "~/_shared/domain/aggregate-root";
+import { dateFromPrimitive, dateToPrimitive } from "~/_shared/domain/primitives";
+
+// 1. Define and export the primitives type
+export type CategoryPrimitives = {
+    id: string;
+    userId: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+};
+
+// 2. Define the aggregate
+export class Category extends AggregateRoot {
+    constructor(
+        public readonly id: CategoryId,
+        public readonly userId: UserId,
+        public name: CategoryName,
+        public readonly createdAt: Date,
+        public updatedAt: Date,
+    ) {
+        super();
+    }
+
+    // 3. Reconstitution from primitives
+    static fromPrimitives(primitives: CategoryPrimitives): Category {
+        return new Category(
+            new CategoryId(primitives.id),
+            new UserId(primitives.userId),
+            new CategoryName(primitives.name),
+            dateFromPrimitive(primitives.createdAt),
+            dateFromPrimitive(primitives.updatedAt),
+        );
+    }
+
+    // 4. Factory method for new instances
+    static create(params: {
+        id: string;
+        userId: string;
+        name: string;
+    }): Category {
+        const now = dateToPrimitive(new Date());
+        return Category.fromPrimitives({
+            id: params.id,
+            userId: params.userId,
+            name: params.name,
+            createdAt: now,
+            updatedAt: now,
+        });
+    }
+
+    // 5. Business methods accept primitives
+    update(name: string): void {
+        this.name = new CategoryName(name);
+        this.updatedAt = new Date();
+    }
+
+    belongsTo(userId: string): boolean {
+        return this.userId.value === userId;
+    }
+
+    // 6. Serialization to primitives
+    toPrimitives(): CategoryPrimitives {
+        return {
+            id: this.id.value,
+            userId: this.userId.value,
+            name: this.name.value,
+            createdAt: dateToPrimitive(this.createdAt),
+            updatedAt: dateToPrimitive(this.updatedAt),
+        };
+    }
+}
+```
+
+**Using in application layer:**
+
 ```typescript
 // Use case
-async execute(accountId: string, amount: number): Promise<void> {
+async execute(categoryId: string, newName: string): Promise<CategoryPrimitives> {
     // ✅ Reconstitute from repository
-    const account = await this.repository.find(
-        new AccountId(accountId)
-    );
+    const category = await this.repository.find(new CategoryId(categoryId));
 
     // ✅ Business operation (primitives as arguments)
-    account.deposit(amount);
-
-    // ✅ Access data via primitives
-    const primitives = account.toPrimitives();
-    this.logger.info(`New balance: ${primitives.balance}`);
+    category.update(newName);
 
     // Save
-    await this.repository.save(account);
+    await this.repository.save(category);
+
+    // ✅ Return primitives (API boundary)
+    return category.toPrimitives();
 }
 ```
 
 ## Common Mistakes
 
 ```typescript
+// ❌ Forgetting to export primitives type
+type CategoryPrimitives = { ... };  // Not exported!
+
+// ❌ Using complex types in primitives
+export type CategoryPrimitives = {
+    createdAt: ISODateTime;  // ❌ Template literal type
+    metadata: Map<string, any>;  // ❌ Not JSON-serializable
+};
+
+// ❌ Coupling create() to Primitives type
+static create(params: Omit<CategoryPrimitives, "createdAt" | "updatedAt">): Category {
+    // This ties factory API to serialization contract
+}
+
+// ✅ Independent create() signature
+static create(params: { id: string; name: string; userId: string }): Category {
+    // Factory API is independent from serialization
+}
+
 // ❌ Using constructor directly
 const account = new Account(...);
 
-// ❌ Adding getters
+// ❌ Adding specific getters
 account.getBalance();
 
-// ❌ Exposing properties directly
-return account.balance.value;
-
-// ❌ Accepting VOs in public methods
+// ❌ Exposing value objects in public methods
 account.deposit(new AccountBalance(100));
 
-// ❌ Using fromPrimitives for new instances
-const account = Account.fromPrimitives({ id: uuid(), ... }); // No event!
+// ❌ Not updating updatedAt
+update(name: string): void {
+    this.name = new CategoryName(name);
+    // Missing: this.updatedAt = new Date();
+}
 
 // ✅ Correct patterns
-const account = Account.fromPrimitives(data);  // Reconstitution
-const account = Account.create(id, name);      // New instance
-const primitives = account.toPrimitives();     // Access data
-account.deposit(100);                          // Primitives in public API
-console.log(primitives.balance);
+const category = Category.fromPrimitives(data);               // Reconstitution
+const category = Category.create({ id, userId, name });       // New entry
+const primitives = category.toPrimitives();                   // Access data
+category.update("New Name");                                  // Primitives in API
+console.log(primitives.name);
 ```
 
 ## Why This Design?
@@ -282,12 +480,25 @@ console.log(primitives.balance);
 
 **Law of Demeter:** Public methods accept primitives, hiding internal structure (value objects). Changes to internal implementation don't affect callers.
 
-**Simplicity:** One way to do things = less cognitive load.
+**Explicit Contracts:** Each aggregate owns its serialization contract through explicit primitives types. The aggregate is accountable for defining and maintaining the shape of its serialized form.
 
-**Type Safety:** Compiler prevents category errors (passing ID where name expected).
+**Simplicity:**
+- Simple types (string, number, boolean) for API boundaries
+- No complex generics or template literals that break type inference
+- One way to serialize = less cognitive load
 
-**Consistency:** `fromPrimitives()` + `toPrimitives()` everywhere.
+**Type Safety:**
+- Compiler prevents category errors (passing ID where name expected)
+- RPC clients get full type inference with simple primitives
+- Value objects provide domain-level type safety
 
-**Minimal API:** Only business operations exposed.
+**Consistency:**
+- Every aggregate: `*Primitives` type + `fromPrimitives()` + `toPrimitives()`
+- Dates: Always use `dateFromPrimitive()` / `dateToPrimitive()` helpers
+- Complex VOs: Nest their primitives in the aggregate's primitives type
 
-**Event Sourcing:** Clear separation between reconstitution (constructor) and creation (factory).
+**Minimal API:** Only business operations exposed as public methods.
+
+**Clear Boundaries:** Domain layer (value objects) ↔ Primitives (plain JSON) ↔ API layer
+
+**Event Sourcing Ready:** Clear separation between reconstitution (`fromPrimitives`) and creation (`create` factory).

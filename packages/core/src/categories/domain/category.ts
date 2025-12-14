@@ -2,11 +2,18 @@ import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 import {
   dateFromPrimitive,
   dateToPrimitive,
-  type Primitives,
 } from "~/_shared/domain/primitives";
 import { UserId } from "~/users/domain/user-id";
 import { CategoryId } from "./category-id";
 import { CategoryName } from "./category-name";
+
+export type CategoryPrimitives = {
+  id: string;
+  userId: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export class Category extends AggregateRoot {
   constructor(
@@ -19,21 +26,22 @@ export class Category extends AggregateRoot {
     super();
   }
 
-  static create({
-    id,
-    userId,
-    name,
-  }: Omit<Primitives<Category>, "createdAt" | "updatedAt">): Category {
-    return new Category(
-      new CategoryId(id),
-      new UserId(userId),
-      new CategoryName(name),
-      new Date(),
-      new Date(),
-    );
+  static create(params: {
+    id: string;
+    userId: string;
+    name: string;
+  }): Category {
+    const now = dateToPrimitive(new Date());
+    return Category.fromPrimitives({
+      id: params.id,
+      userId: params.userId,
+      name: params.name,
+      createdAt: now,
+      updatedAt: now,
+    });
   }
 
-  static fromPrimitives(primitives: Primitives<Category>): Category {
+  static fromPrimitives(primitives: CategoryPrimitives): Category {
     return new Category(
       new CategoryId(primitives.id),
       new UserId(primitives.userId),
@@ -52,7 +60,7 @@ export class Category extends AggregateRoot {
     this.updatedAt = new Date();
   }
 
-  toPrimitives(): Primitives<Category> {
+  toPrimitives(): CategoryPrimitives {
     return {
       id: this.id.value,
       userId: this.userId.value,

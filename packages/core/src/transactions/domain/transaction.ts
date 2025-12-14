@@ -1,9 +1,8 @@
 import { AggregateRoot } from "~/_shared/domain/aggregate-root";
 import { Money } from "~/_shared/domain/money";
 import {
-  dateFromPrimitive,
-  dateToPrimitive,
-  type Primitives,
+	dateFromPrimitive,
+	dateToPrimitive,
 } from "~/_shared/domain/primitives";
 import { AccountId } from "~/accounts/domain/account-id";
 import { CategoryId } from "~/categories/domain/category-id";
@@ -11,19 +10,33 @@ import { UserId } from "~/users/domain/user-id";
 import { TransactionDate } from "./transaction-date";
 import { TransactionDescription } from "./transaction-description";
 import {
-  TransactionDirection,
-  type TransactionDirectionType,
+	TransactionDirection,
+	type TransactionDirectionType,
 } from "./transaction-direction";
 import { TransactionId } from "./transaction-id";
 
+export type TransactionPrimitives = {
+	id: string;
+	userId: string;
+	accountId: string;
+	categoryId: string | null;
+	amount: { amount: number; currency: string };
+	direction: TransactionDirectionType;
+	description: string;
+	date: string;
+	notes: string | null;
+	createdAt: string;
+	updatedAt: string;
+};
+
 export type UpdateTransactionPrimitives = Partial<{
-  categoryId: string | null;
-  amount: number;
-  currency: string;
-  direction: TransactionDirectionType;
-  description: string;
-  transactionDate: string;
-  notes: string | null;
+	categoryId: string | null;
+	amount: number;
+	currency: string;
+	direction: TransactionDirectionType;
+	description: string;
+	transactionDate: string;
+	notes: string | null;
 }>;
 
 export class Transaction extends AggregateRoot {
@@ -43,33 +56,34 @@ export class Transaction extends AggregateRoot {
     super();
   }
 
-  static create({
-    id,
-    userId,
-    accountId,
-    categoryId,
-    amount,
-    direction,
-    description,
-    date,
-    notes,
-  }: Omit<Primitives<Transaction>, "createdAt" | "updatedAt">): Transaction {
-    return new Transaction(
-      new TransactionId(id),
-      new UserId(userId),
-      new AccountId(accountId),
-      categoryId ? new CategoryId(categoryId) : null,
-      new Money(amount.amount, amount.currency),
-      new TransactionDirection(direction),
-      new TransactionDescription(description),
-      new TransactionDate(dateFromPrimitive(date)),
-      notes,
-      new Date(),
-      new Date(),
-    );
+  static create(params: {
+    id: string;
+    userId: string;
+    accountId: string;
+    categoryId: string | null;
+    amount: { amount: number; currency: string };
+    direction: TransactionDirectionType;
+    description: string;
+    date: string;
+    notes: string | null;
+  }): Transaction {
+    const now = dateToPrimitive(new Date());
+    return Transaction.fromPrimitives({
+      id: params.id,
+      userId: params.userId,
+      accountId: params.accountId,
+      categoryId: params.categoryId,
+      amount: params.amount,
+      direction: params.direction,
+      description: params.description,
+      date: params.date,
+      notes: params.notes,
+      createdAt: now,
+      updatedAt: now,
+    });
   }
 
-  static fromPrimitives(primitives: Primitives<Transaction>): Transaction {
+  static fromPrimitives(primitives: TransactionPrimitives): Transaction {
     return new Transaction(
       new TransactionId(primitives.id),
       new UserId(primitives.userId),
@@ -85,7 +99,7 @@ export class Transaction extends AggregateRoot {
     );
   }
 
-  toPrimitives(): Primitives<Transaction> {
+  toPrimitives(): TransactionPrimitives {
     return {
       id: this.id.value,
       userId: this.userId.value,

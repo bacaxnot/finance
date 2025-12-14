@@ -38,7 +38,7 @@ export class CreateTransactionUseCase {
       amount: { amount: params.amount, currency: params.currency },
       direction: params.direction,
       description: params.description,
-      date: params.transactionDate as `${number}${number}${number}${number}-${number}${number}-${number}${number}T${number}${number}:${number}${number}:${number}${number}.${number}${number}${number}Z`,
+      date: params.transactionDate,
       notes: params.notes,
     });
 
