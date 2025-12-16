@@ -1,102 +1,34 @@
-import { CreateTransactionUseCase } from "@repo/core/transactions/application/create-transaction";
-import { DeleteTransactionUseCase } from "@repo/core/transactions/application/delete-transaction";
-import { ListTransactionsByAccount } from "@repo/core/transactions/application/list-transactions-by-account";
-import { ListTransactionsByUser } from "@repo/core/transactions/application/list-transactions-by-user";
-import { UpdateTransactionUseCase } from "@repo/core/transactions/application/update-transaction";
-import type { Hono } from "hono";
-import { Hono as HonoApp } from "hono";
-import { container } from "~/di";
-import { executeWithErrorHandling } from "~/lib/execute-with-error-handling";
-import { badRequest, created, json, noContent } from "~/lib/http-response";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import {
+	deleteTransactionController,
+	deleteTransactionParamsSchema,
+} from "~/controllers/transactions/delete-transaction";
+import {
+	getTransactionsController,
+	getTransactionsSchema,
+} from "~/controllers/transactions/get-transactions";
+import {
+	patchTransactionBodySchema,
+	patchTransactionController,
+	patchTransactionParamsSchema,
+} from "~/controllers/transactions/patch-transaction";
+import {
+	putTransactionController,
+	putTransactionSchema,
+} from "~/controllers/transactions/put-transaction";
 
-const transactions = new HonoApp();
-
-// POST /transactions - Create transaction
-transactions.post("/", async (c) => {
-  return executeWithErrorHandling(c, async () => {
-    const useCase = container.get(CreateTransactionUseCase);
-
-    const body = await c.req.json();
-
-    await useCase.execute({
-      id: body.id,
-      userId: body.userId, // TODO: Get from auth middleware
-      accountId: body.accountId,
-      categoryId: body.categoryId || null,
-      amount: body.amount,
-      currency: body.currency,
-      direction: body.direction,
-      description: body.description,
-      transactionDate: body.transactionDate,
-      notes: body.notes || null,
-    });
-
-    return created(c);
-  });
-});
-
-// PATCH /transactions/:id - Update transaction
-transactions.patch("/:id", async (c) => {
-  return executeWithErrorHandling(c, async () => {
-    const useCase = container.get(UpdateTransactionUseCase);
-
-    const id = c.req.param("id");
-    const body = await c.req.json();
-
-    await useCase.execute({
-      id,
-      amount: body.amount,
-      currency: body.currency,
-      direction: body.direction,
-      description: body.description,
-      transactionDate: body.transactionDate,
-      notes: body.notes,
-      categoryId: body.categoryId,
-    });
-
-    return noContent(c);
-  });
-});
-
-// DELETE /transactions/:id - Delete transaction
-transactions.delete("/:id", async (c) => {
-  return executeWithErrorHandling(c, async () => {
-    const useCase = container.get(DeleteTransactionUseCase);
-
-    const id = c.req.param("id");
-
-    await useCase.execute({ id });
-
-    return noContent(c);
-  });
-});
-
-// GET /transactions?accountId=... - List transactions by account
-// GET /transactions?userId=... - List transactions by user
-transactions.get("/", async (c) => {
-  return executeWithErrorHandling(c, async () => {
-    const accountId = c.req.query("accountId");
-    const userId = c.req.query("userId");
-
-    if (accountId) {
-      const useCase = container.get(ListTransactionsByAccount);
-      const transactions = await useCase.execute({ accountId });
-      return json(c, { data: transactions });
-    }
-
-    if (userId) {
-      const useCase = container.get(ListTransactionsByUser);
-      const transactions = await useCase.execute({ userId });
-      return json(c, { data: transactions });
-    }
-
-    return badRequest(
-      c,
-      "Either accountId or userId query parameter is required",
-    );
-  });
-});
-
-export const register = (app: Hono) => {
-  app.route("/transactions", transactions);
-};
+export const transactionsApp = new Hono()
+	.get("/", zValidator("query", getTransactionsSchema), getTransactionsController)
+	.put("/", zValidator("json", putTransactionSchema), putTransactionController)
+	.patch(
+		"/:id",
+		zValidator("param", patchTransactionParamsSchema),
+		zValidator("json", patchTransactionBodySchema),
+		patchTransactionController,
+	)
+	.delete(
+		"/:id",
+		zValidator("param", deleteTransactionParamsSchema),
+		deleteTransactionController,
+	);

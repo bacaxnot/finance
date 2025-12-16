@@ -1,12 +1,14 @@
+export type DomainErrorPrimitives = {
+  type: string;
+  description: string;
+  data: Record<string, unknown>;
+};
+
 export abstract class DomainError extends Error {
   abstract readonly type: string;
   abstract readonly message: string;
 
-  toPrimitives(): {
-    type: string;
-    description: string;
-    data: Record<string, unknown>;
-  } {
+  toPrimitives(): DomainErrorPrimitives {
     const props = Object.entries(this).filter(
       ([key, _]) => key !== "type" && key !== "message",
     );

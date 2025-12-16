@@ -1,13 +1,22 @@
 {
-  "name": "api",
+  "name": "@repo/api",
+  "type": "module",
   "scripts": {
     "dev": "bun run --hot src/index.ts"
   },
+  "exports": {
+    "./rpc": {
+      "types": "./src/rpc.ts",
+      "import": "./src/rpc.ts"
+    }
+  },
   "dependencies": {
+    "@hono/zod-validator": "0.7.5",
     "@repo/core": "workspace:*",
     "diod": "*",
     "glob": "^13.0.0",
-    "hono": "^4.10.8"
+    "hono": "^4.10.8",
+    "zod": "4.1.13"
   },
   "devDependencies": {
     "@types/bun": "latest"

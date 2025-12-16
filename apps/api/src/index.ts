@@ -1,14 +1,15 @@
 import { Hono } from "hono";
-import { registerRoutes } from "~/lib/register-routes";
+import { accountsApp } from "~/routes/accounts";
+import { categoriesApp } from "~/routes/categories";
+import { transactionsApp } from "~/routes/transactions";
 
-const app = new Hono();
+// Chain everything for proper type inference
+export const app = new Hono()
+  .route("/accounts", accountsApp)
+  .route("/transactions", transactionsApp)
+  .route("/categories", categoriesApp);
 
-// Root endpoint
-app.get("/", (c) => {
-	return c.text("Finance API");
-});
-
-// Auto-discover all resource routes
-registerRoutes(app, `${__dirname}/routes/**/*.ts`);
-
-export default app;
+export default {
+  port: 8000,
+  fetch: app.fetch,
+};

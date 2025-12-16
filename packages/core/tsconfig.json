@@ -2,6 +2,11 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "strict": true,
+    // from here
+    "composite": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    // to here: this allows for the aliases to be used in the code and types inferred from the code
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
