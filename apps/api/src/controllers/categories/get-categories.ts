@@ -1,36 +1,20 @@
 import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { ListCategoriesByUser } from "@repo/core/categories/application/list-categories-by-user";
+import { SearchCategoriesByUser } from "@repo/core/categories/application/search-categories-by-user";
 import type { Context } from "hono";
-import { z } from "zod";
 import { container } from "~/di";
-import { domainError, internalServerError } from "~/lib/http-response";
+import { domainError, internalServerError, json } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
-export const getCategoriesSchema = z.object({
-  userId: z.uuid(),
-});
-
-export type GetCategoriesCtx = Context<
-  Record<string, unknown>,
-  "/",
-  {
-    in: {
-      query: z.infer<typeof getCategoriesSchema>;
-    };
-    out: {
-      query: z.infer<typeof getCategoriesSchema>;
-    };
-  }
->;
+export type GetCategoriesCtx = Context<{ Variables: ProtectedVariables }, "/">;
 
 export const getCategoriesController = async (c: GetCategoriesCtx) => {
   try {
-    const useCase = container.get(ListCategoriesByUser);
-    const query = c.req.valid("query");
+    const useCase = container.get(SearchCategoriesByUser);
+    const user = c.get("user");
 
-    const categories = await useCase.execute({ userId: query.userId });
-    const data = categories.map((category) => category.toPrimitives());
+    const data = await useCase.execute({ userId: user.id });
 
-    return c.json({ data }, 200);
+    return json(c, { data });
   } catch (error: unknown) {
     if (error instanceof DomainError) {
       return domainError(c, error, 400);

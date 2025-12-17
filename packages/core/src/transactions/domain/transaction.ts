@@ -40,18 +40,18 @@ export type UpdateTransactionPrimitives = Partial<{
 }>;
 
 export class Transaction extends AggregateRoot {
-  constructor(
-    public readonly id: TransactionId,
-    public readonly userId: UserId,
-    public readonly accountId: AccountId,
-    public categoryId: CategoryId | null,
-    public amount: Money,
-    public direction: TransactionDirection,
-    public description: TransactionDescription,
-    public date: TransactionDate,
-    public notes: string | null,
-    public readonly createdAt: Date,
-    public updatedAt: Date,
+  private constructor(
+    private readonly id: TransactionId,
+    private readonly userId: UserId,
+    private readonly accountId: AccountId,
+    private categoryId: CategoryId | null,
+    private amount: Money,
+    private direction: TransactionDirection,
+    private description: TransactionDescription,
+    private date: TransactionDate,
+    private notes: string | null,
+    private readonly createdAt: Date,
+    private updatedAt: Date,
   ) {
     super();
   }

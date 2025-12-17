@@ -4,15 +4,15 @@ import type { Context } from "hono";
 import { z } from "zod";
 import { container } from "~/di";
 import { created, domainError, internalServerError } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
 export const putCategorySchema = z.object({
 	id: z.uuid(),
-	userId: z.uuid(),
 	name: z.string().min(1),
 });
 
 export type PutCategoryCtx = Context<
-	Record<string, unknown>,
+	{ Variables: ProtectedVariables },
 	"/",
 	{
 		in: {
@@ -28,8 +28,13 @@ export const putCategoryController = async (c: PutCategoryCtx) => {
 	try {
 		const useCase = container.get(CreateCategory);
 		const body = c.req.valid("json");
+		const user = c.get("user");
 
-		await useCase.execute(body);
+		await useCase.execute({
+			id: body.id,
+			userId: user.id,
+			name: body.name,
+		});
 
 		return created(c);
 	} catch (error: unknown) {

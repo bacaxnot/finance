@@ -24,13 +24,13 @@ export type AccountPrimitives = {
 };
 
 export class Account extends AggregateRoot {
-    constructor(
-        public readonly id: AccountId,
-        public name: AccountName,
-        public balance: AccountBalance,
-        public userId: UserId,
-        public readonly createdAt: Date,
-        public updatedAt: Date,
+    private constructor(
+        private readonly id: AccountId,
+        private name: AccountName,
+        private balance: AccountBalance,
+        private userId: UserId,
+        private readonly createdAt: Date,
+        private updatedAt: Date,
     ) {
         super();
     }
@@ -110,7 +110,7 @@ account.rename("New Name");
 
 ### 1. Never Use Constructors Directly
 
-**Why constructor is public:** TypeScript requires public constructors, but we use factory methods for instantiation.
+**Why constructor is private:** Enforces true encapsulation—only factory methods can create instances, and properties are never exposed directly.
 
 **Convention:** NEVER call `new Account()` outside the class.
 

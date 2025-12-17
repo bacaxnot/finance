@@ -1,14 +1,14 @@
-import type { FindAccount } from "~/accounts/application/find-account";
 import type { Account } from "~/accounts/domain/account";
 import type { AccountRepository } from "~/accounts/domain/account-repository";
+import type { FindAccount } from "~/accounts/domain/find-account";
 import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
+import type { FindTransaction } from "../domain/find-transaction";
 import type {
   Transaction,
   UpdateTransactionPrimitives,
 } from "../domain/transaction";
 import type { TransactionDirectionType } from "../domain/transaction-direction";
 import type { TransactionRepository } from "../domain/transaction-repository";
-import type { FindTransaction } from "./find-transaction";
 
 export class UpdateTransactionUseCase {
   constructor(

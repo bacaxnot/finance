@@ -1,36 +1,20 @@
 import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { ListAccountsByUser } from "@repo/core/accounts/application/list-accounts-by-user";
+import { SearchAccountsByUser } from "@repo/core/accounts/application/search-accounts-by-user";
 import type { Context } from "hono";
-import { z } from "zod";
 import { container } from "~/di";
-import { domainError, internalServerError } from "~/lib/http-response";
+import { domainError, internalServerError, json } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
-export const getAccountsSchema = z.object({
-  userId: z.uuid(),
-});
-
-export type GetAccountsCtx = Context<
-  Record<string, unknown>,
-  "/",
-  {
-    in: {
-      query: z.infer<typeof getAccountsSchema>;
-    };
-    out: {
-      query: z.infer<typeof getAccountsSchema>;
-    };
-  }
->;
+export type GetAccountsCtx = Context<{ Variables: ProtectedVariables }, "/">;
 
 export const getAccountsController = async (c: GetAccountsCtx) => {
   try {
-    const useCase = container.get(ListAccountsByUser);
-    const query = c.req.valid("query");
+    const useCase = container.get(SearchAccountsByUser);
+    const user = c.get("user");
 
-    const accounts = await useCase.execute({ userId: query.userId });
-    const data = accounts.map((account) => account.toPrimitives());
+    const data = await useCase.execute({ userId: user.id });
 
-    return c.json({ data }, 200);
+    return json(c, { data });
   } catch (error: unknown) {
     if (error instanceof DomainError) {
       return domainError(c, error, 400);

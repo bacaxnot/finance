@@ -8,18 +8,18 @@ import {
 	internalServerError,
 	noContent,
 } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
 export const patchCategoryParamsSchema = z.object({
 	id: z.uuid(),
 });
 
 export const patchCategoryBodySchema = z.object({
-	userId: z.uuid(),
 	name: z.string().min(1),
 });
 
 export type PatchCategoryCtx = Context<
-	Record<string, unknown>,
+	{ Variables: ProtectedVariables },
 	"/:id",
 	{
 		in: {
@@ -38,9 +38,10 @@ export const patchCategoryController = async (c: PatchCategoryCtx) => {
 		const useCase = container.get(UpdateCategoryUseCase);
 		const params = c.req.valid("param");
 		const body = c.req.valid("json");
+		const user = c.get("user");
 
 		await useCase.execute({
-			userId: body.userId,
+			userId: user.id,
 			categoryId: params.id,
 			name: body.name,
 		});

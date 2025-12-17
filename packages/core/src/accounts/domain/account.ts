@@ -19,14 +19,14 @@ export type AccountPrimitives = {
 };
 
 export class Account extends AggregateRoot {
-  constructor(
-    public readonly id: AccountId,
-    public name: AccountName,
-    public readonly userId: UserId,
-    public readonly initialBalance: Money,
-    public currentBalance: Money,
-    public readonly createdAt: Date,
-    public updatedAt: Date,
+  private constructor(
+    private readonly id: AccountId,
+    private name: AccountName,
+    private readonly userId: UserId,
+    private readonly initialBalance: Money,
+    private currentBalance: Money,
+    private readonly createdAt: Date,
+    private updatedAt: Date,
   ) {
     super();
   }

@@ -1,23 +1,22 @@
 import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { ListTransactionsByAccount } from "@repo/core/transactions/application/list-transactions-by-account";
-import { ListTransactionsByUser } from "@repo/core/transactions/application/list-transactions-by-user";
+import { SearchTransactionsByAccount } from "@repo/core/transactions/application/search-transactions-by-account";
+import { SearchTransactionsByUser } from "@repo/core/transactions/application/search-transactions-by-user";
 import type { Context } from "hono";
 import { z } from "zod";
 import { container } from "~/di";
 import {
-	badRequest,
 	domainError,
 	internalServerError,
 	json,
 } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
 export const getTransactionsSchema = z.object({
 	accountId: z.uuid().optional(),
-	userId: z.uuid().optional(),
 });
 
 export type GetTransactionsCtx = Context<
-	Record<string, unknown>,
+	{ Variables: ProtectedVariables },
 	"/",
 	{
 		in: {
@@ -32,31 +31,20 @@ export type GetTransactionsCtx = Context<
 export const getTransactionsController = async (c: GetTransactionsCtx) => {
 	try {
 		const query = c.req.valid("query");
+		const user = c.get("user");
 
 		if (query.accountId) {
-			const useCase = container.get(ListTransactionsByAccount);
-			const transactions = await useCase.execute({
+			const useCase = container.get(SearchTransactionsByAccount);
+			const data = await useCase.execute({
+				userId: user.id,
 				accountId: query.accountId,
 			});
-			const data = transactions.map((transaction) =>
-				transaction.toPrimitives(),
-			);
 			return json(c, { data });
 		}
 
-		if (query.userId) {
-			const useCase = container.get(ListTransactionsByUser);
-			const transactions = await useCase.execute({ userId: query.userId });
-			const data = transactions.map((transaction) =>
-				transaction.toPrimitives(),
-			);
-			return json(c, { data });
-		}
-
-		return badRequest(
-			c,
-			"Either accountId or userId query parameter is required",
-		);
+		const useCase = container.get(SearchTransactionsByUser);
+		const data = await useCase.execute({ userId: user.id });
+		return json(c, { data });
 	} catch (error: unknown) {
 		if (error instanceof DomainError) {
 			return domainError(c, error, 400);
