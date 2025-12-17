@@ -16,12 +16,12 @@ export type CategoryPrimitives = {
 };
 
 export class Category extends AggregateRoot {
-  constructor(
-    public readonly id: CategoryId,
-    public readonly userId: UserId,
-    public name: CategoryName,
-    public readonly createdAt: Date,
-    public updatedAt: Date,
+  private constructor(
+    private readonly id: CategoryId,
+    private readonly userId: UserId,
+    private name: CategoryName,
+    private readonly createdAt: Date,
+    private updatedAt: Date,
   ) {
     super();
   }
