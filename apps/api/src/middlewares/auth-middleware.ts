@@ -1,6 +1,12 @@
 import type { Context, Next } from "hono";
 import { auth } from "~/lib/auth";
 
+function isPublicPath(path: string) {
+  if (path.startsWith("/public")) return true;
+  if (path.startsWith("/auth")) return true;
+  return false;
+}
+
 export const authMiddleware = async (c: Context, next: Next) => {
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,
@@ -10,7 +16,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
   c.set("session", session?.session ?? null);
 
   // Allow auth endpoints and public paths
-  if (c.req.path.startsWith("/auth") || c.req.path.startsWith("/public")) {
+  if (isPublicPath(c.req.path)) {
     return next();
   }
 
