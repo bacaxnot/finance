@@ -13,6 +13,8 @@
   "dependencies": {
     "@hono/zod-validator": "0.7.5",
     "@repo/core": "workspace:*",
+    "@repo/db": "workspace:*",
+    "better-auth": "*",
     "diod": "*",
     "glob": "^13.0.0",
     "hono": "^4.10.8",
