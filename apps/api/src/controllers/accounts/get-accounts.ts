@@ -27,8 +27,7 @@ export const getAccountsController = async (c: GetAccountsCtx) => {
     const useCase = container.get(SearchAccountsByUser);
     const query = c.req.valid("query");
 
-    const accounts = await useCase.execute({ userId: query.userId });
-    const data = accounts.map((account) => account.toPrimitives());
+    const data = await useCase.execute({ userId: query.userId });
 
     return c.json({ data }, 200);
   } catch (error: unknown) {

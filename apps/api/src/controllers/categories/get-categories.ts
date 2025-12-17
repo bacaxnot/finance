@@ -27,8 +27,7 @@ export const getCategoriesController = async (c: GetCategoriesCtx) => {
     const useCase = container.get(SearchCategoriesByUser);
     const query = c.req.valid("query");
 
-    const categories = await useCase.execute({ userId: query.userId });
-    const data = categories.map((category) => category.toPrimitives());
+    const data = await useCase.execute({ userId: query.userId });
 
     return c.json({ data }, 200);
   } catch (error: unknown) {

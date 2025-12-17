@@ -33,29 +33,24 @@ export const getTransactionsController = async (c: GetTransactionsCtx) => {
 	try {
 		const query = c.req.valid("query");
 
-		if (query.accountId) {
+		if (query.accountId && query.userId) {
 			const useCase = container.get(SearchTransactionsByAccount);
-			const transactions = await useCase.execute({
+			const data = await useCase.execute({
+				userId: query.userId,
 				accountId: query.accountId,
 			});
-			const data = transactions.map((transaction) =>
-				transaction.toPrimitives(),
-			);
 			return json(c, { data });
 		}
 
 		if (query.userId) {
 			const useCase = container.get(SearchTransactionsByUser);
-			const transactions = await useCase.execute({ userId: query.userId });
-			const data = transactions.map((transaction) =>
-				transaction.toPrimitives(),
-			);
+			const data = await useCase.execute({ userId: query.userId });
 			return json(c, { data });
 		}
 
 		return badRequest(
 			c,
-			"Either accountId or userId query parameter is required",
+			"userId is required. Optionally provide accountId to filter by account.",
 		);
 	} catch (error: unknown) {
 		if (error instanceof DomainError) {
