@@ -5,19 +5,18 @@ import type { Context } from "hono";
 import { z } from "zod";
 import { container } from "~/di";
 import {
-	badRequest,
 	domainError,
 	internalServerError,
 	json,
 } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
 export const getTransactionsSchema = z.object({
 	accountId: z.uuid().optional(),
-	userId: z.uuid().optional(),
 });
 
 export type GetTransactionsCtx = Context<
-	Record<string, unknown>,
+	{ Variables: ProtectedVariables },
 	"/",
 	{
 		in: {
@@ -32,26 +31,20 @@ export type GetTransactionsCtx = Context<
 export const getTransactionsController = async (c: GetTransactionsCtx) => {
 	try {
 		const query = c.req.valid("query");
+		const user = c.get("user");
 
-		if (query.accountId && query.userId) {
+		if (query.accountId) {
 			const useCase = container.get(SearchTransactionsByAccount);
 			const data = await useCase.execute({
-				userId: query.userId,
+				userId: user.id,
 				accountId: query.accountId,
 			});
 			return json(c, { data });
 		}
 
-		if (query.userId) {
-			const useCase = container.get(SearchTransactionsByUser);
-			const data = await useCase.execute({ userId: query.userId });
-			return json(c, { data });
-		}
-
-		return badRequest(
-			c,
-			"userId is required. Optionally provide accountId to filter by account.",
-		);
+		const useCase = container.get(SearchTransactionsByUser);
+		const data = await useCase.execute({ userId: user.id });
+		return json(c, { data });
 	} catch (error: unknown) {
 		if (error instanceof DomainError) {
 			return domainError(c, error, 400);

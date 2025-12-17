@@ -8,6 +8,7 @@ import {
 	internalServerError,
 	noContent,
 } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
 export const patchTransactionParamsSchema = z.object({
 	id: z.uuid(),
@@ -24,7 +25,7 @@ export const patchTransactionBodySchema = z.object({
 });
 
 export type PatchTransactionCtx = Context<
-	Record<string, unknown>,
+	{ Variables: ProtectedVariables },
 	"/:id",
 	{
 		in: {

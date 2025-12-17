@@ -8,26 +8,21 @@ import {
 	internalServerError,
 	noContent,
 } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
 export const deleteCategoryParamsSchema = z.object({
 	id: z.uuid(),
 });
 
-export const deleteCategoryBodySchema = z.object({
-	userId: z.uuid(),
-});
-
 export type DeleteCategoryCtx = Context<
-	Record<string, unknown>,
+	{ Variables: ProtectedVariables },
 	"/:id",
 	{
 		in: {
 			param: z.infer<typeof deleteCategoryParamsSchema>;
-			json: z.infer<typeof deleteCategoryBodySchema>;
 		};
 		out: {
 			param: z.infer<typeof deleteCategoryParamsSchema>;
-			json: z.infer<typeof deleteCategoryBodySchema>;
 		};
 	}
 >;
@@ -36,10 +31,10 @@ export const deleteCategoryController = async (c: DeleteCategoryCtx) => {
 	try {
 		const useCase = container.get(DeleteCategoryUseCase);
 		const params = c.req.valid("param");
-		const body = c.req.valid("json");
+		const user = c.get("user");
 
 		await useCase.execute({
-			userId: body.userId,
+			userId: user.id,
 			categoryId: params.id,
 		});
 

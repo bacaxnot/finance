@@ -8,13 +8,14 @@ import {
 	internalServerError,
 	noContent,
 } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
 export const deleteTransactionParamsSchema = z.object({
 	id: z.uuid(),
 });
 
 export type DeleteTransactionCtx = Context<
-	Record<string, unknown>,
+	{ Variables: ProtectedVariables },
 	"/:id",
 	{
 		in: {

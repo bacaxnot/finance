@@ -1,33 +1,18 @@
 import { DomainError } from "@repo/core/_shared/domain/domain-error";
 import { SearchAccountsByUser } from "@repo/core/accounts/application/search-accounts-by-user";
 import type { Context } from "hono";
-import { z } from "zod";
 import { container } from "~/di";
 import { domainError, internalServerError } from "~/lib/http-response";
+import type { ProtectedVariables } from "~/types/app";
 
-export const getAccountsSchema = z.object({
-  userId: z.uuid(),
-});
-
-export type GetAccountsCtx = Context<
-  Record<string, unknown>,
-  "/",
-  {
-    in: {
-      query: z.infer<typeof getAccountsSchema>;
-    };
-    out: {
-      query: z.infer<typeof getAccountsSchema>;
-    };
-  }
->;
+export type GetAccountsCtx = Context<{ Variables: ProtectedVariables }, "/">;
 
 export const getAccountsController = async (c: GetAccountsCtx) => {
   try {
     const useCase = container.get(SearchAccountsByUser);
-    const query = c.req.valid("query");
+    const user = c.get("user");
 
-    const data = await useCase.execute({ userId: query.userId });
+    const data = await useCase.execute({ userId: user.id });
 
     return c.json({ data }, 200);
   } catch (error: unknown) {
