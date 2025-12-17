@@ -2,7 +2,7 @@ import { AccountId } from "~/accounts/domain/account-id";
 import type { Transaction } from "../domain/transaction";
 import type { TransactionRepository } from "../domain/transaction-repository";
 
-export class ListTransactionsByAccount {
+export class SearchTransactionsByAccount {
   constructor(private readonly repository: TransactionRepository) {}
 
   async execute(params: {

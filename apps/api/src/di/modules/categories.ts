@@ -1,6 +1,6 @@
 import { CreateCategory } from "@repo/core/categories/application/create-category";
 import { DeleteCategoryUseCase } from "@repo/core/categories/application/delete-category";
-import { ListCategoriesByUser } from "@repo/core/categories/application/list-categories-by-user";
+import { SearchCategoriesByUser } from "@repo/core/categories/application/search-categories-by-user";
 import { UpdateCategoryUseCase } from "@repo/core/categories/application/update-category";
 import { CategoryRepository } from "@repo/core/categories/domain/category-repository";
 import { CategoryRepositoryPostgres } from "@repo/core/categories/infrastructure/category-repository.postgres";
@@ -27,7 +27,7 @@ export function register(builder: ContainerBuilder) {
 		.withDependencies([CategoryRepository]);
 
 	builder
-		.register(ListCategoriesByUser)
-		.use(ListCategoriesByUser)
+		.register(SearchCategoriesByUser)
+		.use(SearchCategoriesByUser)
 		.withDependencies([CategoryRepository]);
 }

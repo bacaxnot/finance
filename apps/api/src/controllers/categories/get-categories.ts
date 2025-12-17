@@ -1,5 +1,5 @@
 import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { ListCategoriesByUser } from "@repo/core/categories/application/list-categories-by-user";
+import { SearchCategoriesByUser } from "@repo/core/categories/application/search-categories-by-user";
 import type { Context } from "hono";
 import { z } from "zod";
 import { container } from "~/di";
@@ -24,7 +24,7 @@ export type GetCategoriesCtx = Context<
 
 export const getCategoriesController = async (c: GetCategoriesCtx) => {
   try {
-    const useCase = container.get(ListCategoriesByUser);
+    const useCase = container.get(SearchCategoriesByUser);
     const query = c.req.valid("query");
 
     const categories = await useCase.execute({ userId: query.userId });

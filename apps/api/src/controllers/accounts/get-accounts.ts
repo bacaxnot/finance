@@ -1,5 +1,5 @@
 import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { ListAccountsByUser } from "@repo/core/accounts/application/list-accounts-by-user";
+import { SearchAccountsByUser } from "@repo/core/accounts/application/search-accounts-by-user";
 import type { Context } from "hono";
 import { z } from "zod";
 import { container } from "~/di";
@@ -24,7 +24,7 @@ export type GetAccountsCtx = Context<
 
 export const getAccountsController = async (c: GetAccountsCtx) => {
   try {
-    const useCase = container.get(ListAccountsByUser);
+    const useCase = container.get(SearchAccountsByUser);
     const query = c.req.valid("query");
 
     const accounts = await useCase.execute({ userId: query.userId });

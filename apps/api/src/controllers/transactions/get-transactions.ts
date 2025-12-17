@@ -1,6 +1,6 @@
 import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { ListTransactionsByAccount } from "@repo/core/transactions/application/list-transactions-by-account";
-import { ListTransactionsByUser } from "@repo/core/transactions/application/list-transactions-by-user";
+import { SearchTransactionsByAccount } from "@repo/core/transactions/application/search-transactions-by-account";
+import { SearchTransactionsByUser } from "@repo/core/transactions/application/search-transactions-by-user";
 import type { Context } from "hono";
 import { z } from "zod";
 import { container } from "~/di";
@@ -34,7 +34,7 @@ export const getTransactionsController = async (c: GetTransactionsCtx) => {
 		const query = c.req.valid("query");
 
 		if (query.accountId) {
-			const useCase = container.get(ListTransactionsByAccount);
+			const useCase = container.get(SearchTransactionsByAccount);
 			const transactions = await useCase.execute({
 				accountId: query.accountId,
 			});
@@ -45,7 +45,7 @@ export const getTransactionsController = async (c: GetTransactionsCtx) => {
 		}
 
 		if (query.userId) {
-			const useCase = container.get(ListTransactionsByUser);
+			const useCase = container.get(SearchTransactionsByUser);
 			const transactions = await useCase.execute({ userId: query.userId });
 			const data = transactions.map((transaction) =>
 				transaction.toPrimitives(),
