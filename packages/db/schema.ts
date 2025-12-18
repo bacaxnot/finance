@@ -14,7 +14,7 @@ import {
 // ============================================
 
 export const authUser = pgTable("auth_user", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   name: text("name"),
@@ -24,23 +24,23 @@ export const authUser = pgTable("auth_user", {
 });
 
 export const authSession = pgTable("auth_session", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   token: text("token").notNull().unique(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: text("user_id")
+  userId: uuid("user_id")
     .notNull()
     .references(() => authUser.id),
 });
 
 export const authAccount = pgTable("auth_account", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: text("user_id")
+  userId: uuid("user_id")
     .notNull()
     .references(() => authUser.id),
   accessToken: text("access_token"),
@@ -59,7 +59,7 @@ export const authAccount = pgTable("auth_account", {
 });
 
 export const authVerification = pgTable("auth_verification", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
@@ -72,7 +72,7 @@ export const authVerification = pgTable("auth_verification", {
 // ============================================
 
 export const users = pgTable("users", {
-  id: text("id").primaryKey(), // Same ID as auth_user
+  id: uuid("id").primaryKey(), // Same ID as auth_user
   firstName: varchar("first_name", { length: 100 }).notNull(),
   lastName: varchar("last_name", { length: 100 }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -85,7 +85,7 @@ export const users = pgTable("users", {
 
 export const accounts = pgTable("accounts", {
   id: uuid("id").primaryKey(),
-  userId: text("user_id")
+  userId: uuid("user_id")
     .notNull()
     .references(() => users.id),
   name: varchar("name", { length: 100 }).notNull(),
@@ -108,7 +108,7 @@ export const accounts = pgTable("accounts", {
 
 export const categories = pgTable("categories", {
   id: uuid("id").primaryKey(),
-  userId: text("user_id")
+  userId: uuid("user_id")
     .notNull()
     .references(() => users.id),
   name: varchar("name", { length: 50 }).notNull(),
@@ -128,7 +128,7 @@ export const transactionDirectionEnum = pgEnum("transaction_direction", [
 
 export const transactions = pgTable("transactions", {
   id: uuid("id").primaryKey(),
-  userId: text("user_id")
+  userId: uuid("user_id")
     .notNull()
     .references(() => users.id),
   accountId: uuid("account_id")

@@ -1,4 +1,4 @@
-import { validate as uuidValidate, v7 as uuidv7 } from "uuid";
+import { generateUuid, validateUuid } from "~/utils";
 import { InvalidArgumentError } from "./domain-error";
 
 export class Id {
@@ -14,11 +14,11 @@ export class Id {
   }
 
   private generate(): string {
-    return uuidv7();
+    return generateUuid();
   }
 
   private ensureIsValidUuid(value: string): void {
-    if (uuidValidate(value)) return;
+    if (validateUuid(value)) return;
     throw new InvalidArgumentError("Invalid UUID format");
   }
 

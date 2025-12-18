@@ -1,5 +1,5 @@
 import type { Context, Next } from "hono";
-import { auth } from "~/lib/auth";
+import { auth } from "@repo/auth";
 import { unauthorized } from "~/lib/http-response";
 
 const STARTS_WITH_PUBLIC = ["/public", "/auth"];
