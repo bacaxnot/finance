@@ -1,7 +1,3 @@
-import { Id } from "~/_shared/domain/id";
+import { Id } from "../../_shared/domain/id";
 
-export class AccountId extends Id {
-  constructor(value?: string) {
-    super(value);
-  }
-}
+export class AccountId extends Id {}

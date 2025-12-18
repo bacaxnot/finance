@@ -1,5 +1,6 @@
 import type { Context, Next } from "hono";
-import { auth } from "~/lib/auth";
+import { auth } from "@repo/auth";
+import { unauthorized } from "~/lib/http-response";
 
 const STARTS_WITH_PUBLIC = ["/public", "/auth"];
 const EXACT_MATCH_PUBLIC = ["/openapi.json", "/docs"];
@@ -26,16 +27,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
 
   // All other routes require authentication
   if (!session?.user) {
-    return c.json(
-      {
-        error: {
-          type: "Unauthorized",
-          description: "Authentication required",
-          data: {},
-        },
-      },
-      401,
-    );
+    return unauthorized(c);
   }
 
   await next();

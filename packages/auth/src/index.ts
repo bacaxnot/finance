@@ -1,4 +1,4 @@
-import { UserId } from "@repo/core/users/domain/user-id";
+import { generateUuid } from "@repo/core/utils";
 import { db } from "@repo/db";
 import {
   authAccount,
@@ -25,7 +25,7 @@ export const auth = betterAuth({
   },
   advanced: {
     database: {
-      generateId: () => new UserId().value,
+      generateId: () => generateUuid(),
     },
   },
 });

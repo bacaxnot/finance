@@ -52,3 +52,16 @@ export function noContent(c: Context) {
 export function json<JsonBody>(c: Context, data: JsonBody) {
   return c.json(data, 200);
 }
+
+export function unauthorized(c: Context) {
+  return c.json(
+    {
+      error: {
+        type: "Unauthorized",
+        description: "Unauthorized",
+        data: {},
+      },
+    },
+    401,
+  );
+}
