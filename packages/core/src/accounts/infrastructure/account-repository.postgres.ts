@@ -1,6 +1,9 @@
 import { eq } from "@repo/db/orm";
 import { accounts } from "@repo/db/schema";
-import { dateToPrimitive } from "~/_shared/domain/primitives";
+import {
+  dateFromPrimitive,
+  dateToPrimitive,
+} from "~/_shared/domain/primitives";
 import { DrizzlePostgresRepository } from "~/_shared/infrastructure/drizzle-postgres-repository";
 import type { UserId } from "~/users/domain/user-id";
 import { Account } from "../domain/account";
@@ -23,15 +26,15 @@ export class AccountRepositoryPostgres
         currency: primitives.initialBalance.currency,
         initialBalance: primitives.initialBalance.amount.toString(),
         currentBalance: primitives.currentBalance.amount.toString(),
-        createdAt: new Date(primitives.createdAt),
-        updatedAt: new Date(primitives.updatedAt),
+        createdAt: dateFromPrimitive(primitives.createdAt),
+        updatedAt: dateFromPrimitive(primitives.updatedAt),
       })
       .onConflictDoUpdate({
         target: accounts.id,
         set: {
           name: primitives.name,
           currentBalance: primitives.currentBalance.amount.toString(),
-          updatedAt: new Date(primitives.updatedAt),
+          updatedAt: dateFromPrimitive(primitives.updatedAt),
         },
       });
   }

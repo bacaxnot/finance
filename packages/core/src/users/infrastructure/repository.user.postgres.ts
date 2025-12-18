@@ -1,35 +1,42 @@
-import { db } from "@repo/db";
 import { eq } from "@repo/db/orm";
 import { users } from "@repo/db/schema";
+import {
+  dateFromPrimitive,
+  dateToPrimitive,
+} from "~/_shared/domain/primitives";
+import { DrizzlePostgresRepository } from "~/_shared/infrastructure/drizzle-postgres-repository";
 import { User } from "../domain/user";
 import type { UserId } from "../domain/user-id";
 import type { UserRepository } from "../domain/user-repository";
 
-export class UserRepositoryPostgres implements UserRepository {
+export class UserRepositoryPostgres
+  extends DrizzlePostgresRepository<User>
+  implements UserRepository
+{
   async save(user: User): Promise<void> {
     const primitives = user.toPrimitives();
 
-    await db
+    await this.db
       .insert(users)
       .values({
         id: primitives.id,
         firstName: primitives.firstName,
         lastName: primitives.lastName,
-        createdAt: primitives.createdAt,
-        updatedAt: primitives.updatedAt,
+        createdAt: dateFromPrimitive(primitives.createdAt),
+        updatedAt: dateFromPrimitive(primitives.updatedAt),
       })
       .onConflictDoUpdate({
         target: users.id,
         set: {
           firstName: primitives.firstName,
           lastName: primitives.lastName,
-          updatedAt: primitives.updatedAt,
+          updatedAt: dateFromPrimitive(primitives.updatedAt),
         },
       });
   }
 
   async search(id: UserId): Promise<User | null> {
-    const result = await db
+    const result = await this.db
       .select()
       .from(users)
       .where(eq(users.id, id.value))
@@ -39,14 +46,16 @@ export class UserRepositoryPostgres implements UserRepository {
       return null;
     }
 
-    const row = result[0];
+    return this.toAggregate(result[0]);
+  }
 
+  protected toAggregate(row: typeof users.$inferSelect): User {
     return User.fromPrimitives({
       id: row.id,
       firstName: row.firstName,
       lastName: row.lastName,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
+      createdAt: dateToPrimitive(row.createdAt),
+      updatedAt: dateToPrimitive(row.updatedAt),
     });
   }
 }
