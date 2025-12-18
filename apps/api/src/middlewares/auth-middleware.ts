@@ -1,9 +1,13 @@
 import type { Context, Next } from "hono";
 import { auth } from "~/lib/auth";
 
+const STARTS_WITH_PUBLIC = ["/public", "/auth"];
+const EXACT_MATCH_PUBLIC = ["/openapi.json", "/docs"];
+
 function isPublicPath(path: string) {
-  if (path.startsWith("/public")) return true;
-  if (path.startsWith("/auth")) return true;
+  if (STARTS_WITH_PUBLIC.some((startsWith) => path.startsWith(startsWith)))
+    return true;
+  if (EXACT_MATCH_PUBLIC.some((exactMatch) => path === exactMatch)) return true;
   return false;
 }
 
