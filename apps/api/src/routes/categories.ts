@@ -29,3 +29,5 @@ export const categoriesApp = new Hono()
     zValidator("param", deleteCategoryParamsSchema),
     deleteCategoryController,
   );
+
+export type AppType = typeof categoriesApp;
