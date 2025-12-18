@@ -2,7 +2,8 @@
   "name": "@repo/api",
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "docs": "hono-docs generate --config ./hono-docs.ts"
   },
   "exports": {
     "./rpc": {
@@ -14,6 +15,7 @@
     "@hono/zod-validator": "0.7.5",
     "@repo/core": "workspace:*",
     "@repo/db": "workspace:*",
+    "@scalar/hono-api-reference": "^0.9.28",
     "better-auth": "*",
     "diod": "*",
     "glob": "^13.0.0",
@@ -21,6 +23,7 @@
     "zod": "4.1.13"
   },
   "devDependencies": {
+    "@rcmade/hono-docs": "^1.0.31",
     "@types/bun": "latest"
   }
 }

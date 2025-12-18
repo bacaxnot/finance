@@ -9,3 +9,5 @@ import {
 export const accountsApp = new Hono()
 	.get("/", getAccountsController)
 	.put("/", zValidator("json", putAccountSchema), putAccountController);
+
+export type AppType = typeof accountsApp;

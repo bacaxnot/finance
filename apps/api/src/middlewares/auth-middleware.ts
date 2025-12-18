@@ -1,6 +1,16 @@
 import type { Context, Next } from "hono";
 import { auth } from "~/lib/auth";
 
+const STARTS_WITH_PUBLIC = ["/public", "/auth"];
+const EXACT_MATCH_PUBLIC = ["/openapi.json", "/docs"];
+
+function isPublicPath(path: string) {
+  if (STARTS_WITH_PUBLIC.some((startsWith) => path.startsWith(startsWith)))
+    return true;
+  if (EXACT_MATCH_PUBLIC.some((exactMatch) => path === exactMatch)) return true;
+  return false;
+}
+
 export const authMiddleware = async (c: Context, next: Next) => {
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,
@@ -10,7 +20,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
   c.set("session", session?.session ?? null);
 
   // Allow auth endpoints and public paths
-  if (c.req.path.startsWith("/auth") || c.req.path.startsWith("/public")) {
+  if (isPublicPath(c.req.path)) {
     return next();
   }
 

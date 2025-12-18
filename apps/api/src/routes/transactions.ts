@@ -32,3 +32,5 @@ export const transactionsApp = new Hono()
 		zValidator("param", deleteTransactionParamsSchema),
 		deleteTransactionController,
 	);
+
+export type AppType = typeof transactionsApp;
