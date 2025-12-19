@@ -5,6 +5,7 @@ import { authMiddleware } from "~/middlewares/auth-middleware";
 import { corsMiddleware } from "~/middlewares/cors-middleware";
 import { accountsApp } from "~/routes/accounts";
 import { categoriesApp } from "~/routes/categories";
+import { meApp } from "~/routes/me";
 import { transactionsApp } from "~/routes/transactions";
 import type { AppVariables } from "~/types/app";
 
@@ -26,7 +27,8 @@ export const app = new Hono<{ Variables: AppVariables }>()
   // Domain routes (all protected by default)
   .route("/accounts", accountsApp)
   .route("/transactions", transactionsApp)
-  .route("/categories", categoriesApp);
+  .route("/categories", categoriesApp)
+  .route("/me", meApp);
 
 export default {
   port: 8000,

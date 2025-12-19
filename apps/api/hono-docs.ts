@@ -97,5 +97,24 @@ export default defineConfig({
         },
       ],
     },
+    {
+      name: "Me",
+      apiPrefix: "/me",
+      appTypePath: "src/routes/me.ts",
+      api: [
+        {
+          api: "/",
+          method: "get",
+          summary: "Get current user",
+          description: "Retrieve the authenticated user's profile information",
+        },
+        {
+          api: "/",
+          method: "patch",
+          summary: "Update current user",
+          description: "Update the authenticated user's first name and last name",
+        },
+      ],
+    },
   ],
 });

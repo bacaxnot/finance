@@ -54,6 +54,18 @@ export class User extends AggregateRoot {
     return `${this.firstName.value} ${this.lastName.value}`;
   }
 
+  update(params: { firstName?: string; lastName?: string }): void {
+    const now = new Date();
+    if (params.firstName) {
+      this.firstName = new PersonName(params.firstName);
+      this.updatedAt = now;
+    }
+    if (params.lastName) {
+      this.lastName = new PersonName(params.lastName);
+      this.updatedAt = now;
+    }
+  }
+
   toPrimitives(): UserPrimitives {
     return {
       id: this.id.value,
