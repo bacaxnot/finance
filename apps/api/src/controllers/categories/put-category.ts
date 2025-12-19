@@ -14,6 +14,10 @@ export const putCategoryBodySchema = z.object({
   name: z.string().min(1),
 });
 
+/**
+ * @summary Upsert category
+ * @description Add new category with specific ID
+ */
 export const putCategoryHandlers = factory.createHandlers(
   zValidator("param", putCategoryParamsSchema),
   zValidator("json", putCategoryBodySchema),

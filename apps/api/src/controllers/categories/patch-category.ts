@@ -18,6 +18,10 @@ export const patchCategoryBodySchema = z.object({
   name: z.string().min(1),
 });
 
+/**
+ * @summary Update category
+ * @description Modify category name
+ */
 export const patchCategoryHandlers = factory.createHandlers(
   zValidator("param", patchCategoryParamsSchema),
   zValidator("json", patchCategoryBodySchema),

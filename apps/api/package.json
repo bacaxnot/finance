@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "docs": "hono-docs generate --config ./hono-docs.ts"
+    "docs": "hono-auto-docs generate --config ./hono-docs.ts"
   },
   "exports": {
     "./rpc": {
@@ -22,7 +22,7 @@
     "zod": "4.1.13"
   },
   "devDependencies": {
-    "@rcmade/hono-docs": "^1.0.31",
+    "@bacaxnot/hono-auto-docs": "^0.1.1",
     "@types/bun": "latest"
   }
 }

@@ -14,6 +14,10 @@ export const deleteCategoryParamsSchema = z.object({
   id: z.uuid(),
 });
 
+/**
+ * @summary Delete category
+ * @description Remove specific category
+ */
 export const deleteCategoryHandlers = factory.createHandlers(
   zValidator("param", deleteCategoryParamsSchema),
   async (c) => {

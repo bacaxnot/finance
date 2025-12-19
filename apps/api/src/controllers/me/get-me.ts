@@ -4,6 +4,10 @@ import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";
 
+/**
+ * @summary Get user
+ * @description Retrieve user profile information
+ */
 export const getMeHandlers = factory.createHandlers(async (c) => {
   try {
     const useCase = container.get(FindUser);

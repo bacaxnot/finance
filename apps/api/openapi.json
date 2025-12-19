@@ -12,22 +12,244 @@
   ],
   "tags": [
     {
-      "name": "Accounts"
+      "name": "Me"
+    },
+    {
+      "name": "Transaction Categories"
     },
     {
       "name": "Transactions"
     },
     {
-      "name": "Categories"
-    },
-    {
-      "name": "Me"
+      "name": "Accounts"
     }
   ],
   "paths": {
-    "/accounts": {
+    "/me": {
       "get": {
-        "summary": "List all accounts",
+        "summary": "Get user",
+        "responses": {
+          "200": {
+            "description": "Status 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Status 400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "object",
+                          "properties": {}
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "description",
+                        "data"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Status 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "type",
+                        "description",
+                        "data"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "description": "Retrieve user profile information",
+        "tags": [
+          "Me"
+        ]
+      },
+      "patch": {
+        "summary": "Update user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "lastName": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Status 204",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Status 400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "object",
+                          "properties": {}
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "description",
+                        "data"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Status 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "data": {}
+                      },
+                      "required": [
+                        "type",
+                        "description",
+                        "data"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "description": "Update user profile information",
+        "tags": [
+          "Me"
+        ]
+      }
+    },
+    "/categories": {
+      "get": {
+        "summary": "List categories",
         "responses": {
           "200": {
             "description": "Status 200",
@@ -44,41 +266,11 @@
                           "id": {
                             "type": "string"
                           },
-                          "name": {
-                            "type": "string"
-                          },
                           "userId": {
                             "type": "string"
                           },
-                          "initialBalance": {
-                            "type": "object",
-                            "properties": {
-                              "amount": {
-                                "type": "number"
-                              },
-                              "currency": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "amount",
-                              "currency"
-                            ]
-                          },
-                          "currentBalance": {
-                            "type": "object",
-                            "properties": {
-                              "amount": {
-                                "type": "number"
-                              },
-                              "currency": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "amount",
-                              "currency"
-                            ]
+                          "name": {
+                            "type": "string"
                           },
                           "createdAt": {
                             "type": "string"
@@ -89,10 +281,8 @@
                         },
                         "required": [
                           "id",
-                          "name",
                           "userId",
-                          "initialBalance",
-                          "currentBalance",
+                          "name",
                           "createdAt",
                           "updatedAt"
                         ]
@@ -174,15 +364,15 @@
             }
           }
         },
-        "description": "Retrieve all financial accounts for the authenticated user",
+        "description": "Retrieve user's categories",
         "tags": [
-          "Accounts"
+          "Transaction Categories"
         ]
       }
     },
-    "/accounts/{id}": {
+    "/categories/{id}": {
       "put": {
-        "summary": "Upsert account",
+        "summary": "Upsert category",
         "parameters": [
           {
             "name": "id",
@@ -202,18 +392,10 @@
                 "properties": {
                   "name": {
                     "type": "string"
-                  },
-                  "currency": {
-                    "type": "string"
-                  },
-                  "initialBalance": {
-                    "type": "number"
                   }
                 },
                 "required": [
-                  "name",
-                  "currency",
-                  "initialBalance"
+                  "name"
                 ]
               }
             }
@@ -296,13 +478,13 @@
             }
           }
         },
-        "description": "Upsert a financial account with a specific ID",
+        "description": "Add new category with specific ID",
         "tags": [
-          "Accounts"
+          "Transaction Categories"
         ]
       },
       "patch": {
-        "summary": "Update account",
+        "summary": "Update category",
         "parameters": [
           {
             "name": "id",
@@ -408,13 +590,13 @@
             }
           }
         },
-        "description": "Update an existing account by ID",
+        "description": "Modify category name",
         "tags": [
-          "Accounts"
+          "Transaction Categories"
         ]
       },
       "delete": {
-        "summary": "Delete account",
+        "summary": "Delete category",
         "parameters": [
           {
             "name": "id",
@@ -502,9 +684,9 @@
             }
           }
         },
-        "description": "Delete an account by ID (including all associated transactions)",
+        "description": "Remove specific category",
         "tags": [
-          "Accounts"
+          "Transaction Categories"
         ]
       }
     },
@@ -687,7 +869,7 @@
             }
           }
         },
-        "description": "Retrieve transactions for the authenticated user, optionally filtered by account",
+        "description": "Retrieve transactions by account or all accounts",
         "tags": [
           "Transactions"
         ]
@@ -841,7 +1023,7 @@
             }
           }
         },
-        "description": "Upsert a new transaction with a specific ID",
+        "description": "Create transaction with detailed financial information",
         "tags": [
           "Transactions"
         ]
@@ -997,7 +1179,7 @@
             }
           }
         },
-        "description": "Update an existing transaction by ID",
+        "description": "Modify transaction details partially",
         "tags": [
           "Transactions"
         ]
@@ -1091,15 +1273,15 @@
             }
           }
         },
-        "description": "Delete a transaction by ID",
+        "description": "Remove transaction permanently",
         "tags": [
           "Transactions"
         ]
       }
     },
-    "/categories": {
+    "/accounts": {
       "get": {
-        "summary": "List categories",
+        "summary": "List accounts",
         "responses": {
           "200": {
             "description": "Status 200",
@@ -1116,11 +1298,41 @@
                           "id": {
                             "type": "string"
                           },
+                          "name": {
+                            "type": "string"
+                          },
                           "userId": {
                             "type": "string"
                           },
-                          "name": {
-                            "type": "string"
+                          "initialBalance": {
+                            "type": "object",
+                            "properties": {
+                              "amount": {
+                                "type": "number"
+                              },
+                              "currency": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amount",
+                              "currency"
+                            ]
+                          },
+                          "currentBalance": {
+                            "type": "object",
+                            "properties": {
+                              "amount": {
+                                "type": "number"
+                              },
+                              "currency": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amount",
+                              "currency"
+                            ]
                           },
                           "createdAt": {
                             "type": "string"
@@ -1131,8 +1343,10 @@
                         },
                         "required": [
                           "id",
-                          "userId",
                           "name",
+                          "userId",
+                          "initialBalance",
+                          "currentBalance",
                           "createdAt",
                           "updatedAt"
                         ]
@@ -1214,15 +1428,15 @@
             }
           }
         },
-        "description": "Retrieve all categories for the authenticated user",
+        "description": "Retrieve user accounts with balances",
         "tags": [
-          "Categories"
+          "Accounts"
         ]
       }
     },
-    "/categories/{id}": {
+    "/accounts/{id}": {
       "put": {
-        "summary": "Upsert category",
+        "summary": "Upsert account",
         "parameters": [
           {
             "name": "id",
@@ -1242,10 +1456,18 @@
                 "properties": {
                   "name": {
                     "type": "string"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "initialBalance": {
+                    "type": "number"
                   }
                 },
                 "required": [
-                  "name"
+                  "name",
+                  "currency",
+                  "initialBalance"
                 ]
               }
             }
@@ -1328,13 +1550,13 @@
             }
           }
         },
-        "description": "Upsert a new transaction category with a specific ID",
+        "description": "Add new account with balance and currency",
         "tags": [
-          "Categories"
+          "Accounts"
         ]
       },
       "patch": {
-        "summary": "Update category",
+        "summary": "Update account",
         "parameters": [
           {
             "name": "id",
@@ -1440,13 +1662,13 @@
             }
           }
         },
-        "description": "Update an existing category by ID",
+        "description": "Change name of account",
         "tags": [
-          "Categories"
+          "Accounts"
         ]
       },
       "delete": {
-        "summary": "Delete category",
+        "summary": "Delete account",
         "parameters": [
           {
             "name": "id",
@@ -1534,231 +1756,9 @@
             }
           }
         },
-        "description": "Delete a category by ID",
+        "description": "Remove account permanently",
         "tags": [
-          "Categories"
-        ]
-      }
-    },
-    "/me": {
-      "get": {
-        "summary": "Get current user",
-        "responses": {
-          "200": {
-            "description": "Status 200",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "firstName": {
-                      "type": "string"
-                    },
-                    "lastName": {
-                      "type": "string"
-                    },
-                    "createdAt": {
-                      "type": "string"
-                    },
-                    "updatedAt": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "firstName",
-                    "lastName",
-                    "createdAt",
-                    "updatedAt"
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Status 400",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string"
-                        },
-                        "description": {
-                          "type": "string"
-                        },
-                        "data": {
-                          "type": "object",
-                          "properties": {}
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "description",
-                        "data"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Status 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string"
-                        },
-                        "description": {
-                          "type": "string"
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "type",
-                        "description",
-                        "data"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "description": "Retrieve the authenticated user's profile information",
-        "tags": [
-          "Me"
-        ]
-      },
-      "patch": {
-        "summary": "Update current user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "firstName": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      }
-                    ]
-                  },
-                  "lastName": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Status 204",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "400": {
-            "description": "Status 400",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string"
-                        },
-                        "description": {
-                          "type": "string"
-                        },
-                        "data": {
-                          "type": "object",
-                          "properties": {}
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "description",
-                        "data"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Status 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string"
-                        },
-                        "description": {
-                          "type": "string"
-                        },
-                        "data": {}
-                      },
-                      "required": [
-                        "type",
-                        "description",
-                        "data"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "description": "Update the authenticated user's first name and last name",
-        "tags": [
-          "Me"
+          "Accounts"
         ]
       }
     }

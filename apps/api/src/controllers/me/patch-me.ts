@@ -15,6 +15,10 @@ export const patchMeBodySchema = z.object({
   lastName: z.string().min(1).optional(),
 });
 
+/**
+ * @summary Update user
+ * @description Update user profile information
+ */
 export const patchMeHandlers = factory.createHandlers(
   zValidator("json", patchMeBodySchema),
   async (c) => {

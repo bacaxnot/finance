@@ -16,6 +16,11 @@ export const putAccountBodySchema = z.object({
   initialBalance: z.number(),
 });
 
+/**
+ * @summary Upsert account
+ * @description Add new account with balance and currency
+ * @tags Accounts
+ */
 export const putAccountHandlers = factory.createHandlers(
   zValidator("param", putAccountParamsSchema),
   zValidator("json", putAccountBodySchema),

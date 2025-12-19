@@ -14,6 +14,10 @@ export const deleteAccountParamsSchema = z.object({
   id: z.uuid(),
 });
 
+/**
+ * @summary Delete account
+ * @description Remove account permanently
+ */
 export const deleteAccountHandlers = factory.createHandlers(
   zValidator("param", deleteAccountParamsSchema),
   async (c) => {

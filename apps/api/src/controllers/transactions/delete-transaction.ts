@@ -14,6 +14,10 @@ export const deleteTransactionParamsSchema = z.object({
   id: z.uuid(),
 });
 
+/**
+ * @summary Delete transaction
+ * @description Remove transaction permanently
+ */
 export const deleteTransactionHandlers = factory.createHandlers(
   zValidator("param", deleteTransactionParamsSchema),
   async (c) => {

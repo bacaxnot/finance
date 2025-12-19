@@ -18,6 +18,10 @@ export const patchAccountBodySchema = z.object({
   name: z.string().min(1),
 });
 
+/**
+ * @summary Update account
+ * @description Change name of account
+ */
 export const patchAccountHandlers = factory.createHandlers(
   zValidator("param", patchAccountParamsSchema),
   zValidator("json", patchAccountBodySchema),

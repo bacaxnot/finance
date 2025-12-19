@@ -24,6 +24,10 @@ export const patchTransactionBodySchema = z.object({
   categoryId: z.uuid().nullable().optional(),
 });
 
+/**
+ * @summary Update transaction
+ * @description Modify transaction details partially
+ */
 export const patchTransactionHandlers = factory.createHandlers(
   zValidator("param", patchTransactionParamsSchema),
   zValidator("json", patchTransactionBodySchema),

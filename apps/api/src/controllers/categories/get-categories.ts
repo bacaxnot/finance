@@ -4,6 +4,10 @@ import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";
 
+/**
+ * @summary List categories
+ * @description Retrieve user's categories
+ */
 export const getCategoriesHandlers = factory.createHandlers(async (c) => {
   try {
     const useCase = container.get(SearchCategoriesByUser);

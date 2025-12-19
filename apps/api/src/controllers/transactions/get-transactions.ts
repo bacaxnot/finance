@@ -11,6 +11,10 @@ export const getTransactionsSchema = z.object({
   accountId: z.uuid().optional(),
 });
 
+/**
+ * @summary List transactions
+ * @description Retrieve transactions by account or all accounts
+ */
 export const getTransactionsHandlers = factory.createHandlers(
   zValidator("query", getTransactionsSchema),
   async (c) => {

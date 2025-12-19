@@ -4,6 +4,10 @@ import { getTransactionsHandlers } from "~/controllers/transactions/get-transact
 import { patchTransactionHandlers } from "~/controllers/transactions/patch-transaction";
 import { putTransactionHandlers } from "~/controllers/transactions/put-transaction";
 
+/**
+ * @name Transactions
+ * @description Endpoints for managing financial transactions
+ */
 export const transactionsApp = new Hono()
   .get("/", ...getTransactionsHandlers)
   .put("/:id", ...putTransactionHandlers)

@@ -4,6 +4,11 @@ import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";
 
+/**
+ * @summary List accounts
+ * @description Retrieve user accounts with balances
+ * @tags Accounts
+ */
 export const getAccountsHandlers = factory.createHandlers(async (c) => {
   try {
     const useCase = container.get(SearchAccountsByUser);

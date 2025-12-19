@@ -21,6 +21,10 @@ export const putTransactionBodySchema = z.object({
   notes: z.string().nullable(),
 });
 
+/**
+ * @summary Upsert transaction
+ * @description Create transaction with detailed financial information
+ */
 export const putTransactionHandlers = factory.createHandlers(
   zValidator("param", putTransactionParamsSchema),
   zValidator("json", putTransactionBodySchema),
