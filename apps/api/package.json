@@ -22,7 +22,7 @@
     "zod": "4.1.13"
   },
   "devDependencies": {
-    "@bacaxnot/hono-auto-docs": "^0.1.2",
+    "hono-auto-docs": "^0.1.2",
     "@types/bun": "latest"
   }
 }
