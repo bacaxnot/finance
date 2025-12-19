@@ -6,7 +6,7 @@ import { putCategoryHandlers } from "~/controllers/categories/put-category";
 
 export const categoriesApp = new Hono()
   .get("/", ...getCategoriesHandlers)
-  .put("/", ...putCategoryHandlers)
+  .put("/:id", ...putCategoryHandlers)
   .patch("/:id", ...patchCategoryHandlers)
   .delete("/:id", ...deleteCategoryHandlers);
 

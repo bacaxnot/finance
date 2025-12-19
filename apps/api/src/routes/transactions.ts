@@ -6,7 +6,7 @@ import { putTransactionHandlers } from "~/controllers/transactions/put-transacti
 
 export const transactionsApp = new Hono()
   .get("/", ...getTransactionsHandlers)
-  .put("/", ...putTransactionHandlers)
+  .put("/:id", ...putTransactionHandlers)
   .patch("/:id", ...patchTransactionHandlers)
   .delete("/:id", ...deleteTransactionHandlers);
 

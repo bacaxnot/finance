@@ -4,6 +4,6 @@ import { putAccountHandlers } from "~/controllers/accounts/put-account";
 
 export const accountsApp = new Hono()
 	.get("/", ...getAccountsHandlers)
-	.put("/", ...putAccountHandlers);
+	.put("/:id", ...putAccountHandlers);
 
 export type AppType = typeof accountsApp;

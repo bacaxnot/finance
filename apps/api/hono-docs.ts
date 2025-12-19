@@ -7,7 +7,8 @@ export default defineConfig({
     info: {
       title: "Finance API",
       version: "1.0.0",
-      description: "API for managing personal finance accounts, transactions, and categories",
+      description:
+        "API for managing personal finance accounts, transactions, and categories",
     },
     servers: [{ url: "http://localhost:8000" }],
   },
@@ -24,13 +25,14 @@ export default defineConfig({
           api: "/",
           method: "get",
           summary: "List all accounts",
-          description: "Retrieve all financial accounts for the authenticated user",
+          description:
+            "Retrieve all financial accounts for the authenticated user",
         },
         {
-          api: "/",
+          api: "/{id}",
           method: "put",
-          summary: "Create account",
-          description: "Create a new financial account",
+          summary: "Upsert account",
+          description: "Upsert a financial account with a specific ID",
         },
       ],
     },
@@ -47,10 +49,10 @@ export default defineConfig({
             "Retrieve transactions for the authenticated user, optionally filtered by account",
         },
         {
-          api: "/",
+          api: "/{id}",
           method: "put",
-          summary: "Create transaction",
-          description: "Create a new transaction",
+          summary: "Upsert transaction",
+          description: "Upsert a new transaction with a specific ID",
         },
         {
           api: "/{id}",
@@ -78,10 +80,10 @@ export default defineConfig({
           description: "Retrieve all categories for the authenticated user",
         },
         {
-          api: "/",
+          api: "/{id}",
           method: "put",
-          summary: "Create category",
-          description: "Create a new transaction category",
+          summary: "Upsert category",
+          description: "Upsert a new transaction category with a specific ID",
         },
         {
           api: "/{id}",
@@ -112,7 +114,8 @@ export default defineConfig({
           api: "/",
           method: "patch",
           summary: "Update current user",
-          description: "Update the authenticated user's first name and last name",
+          description:
+            "Update the authenticated user's first name and last name",
         },
       ],
     },

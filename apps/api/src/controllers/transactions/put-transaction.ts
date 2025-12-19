@@ -6,8 +6,11 @@ import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { created, domainError, internalServerError } from "~/lib/http-response";
 
-export const putTransactionSchema = z.object({
+export const putTransactionParamsSchema = z.object({
   id: z.uuid(),
+});
+
+export const putTransactionBodySchema = z.object({
   accountId: z.uuid(),
   categoryId: z.uuid().nullable(),
   amount: z.number(),
@@ -19,15 +22,17 @@ export const putTransactionSchema = z.object({
 });
 
 export const putTransactionHandlers = factory.createHandlers(
-  zValidator("json", putTransactionSchema),
+  zValidator("param", putTransactionParamsSchema),
+  zValidator("json", putTransactionBodySchema),
   async (c) => {
     try {
       const useCase = container.get(CreateTransactionUseCase);
+      const params = c.req.valid("param");
       const body = c.req.valid("json");
       const user = c.get("user");
 
       await useCase.execute({
-        id: body.id,
+        id: params.id,
         userId: user.id,
         accountId: body.accountId,
         categoryId: body.categoryId || null,

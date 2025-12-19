@@ -178,9 +178,21 @@
         "tags": [
           "Accounts"
         ]
-      },
+      }
+    },
+    "/accounts/{id}": {
       "put": {
-        "summary": "Create account",
+        "summary": "Upsert account",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -188,9 +200,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -202,7 +211,6 @@
                   }
                 },
                 "required": [
-                  "id",
                   "name",
                   "currency",
                   "initialBalance"
@@ -288,7 +296,7 @@
             }
           }
         },
-        "description": "Create a new financial account",
+        "description": "Upsert a financial account with a specific ID",
         "tags": [
           "Accounts"
         ]
@@ -477,9 +485,21 @@
         "tags": [
           "Transactions"
         ]
-      },
+      }
+    },
+    "/transactions/{id}": {
       "put": {
-        "summary": "Create transaction",
+        "summary": "Upsert transaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -487,9 +507,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "type": "string"
-                  },
                   "accountId": {
                     "type": "string"
                   },
@@ -528,7 +545,6 @@
                   }
                 },
                 "required": [
-                  "id",
                   "accountId",
                   "categoryId",
                   "amount",
@@ -619,13 +635,11 @@
             }
           }
         },
-        "description": "Create a new transaction",
+        "description": "Upsert a new transaction with a specific ID",
         "tags": [
           "Transactions"
         ]
-      }
-    },
-    "/transactions/{id}": {
+      },
       "patch": {
         "summary": "Update transaction",
         "parameters": [
@@ -998,9 +1012,21 @@
         "tags": [
           "Categories"
         ]
-      },
+      }
+    },
+    "/categories/{id}": {
       "put": {
-        "summary": "Create category",
+        "summary": "Upsert category",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1008,15 +1034,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "id",
                   "name"
                 ]
               }
@@ -1100,13 +1122,11 @@
             }
           }
         },
-        "description": "Create a new transaction category",
+        "description": "Upsert a new transaction category with a specific ID",
         "tags": [
           "Categories"
         ]
-      }
-    },
-    "/categories/{id}": {
+      },
       "patch": {
         "summary": "Update category",
         "parameters": [
