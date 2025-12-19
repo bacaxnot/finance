@@ -1,36 +1,13 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import {
-	deleteTransactionController,
-	deleteTransactionParamsSchema,
-} from "~/controllers/transactions/delete-transaction";
-import {
-	getTransactionsController,
-	getTransactionsSchema,
-} from "~/controllers/transactions/get-transactions";
-import {
-	patchTransactionBodySchema,
-	patchTransactionController,
-	patchTransactionParamsSchema,
-} from "~/controllers/transactions/patch-transaction";
-import {
-	putTransactionController,
-	putTransactionSchema,
-} from "~/controllers/transactions/put-transaction";
+import { deleteTransactionHandlers } from "~/controllers/transactions/delete-transaction";
+import { getTransactionsHandlers } from "~/controllers/transactions/get-transactions";
+import { patchTransactionHandlers } from "~/controllers/transactions/patch-transaction";
+import { putTransactionHandlers } from "~/controllers/transactions/put-transaction";
 
 export const transactionsApp = new Hono()
-	.get("/", zValidator("query", getTransactionsSchema), getTransactionsController)
-	.put("/", zValidator("json", putTransactionSchema), putTransactionController)
-	.patch(
-		"/:id",
-		zValidator("param", patchTransactionParamsSchema),
-		zValidator("json", patchTransactionBodySchema),
-		patchTransactionController,
-	)
-	.delete(
-		"/:id",
-		zValidator("param", deleteTransactionParamsSchema),
-		deleteTransactionController,
-	);
+  .get("/", ...getTransactionsHandlers)
+  .put("/", ...putTransactionHandlers)
+  .patch("/:id", ...patchTransactionHandlers)
+  .delete("/:id", ...deleteTransactionHandlers);
 
 export type AppType = typeof transactionsApp;

@@ -185,7 +185,29 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {}
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "initialBalance": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "currency",
+                  "initialBalance"
+                ]
+              }
             }
           }
         },
@@ -275,6 +297,20 @@
     "/transactions": {
       "get": {
         "summary": "List transactions",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Status 200",
@@ -448,7 +484,61 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {}
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "accountId": {
+                    "type": "string"
+                  },
+                  "categoryId": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "amount": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "direction": {
+                    "type": "string",
+                    "enum": [
+                      "inbound",
+                      "outbound"
+                    ]
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "transactionDate": {
+                    "type": "string"
+                  },
+                  "notes": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "accountId",
+                  "categoryId",
+                  "amount",
+                  "currency",
+                  "direction",
+                  "description",
+                  "transactionDate",
+                  "notes"
+                ]
+              }
             }
           }
         },
@@ -538,11 +628,75 @@
     "/transactions/{id}": {
       "patch": {
         "summary": "Update transaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {}
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      }
+                    ]
+                  },
+                  "currency": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "direction": {
+                    "type": "string",
+                    "enum": [
+                      "inbound",
+                      "outbound"
+                    ],
+                    "nullable": true
+                  },
+                  "description": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "transactionDate": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "notes": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "categoryId": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         },
@@ -630,6 +784,16 @@
       },
       "delete": {
         "summary": "Delete transaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "Status 204",
@@ -841,7 +1005,21 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {}
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name"
+                ]
+              }
             }
           }
         },
@@ -931,11 +1109,31 @@
     "/categories/{id}": {
       "patch": {
         "summary": "Update category",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {}
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
             }
           }
         },
@@ -1023,6 +1221,16 @@
       },
       "delete": {
         "summary": "Delete category",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "Status 204",

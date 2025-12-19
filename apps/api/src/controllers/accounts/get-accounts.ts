@@ -1,13 +1,10 @@
 import { DomainError } from "@repo/core/_shared/domain/domain-error";
 import { SearchAccountsByUser } from "@repo/core/accounts/application/search-accounts-by-user";
-import type { Context } from "hono";
 import { container } from "~/di";
+import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";
-import type { ProtectedVariables } from "~/types/app";
 
-export type GetAccountsCtx = Context<{ Variables: ProtectedVariables }, "/">;
-
-export const getAccountsController = async (c: GetAccountsCtx) => {
+export const getAccountsHandlers = factory.createHandlers(async (c) => {
   try {
     const useCase = container.get(SearchAccountsByUser);
     const user = c.get("user");
@@ -22,4 +19,4 @@ export const getAccountsController = async (c: GetAccountsCtx) => {
 
     return internalServerError(c);
   }
-};
+});
