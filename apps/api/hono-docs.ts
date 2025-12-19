@@ -34,6 +34,18 @@ export default defineConfig({
           summary: "Upsert account",
           description: "Upsert a financial account with a specific ID",
         },
+        {
+          api: "/{id}",
+          method: "patch",
+          summary: "Update account",
+          description: "Update an existing account by ID",
+        },
+        {
+          api: "/{id}",
+          method: "delete",
+          summary: "Delete account",
+          description: "Delete an account by ID (including all associated transactions)",
+        },
       ],
     },
     {

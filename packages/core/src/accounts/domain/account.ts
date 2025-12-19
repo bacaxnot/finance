@@ -112,6 +112,11 @@ export class Account extends AggregateRoot {
     this.updatedAt = new Date();
   }
 
+  update(name: string): void {
+    this.name = new AccountName(name);
+    this.updatedAt = new Date();
+  }
+
   toPrimitives(): AccountPrimitives {
     return {
       id: this.id.value,
