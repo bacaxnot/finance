@@ -1,5 +1,5 @@
-import type { AccountId } from "~/accounts/domain/account-id";
-import type { UserId } from "~/users/domain/user-id";
+import type { AccountId } from "../../accounts/domain/account-id";
+import type { UserId } from "../../users/domain/user-id";
 import type { Transaction } from "./transaction";
 import type { TransactionId } from "./transaction-id";
 

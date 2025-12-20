@@ -1,4 +1,4 @@
-import { DomainError } from "~/_shared/domain/domain-error";
+import { DomainError } from "../../_shared/domain/domain-error";
 
 export class CategoryDoesNotExistError extends DomainError {
   readonly type = "CategoryDoesNotExistError";

@@ -1,12 +1,12 @@
-import { AggregateRoot } from "~/_shared/domain/aggregate-root";
-import { Money } from "~/_shared/domain/money";
+import { AggregateRoot } from "../../_shared/domain/aggregate-root";
+import { Money } from "../../_shared/domain/money";
 import {
 	dateFromPrimitive,
 	dateToPrimitive,
-} from "~/_shared/domain/primitives";
-import { AccountId } from "~/accounts/domain/account-id";
-import { CategoryId } from "~/categories/domain/category-id";
-import { UserId } from "~/users/domain/user-id";
+} from "../../_shared/domain/primitives";
+import { AccountId } from "../../accounts/domain/account-id";
+import { CategoryId } from "../../categories/domain/category-id";
+import { UserId } from "../../users/domain/user-id";
 import { TransactionDate } from "./transaction-date";
 import { TransactionDescription } from "./transaction-description";
 import {

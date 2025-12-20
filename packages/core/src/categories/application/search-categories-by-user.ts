@@ -1,4 +1,4 @@
-import { UserId } from "~/users/domain/user-id";
+import { UserId } from "../../users/domain/user-id";
 import type { CategoryPrimitives } from "../domain/category";
 import type { CategoryRepository } from "../domain/category-repository";
 

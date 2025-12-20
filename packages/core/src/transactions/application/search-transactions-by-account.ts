@@ -1,4 +1,4 @@
-import { AccountId } from "~/accounts/domain/account-id";
+import { AccountId } from "../../accounts/domain/account-id";
 import type { TransactionPrimitives } from "../domain/transaction";
 import type { TransactionRepository } from "../domain/transaction-repository";
 

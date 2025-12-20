@@ -1,8 +1,8 @@
 import { eq } from "@repo/db/orm";
 import { categories } from "@repo/db/schema";
-import { dateToPrimitive } from "~/_shared/domain/primitives";
-import { DrizzlePostgresRepository } from "~/_shared/infrastructure/drizzle-postgres-repository";
-import type { UserId } from "~/users/domain/user-id";
+import { dateToPrimitive } from "../../_shared/domain/primitives";
+import { DrizzlePostgresRepository } from "../../_shared/infrastructure/drizzle-postgres-repository";
+import type { UserId } from "../../users/domain/user-id";
 import { Category } from "../domain/category";
 import type { CategoryId } from "../domain/category-id";
 import type { CategoryRepository } from "../domain/category-repository";

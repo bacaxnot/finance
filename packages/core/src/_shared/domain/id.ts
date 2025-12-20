@@ -1,4 +1,4 @@
-import { generateUuid, validateUuid } from "~/utils";
+import { generateUuid, validateUuid } from "../../utils";
 import { InvalidArgumentError } from "./domain-error";
 
 export class Id {

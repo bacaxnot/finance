@@ -1,12 +1,12 @@
-import { AggregateRoot } from "~/_shared/domain/aggregate-root";
-import { Money } from "~/_shared/domain/money";
+import { AggregateRoot } from "../../_shared/domain/aggregate-root";
+import { Money } from "../../_shared/domain/money";
 import {
   dateFromPrimitive,
   dateToPrimitive,
-} from "~/_shared/domain/primitives";
-import { AccountId } from "~/accounts/domain/account-id";
-import { AccountName } from "~/accounts/domain/account-name";
-import { UserId } from "~/users/domain/user-id";
+} from "../../_shared/domain/primitives";
+import { AccountId } from "./account-id";
+import { AccountName } from "./account-name";
+import { UserId } from "../../users/domain/user-id";
 
 export type AccountPrimitives = {
   id: string;

@@ -1,6 +1,6 @@
-import type { Account } from "~/accounts/domain/account";
-import type { AccountRepository } from "~/accounts/domain/account-repository";
-import type { FindAccount } from "~/accounts/domain/find-account";
+import type { Account } from "../../accounts/domain/account";
+import type { AccountRepository } from "../../accounts/domain/account-repository";
+import type { FindAccount } from "../../accounts/domain/find-account";
 import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
 import type { FindTransaction } from "../domain/find-transaction";
 import type {

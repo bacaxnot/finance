@@ -1,5 +1,5 @@
-import type { AccountRepository } from "~/accounts/domain/account-repository";
-import { UserId } from "~/users/domain/user-id";
+import type { AccountRepository } from "../domain/account-repository";
+import { UserId } from "../../users/domain/user-id";
 import type { AccountPrimitives } from "../domain/account";
 
 export class SearchAccountsByUser {

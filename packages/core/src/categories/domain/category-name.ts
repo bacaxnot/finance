@@ -1,4 +1,4 @@
-import { InvalidArgumentError } from "~/_shared/domain/domain-error";
+import { InvalidArgumentError } from "../../_shared/domain/domain-error";
 
 const MAX_NAME_LENGTH = 50;
 

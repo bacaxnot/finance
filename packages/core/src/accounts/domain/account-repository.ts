@@ -1,4 +1,4 @@
-import type { UserId } from "~/users/domain/user-id";
+import type { UserId } from "../../users/domain/user-id";
 import type { Account } from "./account";
 import type { AccountId } from "./account-id";
 
