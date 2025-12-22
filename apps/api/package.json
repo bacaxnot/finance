@@ -3,8 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --hot src/index.ts & bun run build:rpc:watch",
-    "build:rpc": "tsup",
-    "build:rpc:watch": "tsup --watch",
+    "build:rpc": "tsdown",
+    "build:rpc:watch": "tsdown --watch",
     "docs": "hono-auto-docs generate --config ./hono-docs.ts"
   },
   "exports": {
@@ -26,6 +26,6 @@
   "devDependencies": {
     "@types/bun": "latest",
     "hono-auto-docs": "^0.1.2",
-    "tsup": "^8.5.1"
+    "tsdown": "^0.18.2"
   }
 }
