@@ -1,7 +1,7 @@
 import { InvalidArgumentError } from "../../../../shared/domain/domain-error";
 
 const MAX_NAME_LENGTH = 100;
-export class PersonName {
+export class UserFirstName {
   public readonly value: string;
 
   constructor(value: string) {
@@ -31,7 +31,7 @@ export class PersonName {
     );
   }
 
-  equals(other: PersonName): boolean {
+  equals(other: UserFirstName): boolean {
     return this.value === other.value;
   }
 }

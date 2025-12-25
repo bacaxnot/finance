@@ -3,8 +3,9 @@ import {
   dateFromPrimitive,
   dateToPrimitive,
 } from "../../../../shared/domain/primitives";
-import { PersonName } from "./person-name";
+import { UserFirstName } from "./user-first-name";
 import { UserId } from "./user-id";
+import { UserLastName } from "./user-last-name";
 
 export type UserPrimitives = {
   id: string;
@@ -17,8 +18,8 @@ export type UserPrimitives = {
 export class User extends AggregateRoot {
   private constructor(
     private readonly id: UserId,
-    private firstName: PersonName,
-    private lastName: PersonName,
+    private firstName: UserFirstName,
+    private lastName: UserLastName,
     private readonly createdAt: Date,
     private updatedAt: Date,
   ) {
@@ -43,8 +44,8 @@ export class User extends AggregateRoot {
   static fromPrimitives(primitives: UserPrimitives): User {
     return new User(
       new UserId(primitives.id),
-      new PersonName(primitives.firstName),
-      new PersonName(primitives.lastName),
+      new UserFirstName(primitives.firstName),
+      new UserLastName(primitives.lastName),
       dateFromPrimitive(primitives.createdAt),
       dateFromPrimitive(primitives.updatedAt),
     );
@@ -57,11 +58,11 @@ export class User extends AggregateRoot {
   update(params: { firstName?: string; lastName?: string }): void {
     const now = new Date();
     if (params.firstName) {
-      this.firstName = new PersonName(params.firstName);
+      this.firstName = new UserFirstName(params.firstName);
       this.updatedAt = now;
     }
     if (params.lastName) {
-      this.lastName = new PersonName(params.lastName);
+      this.lastName = new UserLastName(params.lastName);
       this.updatedAt = now;
     }
   }
