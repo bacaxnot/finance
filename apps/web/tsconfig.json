@@ -28,12 +28,6 @@
       ]
     }
   },
-  "references": [
-    // this allows for the type checking of the rpc client
-    {
-      "path": "../api/tsconfig.json"
-    }
-  ],
   "include": [
     "next-env.d.ts",
     "**/*.ts",

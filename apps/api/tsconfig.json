@@ -2,11 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "strict": true,
-    // from here
-    "composite": true,
-    "noEmit": false,
-    "emitDeclarationOnly": true,
-    // to here: this allows for the type checking of the rpc client
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "baseUrl": ".",
