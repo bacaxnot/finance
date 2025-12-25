@@ -1,5 +1,5 @@
-import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { SearchCategoriesByUser } from "@repo/core/categories/application/search-categories-by-user";
+import { SearchCategoriesByUser } from "@repo/core/ledger/categories/application/search-categories-by-user";
+import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";

@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
-import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { DeleteAccountUseCase } from "@repo/core/accounts/application/delete-account";
+import { DeleteAccountUseCase } from "@repo/core/ledger/accounts/application/delete-account";
+import { DomainError } from "@repo/core/ledger/shared/domain/domain-error";
 import { z } from "zod";
 import { container } from "~/di";
 import { factory } from "~/lib/factory";

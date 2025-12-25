@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
-import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { UpdateCategoryUseCase } from "@repo/core/categories/application/update-category";
+import { UpdateCategoryUseCase } from "@repo/core/ledger/categories/application/update-category";
+import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { container } from "~/di";
 import { factory } from "~/lib/factory";

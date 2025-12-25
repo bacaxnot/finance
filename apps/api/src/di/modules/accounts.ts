@@ -1,10 +1,10 @@
-import { CreateAccount } from "@repo/core/accounts/application/create-account";
-import { DeleteAccountUseCase } from "@repo/core/accounts/application/delete-account";
-import { SearchAccountsByUser } from "@repo/core/accounts/application/search-accounts-by-user";
-import { UpdateAccountUseCase } from "@repo/core/accounts/application/update-account";
-import { AccountRepository } from "@repo/core/accounts/domain/account-repository";
-import { FindAccount } from "@repo/core/accounts/domain/find-account";
-import { AccountRepositoryPostgres } from "@repo/core/accounts/infrastructure/account-repository.postgres";
+import { CreateAccount } from "@repo/core/ledger/accounts/application/create-account";
+import { DeleteAccountUseCase } from "@repo/core/ledger/accounts/application/delete-account";
+import { SearchAccountsByUser } from "@repo/core/ledger/accounts/application/search-accounts-by-user";
+import { UpdateAccountUseCase } from "@repo/core/ledger/accounts/application/update-account";
+import { AccountRepository } from "@repo/core/ledger/accounts/domain/account-repository";
+import { FindAccount } from "@repo/core/ledger/accounts/domain/find-account";
+import { AccountRepositoryPostgres } from "@repo/core/ledger/accounts/infrastructure/account-repository.postgres";
 import type { ContainerBuilder } from "diod";
 
 export function register(builder: ContainerBuilder) {

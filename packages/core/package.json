@@ -8,7 +8,9 @@
     "node": ">=20.0.0"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./shared/*": "./src/shared/*.ts",
+    "./ledger/*": "./src/contexts/ledger/*.ts",
+    "./utils": "./src/utils.ts"
   },
   "scripts": {
     "integration": "RUN_INTEGRATION_TESTS=1 bun test",

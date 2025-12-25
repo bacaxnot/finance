@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
-import { DomainError } from "@repo/core/_shared/domain/domain-error";
-import { UpdateUser } from "@repo/core/users/application/update-user";
+import { UpdateUser } from "@repo/core/ledger/users/application/update-user";
+import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { container } from "~/di";
 import { factory } from "~/lib/factory";

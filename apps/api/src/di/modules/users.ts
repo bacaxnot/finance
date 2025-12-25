@@ -1,7 +1,7 @@
-import { FindUser } from "@repo/core/users/application/find-user";
-import { UpdateUser } from "@repo/core/users/application/update-user";
-import { UserRepository } from "@repo/core/users/domain/user-repository";
-import { UserRepositoryPostgres } from "@repo/core/users/infrastructure/repository.user.postgres";
+import { FindUser } from "@repo/core/ledger/users/application/find-user";
+import { UpdateUser } from "@repo/core/ledger/users/application/update-user";
+import { UserRepository } from "@repo/core/ledger/users/domain/user-repository";
+import { UserRepositoryPostgres } from "@repo/core/ledger/users/infrastructure/repository.user.postgres";
 import type { ContainerBuilder } from "diod";
 
 export function register(builder: ContainerBuilder) {
