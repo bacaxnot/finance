@@ -1,4 +1,4 @@
-import { DomainError } from "../../_shared/domain/domain-error";
+import { DomainError } from "../../shared/domain/domain-error";
 
 export class TransactionDoesNotExistError extends DomainError {
   readonly type = "TransactionDoesNotExistError";

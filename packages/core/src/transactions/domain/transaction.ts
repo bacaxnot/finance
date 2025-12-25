@@ -1,42 +1,42 @@
-import { AggregateRoot } from "../../_shared/domain/aggregate-root";
-import { Money } from "../../_shared/domain/money";
-import {
-	dateFromPrimitive,
-	dateToPrimitive,
-} from "../../_shared/domain/primitives";
 import { AccountId } from "../../accounts/domain/account-id";
 import { CategoryId } from "../../categories/domain/category-id";
+import { AggregateRoot } from "../../shared/domain/aggregate-root";
+import { Money } from "../../shared/domain/money";
+import {
+  dateFromPrimitive,
+  dateToPrimitive,
+} from "../../shared/domain/primitives";
 import { UserId } from "../../users/domain/user-id";
 import { TransactionDate } from "./transaction-date";
 import { TransactionDescription } from "./transaction-description";
 import {
-	TransactionDirection,
-	type TransactionDirectionType,
+  TransactionDirection,
+  type TransactionDirectionType,
 } from "./transaction-direction";
 import { TransactionId } from "./transaction-id";
 
 export type TransactionPrimitives = {
-	id: string;
-	userId: string;
-	accountId: string;
-	categoryId: string | null;
-	amount: { amount: number; currency: string };
-	direction: TransactionDirectionType;
-	description: string;
-	date: string;
-	notes: string | null;
-	createdAt: string;
-	updatedAt: string;
+  id: string;
+  userId: string;
+  accountId: string;
+  categoryId: string | null;
+  amount: { amount: number; currency: string };
+  direction: TransactionDirectionType;
+  description: string;
+  date: string;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type UpdateTransactionPrimitives = Partial<{
-	categoryId: string | null;
-	amount: number;
-	currency: string;
-	direction: TransactionDirectionType;
-	description: string;
-	transactionDate: string;
-	notes: string | null;
+  categoryId: string | null;
+  amount: number;
+  currency: string;
+  direction: TransactionDirectionType;
+  description: string;
+  transactionDate: string;
+  notes: string | null;
 }>;
 
 export class Transaction extends AggregateRoot {

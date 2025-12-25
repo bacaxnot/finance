@@ -1,4 +1,4 @@
-import { v7 as uuidv7 } from "uuid";
+import { generateUuid } from "../../utils";
 
 export type DomainEventAttributes = { [key: string]: unknown };
 
@@ -19,7 +19,7 @@ export abstract class DomainEvent {
     eventId?: string,
     occurredOn?: Date,
   ) {
-    this.eventId = eventId ?? uuidv7();
+    this.eventId = eventId ?? generateUuid();
     this.occurredOn = occurredOn ?? new Date();
   }
 

@@ -1,4 +1,4 @@
-import { InvalidArgumentError } from "../../_shared/domain/domain-error";
+import { InvalidArgumentError } from "../../shared/domain/domain-error";
 
 const MAX_DESCRIPTION_LENGTH = 200;
 

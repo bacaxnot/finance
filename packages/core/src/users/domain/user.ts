@@ -1,8 +1,8 @@
-import { AggregateRoot } from "../../_shared/domain/aggregate-root";
+import { AggregateRoot } from "../../shared/domain/aggregate-root";
 import {
   dateFromPrimitive,
   dateToPrimitive,
-} from "../../_shared/domain/primitives";
+} from "../../shared/domain/primitives";
 import { PersonName } from "./person-name";
 import { UserId } from "./user-id";
 
