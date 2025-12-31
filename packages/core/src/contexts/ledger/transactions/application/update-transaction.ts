@@ -1,94 +1,65 @@
-import type { Account } from "../../accounts/domain/account";
-import type { AccountRepository } from "../../accounts/domain/account-repository";
-import type { FindAccount } from "../../accounts/domain/find-account";
-import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
+import type { EventBus } from "../../../../shared/domain/event-bus";
 import type { FindTransaction } from "../domain/find-transaction";
-import type {
-  Transaction,
-  UpdateTransactionPrimitives,
-} from "../domain/transaction";
+import type { Transaction } from "../domain/transaction";
 import type { TransactionDirectionType } from "../domain/transaction-direction";
 import type { TransactionRepository } from "../domain/transaction-repository";
+
+type UpdateTransactionPayload = {
+  categoryId?: string | null;
+  amount?: number;
+  direction?: TransactionDirectionType;
+  description?: string;
+  transactionDate?: string;
+  notes?: string | null;
+};
 
 export class UpdateTransactionUseCase {
   constructor(
     private readonly transactionRepository: TransactionRepository,
-    private readonly accountRepository: AccountRepository,
-    private readonly findAccount: FindAccount,
     private readonly findTransaction: FindTransaction,
+    private readonly eventBus: EventBus,
   ) {}
 
-  async execute(
-    params: UpdateTransactionPrimitives & { id: string },
-  ): Promise<void> {
-    const transaction = await this.getTransaction(params.id);
-    const account = await this.getTransactionAccount(transaction);
+  async execute(id: string, payload: UpdateTransactionPayload): Promise<void> {
+    const transaction = await this.findTransaction.execute({ id });
 
-    this.ensureCurrencyMatches(account, params.currency);
-
-    if (this.needsBalanceRecalculation(params)) {
-      await this.recalculateBalance(account, transaction, params);
-    }
-
-    transaction.update({ ...params });
-
+    this.applyUpdates(transaction, payload);
     await this.transactionRepository.save(transaction);
+
+    const events = transaction.pullDomainEvents();
+    await this.eventBus.publish(events);
   }
 
-  private getTransactionAccount(transaction: Transaction): Promise<Account> {
-    const transactionPrimitives = transaction.toPrimitives();
-    return this.findAccount.execute({ id: transactionPrimitives.accountId });
-  }
-
-  private getTransaction(id: string): Promise<Transaction> {
-    return this.findTransaction.execute({ id });
-  }
-
-  private needsBalanceRecalculation(params: {
-    amount?: number;
-    direction?: TransactionDirectionType;
-  }): boolean {
-    return params.amount !== undefined || params.direction !== undefined;
-  }
-
-  private async recalculateBalance(
-    account: Account,
+  private applyUpdates(
     transaction: Transaction,
-    params: {
-      amount?: number;
-      currency?: string;
-      direction?: TransactionDirectionType;
-    },
-  ): Promise<void> {
-    const transactionPrimitives = transaction.toPrimitives();
-    const oldAmount = transactionPrimitives.amount;
-    const oldDirection = transactionPrimitives.direction;
+    payload: UpdateTransactionPayload,
+  ) {
+    type PayloadHandlers = {
+      [K in keyof Required<UpdateTransactionPayload>]: (
+        value: Exclude<UpdateTransactionPayload[K], undefined>,
+      ) => void;
+    };
 
-    account.reverseTransaction(
-      oldAmount.amount,
-      oldAmount.currency,
-      oldDirection,
-    );
+    const handlers = {
+      categoryId: (v) => transaction.updateCategoryId(v),
+      amount: (v) => transaction.updateAmount(v),
+      direction: (v) => transaction.updateDirection(v),
+      description: (v) => transaction.updateDescription(v),
+      transactionDate: (v) => transaction.updateDate(v),
+      notes: (v) => transaction.updateNotes(v),
+      /**
+       *
+       * this 'satisfies' is needed to ensure
+       * all payload keys are handled and type safe at compile time
+       *
+       * */
+    } satisfies PayloadHandlers;
 
-    const newAmount =
-      params.amount !== undefined ? params.amount : oldAmount.amount;
-    const newCurrency =
-      params.currency !== undefined ? params.currency : oldAmount.currency;
-    const newDirection =
-      params.direction !== undefined ? params.direction : oldDirection;
-
-    account.applyTransaction(newAmount, newCurrency, newDirection);
-
-    await this.accountRepository.save(account);
-  }
-
-  private ensureCurrencyMatches(account: Account, currency?: string): void {
-    if (!currency) return;
-    if (account.hasCurrency(currency)) return;
-    const accountPrimitives = account.toPrimitives();
-    throw new CurrencyMismatchError(
-      accountPrimitives.currentBalance.currency,
-      currency,
-    );
+    for (const [key, handler] of Object.entries(handlers)) {
+      const value = payload[key as keyof typeof handlers];
+      if (value !== undefined) {
+        handler(value as never);
+      }
+    }
   }
 }

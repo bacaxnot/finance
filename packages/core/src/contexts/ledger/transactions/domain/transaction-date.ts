@@ -1,4 +1,4 @@
-import { InvalidArgumentError } from "../../../shared/domain/domain-error";
+import { InvalidArgumentError } from "../../../../shared/domain/domain-error";
 
 export class TransactionDate {
   constructor(public readonly value: Date) {

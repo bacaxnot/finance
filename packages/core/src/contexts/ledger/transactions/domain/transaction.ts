@@ -7,6 +7,14 @@ import {
 import { AccountId } from "../../accounts/domain/account-id";
 import { CategoryId } from "../../categories/domain/category-id";
 import { UserId } from "../../users/domain/user-id";
+import { TransactionAmountUpdatedDomainEvent } from "./events/transaction-amount-updated";
+import { TransactionCategoryUpdatedDomainEvent } from "./events/transaction-category-updated";
+import { TransactionCreatedDomainEvent } from "./events/transaction-created";
+import { TransactionDateUpdatedDomainEvent } from "./events/transaction-date-updated";
+import { TransactionDeletedDomainEvent } from "./events/transaction-deleted";
+import { TransactionDescriptionUpdatedDomainEvent } from "./events/transaction-description-updated";
+import { TransactionDirectionUpdatedDomainEvent } from "./events/transaction-direction-updated";
+import { TransactionNotesUpdatedDomainEvent } from "./events/transaction-notes-updated";
 import { TransactionDate } from "./transaction-date";
 import { TransactionDescription } from "./transaction-description";
 import {
@@ -28,16 +36,6 @@ export type TransactionPrimitives = {
   createdAt: string;
   updatedAt: string;
 };
-
-export type UpdateTransactionPrimitives = Partial<{
-  categoryId: string | null;
-  amount: number;
-  currency: string;
-  direction: TransactionDirectionType;
-  description: string;
-  transactionDate: string;
-  notes: string | null;
-}>;
 
 export class Transaction extends AggregateRoot {
   private constructor(
@@ -68,7 +66,7 @@ export class Transaction extends AggregateRoot {
     notes: string | null;
   }): Transaction {
     const now = dateToPrimitive(new Date());
-    return Transaction.fromPrimitives({
+    const transaction = Transaction.fromPrimitives({
       id: params.id,
       userId: params.userId,
       accountId: params.accountId,
@@ -81,6 +79,22 @@ export class Transaction extends AggregateRoot {
       createdAt: now,
       updatedAt: now,
     });
+
+    transaction.record(
+      new TransactionCreatedDomainEvent(
+        params.id,
+        params.userId,
+        params.accountId,
+        params.categoryId,
+        params.amount,
+        params.direction,
+        params.description,
+        params.date,
+        params.notes,
+      ),
+    );
+
+    return transaction;
   }
 
   static fromPrimitives(primitives: TransactionPrimitives): Transaction {
@@ -119,57 +133,134 @@ export class Transaction extends AggregateRoot {
     return this.userId.value === userId;
   }
 
-  update(params: UpdateTransactionPrimitives): void {
-    if (params.amount !== undefined || params.currency !== undefined) {
-      this.updateAmount(params.amount, params.currency);
-    }
-    if (params.categoryId !== undefined) {
-      this.updateCategoryId(params.categoryId);
-    }
-    if (params.direction !== undefined) {
-      this.updateDirection(params.direction);
-    }
-    if (params.description !== undefined) {
-      this.updateDescription(params.description);
-    }
-    if (params.transactionDate !== undefined) {
-      this.updateTransactionDate(params.transactionDate);
-    }
-    if (params.notes !== undefined) {
-      this.updateNotes(params.notes);
-    }
-
-    this.updatedAt = new Date();
-  }
-
-  private updateCategoryId(categoryId: string | null): void {
+  updateCategoryId(categoryId: string | null): void {
     this.categoryId = categoryId ? new CategoryId(categoryId) : null;
+    this.updatedAt = new Date();
+
+    this.record(
+      new TransactionCategoryUpdatedDomainEvent(
+        this.id.value,
+        this.userId.value,
+        this.accountId.value,
+        this.categoryId?.value ?? null,
+        this.amount.toPrimitives(),
+        this.direction.value,
+        this.description.value,
+        dateToPrimitive(this.date.value),
+        this.notes,
+      ),
+    );
   }
 
-  private updateAmount(
-    amount: number | undefined,
-    currency: string | undefined,
-  ): void {
-    const currentAmount = this.amount.toPrimitives();
-    const newAmount = amount !== undefined ? amount : currentAmount.amount;
-    const newCurrency =
-      currency !== undefined ? currency : currentAmount.currency;
-    this.amount = new Money(newAmount, newCurrency);
+  updateAmount(amount: number): void {
+    const currentCurrency = this.amount.toPrimitives().currency;
+    this.amount = new Money(amount, currentCurrency);
+    this.updatedAt = new Date();
+
+    this.record(
+      new TransactionAmountUpdatedDomainEvent(
+        this.id.value,
+        this.userId.value,
+        this.accountId.value,
+        this.categoryId?.value ?? null,
+        this.amount.toPrimitives(),
+        this.direction.value,
+        this.description.value,
+        dateToPrimitive(this.date.value),
+        this.notes,
+      ),
+    );
   }
 
-  private updateDirection(direction: TransactionDirectionType): void {
+  updateDirection(direction: TransactionDirectionType): void {
     this.direction = new TransactionDirection(direction);
+    this.updatedAt = new Date();
+
+    this.record(
+      new TransactionDirectionUpdatedDomainEvent(
+        this.id.value,
+        this.userId.value,
+        this.accountId.value,
+        this.categoryId?.value ?? null,
+        this.amount.toPrimitives(),
+        this.direction.value,
+        this.description.value,
+        dateToPrimitive(this.date.value),
+        this.notes,
+      ),
+    );
   }
 
-  private updateDescription(description: string): void {
+  updateDescription(description: string): void {
     this.description = new TransactionDescription(description);
+    this.updatedAt = new Date();
+
+    this.record(
+      new TransactionDescriptionUpdatedDomainEvent(
+        this.id.value,
+        this.userId.value,
+        this.accountId.value,
+        this.categoryId?.value ?? null,
+        this.amount.toPrimitives(),
+        this.direction.value,
+        this.description.value,
+        dateToPrimitive(this.date.value),
+        this.notes,
+      ),
+    );
   }
 
-  private updateTransactionDate(transactionDate: string): void {
-    this.date = new TransactionDate(new Date(transactionDate));
+  updateDate(date: string): void {
+    this.date = new TransactionDate(new Date(date));
+    this.updatedAt = new Date();
+
+    this.record(
+      new TransactionDateUpdatedDomainEvent(
+        this.id.value,
+        this.userId.value,
+        this.accountId.value,
+        this.categoryId?.value ?? null,
+        this.amount.toPrimitives(),
+        this.direction.value,
+        this.description.value,
+        dateToPrimitive(this.date.value),
+        this.notes,
+      ),
+    );
   }
 
-  private updateNotes(notes: string | null): void {
+  updateNotes(notes: string | null): void {
     this.notes = notes;
+    this.updatedAt = new Date();
+
+    this.record(
+      new TransactionNotesUpdatedDomainEvent(
+        this.id.value,
+        this.userId.value,
+        this.accountId.value,
+        this.categoryId?.value ?? null,
+        this.amount.toPrimitives(),
+        this.direction.value,
+        this.description.value,
+        dateToPrimitive(this.date.value),
+        this.notes,
+      ),
+    );
+  }
+
+  delete(): void {
+    this.record(
+      new TransactionDeletedDomainEvent(
+        this.id.value,
+        this.userId.value,
+        this.accountId.value,
+        this.categoryId?.value ?? null,
+        this.amount.toPrimitives(),
+        this.direction.value,
+        this.description.value,
+        dateToPrimitive(this.date.value),
+        this.notes,
+      ),
+    );
   }
 }

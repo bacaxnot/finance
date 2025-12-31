@@ -84,35 +84,19 @@ export class Account extends AggregateRoot {
     return this.currentBalance.toPrimitives().currency === currency;
   }
 
-  applyTransaction(
-    amount: number,
-    currency: string,
-    direction: "inbound" | "outbound",
-  ): void {
+  addAmount(amount: number, currency: string): void {
     const money = new Money(amount, currency);
-    if (direction === "inbound") {
-      this.currentBalance = this.currentBalance.add(money);
-    } else {
-      this.currentBalance = this.currentBalance.subtract(money);
-    }
+    this.currentBalance = this.currentBalance.add(money);
     this.updatedAt = new Date();
   }
 
-  reverseTransaction(
-    amount: number,
-    currency: string,
-    direction: "inbound" | "outbound",
-  ): void {
+  subtractAmount(amount: number, currency: string): void {
     const money = new Money(amount, currency);
-    if (direction === "inbound") {
-      this.currentBalance = this.currentBalance.subtract(money);
-    } else {
-      this.currentBalance = this.currentBalance.add(money);
-    }
+    this.currentBalance = this.currentBalance.subtract(money);
     this.updatedAt = new Date();
   }
 
-  update(name: string): void {
+  updateName(name: string): void {
     this.name = new AccountName(name);
     this.updatedAt = new Date();
   }

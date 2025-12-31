@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
+import { container } from "@repo/core/container";
 import { UpdateTransactionUseCase } from "@repo/core/ledger/transactions/application/update-transaction";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
-import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import {
   domainError,
@@ -16,7 +16,6 @@ export const patchTransactionParamsSchema = z.object({
 
 export const patchTransactionBodySchema = z.object({
   amount: z.number().optional(),
-  currency: z.string().optional(),
   direction: z.enum(["inbound", "outbound"]).optional(),
   description: z.string().optional(),
   transactionDate: z.string().optional(),
@@ -37,10 +36,8 @@ export const patchTransactionHandlers = factory.createHandlers(
       const params = c.req.valid("param");
       const body = c.req.valid("json");
 
-      await useCase.execute({
-        id: params.id,
+      await useCase.execute(params.id, {
         amount: body.amount,
-        currency: body.currency,
         direction: body.direction,
         description: body.description,
         transactionDate: body.transactionDate,

@@ -1,6 +1,6 @@
-import type { DomainError } from "@repo/core/shared/domain/domain-error";
 import type { Context } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
+import type { DomainError } from "../../../../packages/core/src/shared/domain/domain-error";
 
 export function domainError<StatusCode extends ContentfulStatusCode>(
   c: Context,

@@ -1,9 +1,9 @@
 import { zValidator } from "@hono/zod-validator";
+import { container } from "@repo/core/container";
 import { SearchTransactionsByAccount } from "@repo/core/ledger/transactions/application/search-transactions-by-account";
 import { SearchTransactionsByUser } from "@repo/core/ledger/transactions/application/search-transactions-by-user";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
-import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";
 

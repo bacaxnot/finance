@@ -1,4 +1,4 @@
-import { InvalidArgumentError } from "../../../shared/domain/domain-error";
+import { InvalidArgumentError } from "../../../../shared/domain/domain-error";
 
 const MAX_NAME_LENGTH = 100;
 export class UserLastName {

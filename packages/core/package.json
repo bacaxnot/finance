@@ -8,7 +8,8 @@
     "node": ">=20.0.0"
   },
   "exports": {
-    "./shared/*": "./src/contexts/shared/*.ts",
+    "./container": "./di/container.ts",
+    "./shared/*": "./src/shared/*.ts",
     "./ledger/*": "./src/contexts/ledger/*.ts",
     "./utils": "./src/utils.ts"
   },
@@ -22,7 +23,9 @@
   },
   "dependencies": {
     "@repo/db": "workspace:*",
-    "diod": "*",
+    "diod": "3.0.0",
+    "glob": "13.0.0",
+    "reflect-metadata": "0.2.2",
     "uuid": "^13.0.0"
   }
 }

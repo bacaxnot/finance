@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
+import { container } from "@repo/core/container";
 import { CreateAccount } from "@repo/core/ledger/accounts/application/create-account";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
-import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { created, domainError, internalServerError } from "~/lib/http-response";
 

@@ -17,7 +17,7 @@ export class UpdateAccountUseCase {
     this.ensureAccountExists(account, params.accountId);
     this.ensureAccountBelongsToUser(account, params.userId);
 
-    account.update(params.name);
+    account.updateName(params.name);
 
     await this.repository.save(account);
   }
@@ -30,10 +30,7 @@ export class UpdateAccountUseCase {
     throw new AccountDoesNotExistError(accountId);
   }
 
-  private ensureAccountBelongsToUser(
-    account: Account,
-    userId: string,
-  ): void {
+  private ensureAccountBelongsToUser(account: Account, userId: string): void {
     if (account.belongsTo(userId)) return;
     throw new Error("Account does not belong to user");
   }

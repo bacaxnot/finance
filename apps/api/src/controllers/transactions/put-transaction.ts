@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
+import { container } from "@repo/core/container";
 import { CreateTransactionUseCase } from "@repo/core/ledger/transactions/application/create-transaction";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
-import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { created, domainError, internalServerError } from "~/lib/http-response";
 
@@ -17,7 +17,7 @@ export const putTransactionBodySchema = z.object({
   currency: z.string(),
   direction: z.enum(["inbound", "outbound"]),
   description: z.string(),
-  transactionDate: z.string(),
+  date: z.string(),
   notes: z.string().nullable(),
 });
 
@@ -44,7 +44,7 @@ export const putTransactionHandlers = factory.createHandlers(
         currency: body.currency,
         direction: body.direction,
         description: body.description,
-        transactionDate: body.transactionDate,
+        date: body.date,
         notes: body.notes || null,
       });
 

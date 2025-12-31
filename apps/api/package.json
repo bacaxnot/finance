@@ -18,8 +18,6 @@
     "@repo/auth": "workspace:*",
     "@repo/core": "workspace:*",
     "@scalar/hono-api-reference": "^0.9.28",
-    "diod": "*",
-    "glob": "^13.0.0",
     "hono": "^4.10.8",
     "zod": "4.1.13"
   },

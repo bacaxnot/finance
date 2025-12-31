@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
+import { container } from "@repo/core/container";
 import { DeleteTransactionUseCase } from "@repo/core/ledger/transactions/application/delete-transaction";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
-import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import {
   domainError,
@@ -24,9 +24,8 @@ export const deleteTransactionHandlers = factory.createHandlers(
     try {
       const useCase = container.get(DeleteTransactionUseCase);
       const params = c.req.valid("param");
-      const user = c.get("user");
 
-      await useCase.execute({ userId: user.id, id: params.id });
+      await useCase.execute(params.id);
 
       return noContent(c);
     } catch (error: unknown) {

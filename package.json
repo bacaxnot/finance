@@ -22,8 +22,6 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "better-auth": "1.4.7",
-    "diod": "3.0.0",
-    "reflect-metadata": "0.2.2"
+    "better-auth": "1.4.7"
   }
 }

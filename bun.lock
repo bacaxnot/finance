@@ -5,8 +5,6 @@
       "name": "finance",
       "dependencies": {
         "better-auth": "1.4.7",
-        "diod": "3.0.0",
-        "reflect-metadata": "0.2.2",
       },
       "devDependencies": {
         "@biomejs/biome": "2.3.8",
@@ -22,8 +20,6 @@
         "@repo/auth": "workspace:*",
         "@repo/core": "workspace:*",
         "@scalar/hono-api-reference": "^0.9.28",
-        "diod": "*",
-        "glob": "^13.0.0",
         "hono": "^4.10.8",
         "zod": "4.1.13",
       },
@@ -103,7 +99,9 @@
       "version": "0.1.0",
       "dependencies": {
         "@repo/db": "workspace:*",
-        "diod": "*",
+        "diod": "3.0.0",
+        "glob": "13.0.0",
+        "reflect-metadata": "0.2.2",
         "uuid": "^13.0.0",
       },
       "devDependencies": {

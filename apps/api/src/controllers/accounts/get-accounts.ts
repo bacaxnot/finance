@@ -1,6 +1,6 @@
+import { container } from "@repo/core/container";
 import { SearchAccountsByUser } from "@repo/core/ledger/accounts/application/search-accounts-by-user";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
-import { container } from "~/di";
 import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";
 

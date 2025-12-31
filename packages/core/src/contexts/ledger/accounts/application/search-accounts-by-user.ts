@@ -1,6 +1,6 @@
-import type { AccountRepository } from "../domain/account-repository";
 import { UserId } from "../../users/domain/user-id";
 import type { AccountPrimitives } from "../domain/account";
+import type { AccountRepository } from "../domain/account-repository";
 
 export class SearchAccountsByUser {
   constructor(private readonly accountRepository: AccountRepository) {}
