@@ -3,8 +3,8 @@ import { accounts } from "@repo/db/schema";
 import {
   dateFromPrimitive,
   dateToPrimitive,
-} from "../../../../shared/domain/primitives";
-import { DrizzlePostgresRepository } from "../../../../shared/infrastructure/drizzle-postgres-repository";
+} from "../../../shared/domain/primitives";
+import { DrizzlePostgresRepository } from "../../../shared/infrastructure/drizzle-postgres-repository";
 import type { UserId } from "../../users/domain/user-id";
 import { Account } from "../domain/account";
 import type { AccountId } from "../domain/account-id";

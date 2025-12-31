@@ -1,7 +1,7 @@
 import { eq } from "@repo/db/orm";
 import { transactions } from "@repo/db/schema";
-import { dateToPrimitive } from "../../../../shared/domain/primitives";
-import { DrizzlePostgresRepository } from "../../../../shared/infrastructure/drizzle-postgres-repository";
+import { dateToPrimitive } from "../../../shared/domain/primitives";
+import { DrizzlePostgresRepository } from "../../../shared/infrastructure/drizzle-postgres-repository";
 import type { AccountId } from "../../accounts/domain/account-id";
 import type { UserId } from "../../users/domain/user-id";
 import { Transaction } from "../domain/transaction";
