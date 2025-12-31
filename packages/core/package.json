@@ -8,7 +8,7 @@
     "node": ">=20.0.0"
   },
   "exports": {
-    "./shared/*": "./src/shared/*.ts",
+    "./shared/*": "./src/contexts/shared/*.ts",
     "./ledger/*": "./src/contexts/ledger/*.ts",
     "./utils": "./src/utils.ts"
   },
