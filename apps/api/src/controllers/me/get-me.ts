@@ -1,5 +1,5 @@
 import { container } from "@repo/core/container";
-import { FindUser } from "@repo/core/ledger/users/application/find-user";
+import { FindUser } from "@repo/core/ledger/users/application/find-user.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";

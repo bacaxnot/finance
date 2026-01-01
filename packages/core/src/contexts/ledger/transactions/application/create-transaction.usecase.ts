@@ -1,12 +1,14 @@
-import type { EventBus } from "../../../../shared/domain/event-bus";
+import { InferDependencies } from "../../../../../di/autoregister";
+
+import { EventBus } from "../../../../shared/domain/event-bus";
 import type { Account } from "../../accounts/domain/account";
-import type { FindAccount } from "../../accounts/domain/find-account";
+import { FindAccount } from "../../accounts/domain/find-account.usecase";
 import { CurrencyMismatchError } from "../domain/currency-mismatch-error";
 import { Transaction } from "../domain/transaction";
 import type { TransactionDirectionType } from "../domain/transaction-direction";
-import type { TransactionRepository } from "../domain/transaction-repository";
+import { TransactionRepository } from "../domain/transaction-repository";
 
-type CreateTransactionPayload = {
+export type CreateTransactionPayload = {
   id: string;
   userId: string;
   accountId: string;
@@ -18,7 +20,9 @@ type CreateTransactionPayload = {
   date: string;
   notes: string | null;
 };
-export class CreateTransactionUseCase {
+
+@InferDependencies()
+export class CreateTransaction {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly findAccount: FindAccount,

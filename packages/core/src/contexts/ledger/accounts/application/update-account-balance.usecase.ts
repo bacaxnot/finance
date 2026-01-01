@@ -1,5 +1,7 @@
-import type { AccountRepository } from "../domain/account-repository";
-import type { FindAccount } from "../domain/find-account";
+import { InferDependencies } from "../../../../../di/autoregister";
+
+import { AccountRepository } from "../domain/account-repository";
+import { FindAccount } from "../domain/find-account.usecase";
 
 type Params = {
   accountId: string;
@@ -8,6 +10,7 @@ type Params = {
   currency: string;
 };
 
+@InferDependencies()
 export class UpdateAccountBalance {
   constructor(
     private readonly accountRepository: AccountRepository,

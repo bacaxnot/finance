@@ -1,50 +1,103 @@
 import type { ContainerBuilder, Newable } from "diod";
+import { glob } from "glob";
 import { DOMAIN_EVENT_SUBSCRIBER } from "./tags";
 
-const autoregisteredServices: Newable<unknown>[] = [];
-const autoregisteredSubscribers: Newable<unknown>[] = [];
+/**
+ * Decorator that enables dependency inference for a class.
+ * Required for DIOD to extract constructor parameter types via reflect-metadata.
+ * Does nothing else - registration is handled by file suffix (.usecase.ts, .subscriber.ts).
+ *
+ * Example:
+ * @InferDependencies()
+ * class CreateAccount {
+ *   constructor(private readonly accountRepository: AccountRepository) {}
+ * }
+ *
+ */
+export const InferDependencies = (): ClassDecorator => {
+  return (target) => target;
+};
 
-const isNewable = (target: unknown): target is Newable<unknown> => {
-  if (typeof target !== "function") {
-    return false;
+const CONTEXTS_PATH = `${__dirname}/../src/contexts`;
+const USE_CASE_PATTERN = `${CONTEXTS_PATH}/**/*.usecase.ts`;
+const SUBSCRIBER_PATTERN = `${CONTEXTS_PATH}/**/*.subscriber.ts`;
+const DI_MODULE_PATTERN = `${__dirname}/{contexts,shared}/**/*.ts`;
+
+function formatNoClassesError(filePath: string) {
+  return `No class exports found in:\n  ${filePath}`;
+}
+
+function formatMultipleClassesError(filePath: string, classNames: string[]) {
+  return (
+    `Multiple class exports found in:\n` +
+    `  ${filePath}\n\n` +
+    `Found ${classNames.length} classes:\n` +
+    classNames.map((name) => `  - ${name}`).join("\n") +
+    `\n\nEach .usecase.ts/.subscriber.ts file must export exactly one class.`
+  );
+}
+
+function extractSingleClassExport(
+  module: Record<string, unknown>,
+  filePath: string,
+) {
+  const classes = Object.entries(module).filter(
+    (entry): entry is [string, Newable<unknown>] =>
+      typeof entry[1] === "function" &&
+      entry[1].prototype?.constructor !== undefined,
+  );
+
+  if (classes.length === 0) {
+    throw new Error(formatNoClassesError(filePath));
   }
 
-  const prototype = target.prototype;
-  return !!prototype && !!prototype.constructor;
-};
-
-export const RegisterService = (): ClassDecorator => {
-  return <TFunction extends Function>(target: TFunction): TFunction => {
-    if (isNewable(target)) {
-      autoregisteredServices.push(target);
-    } else {
-      throw new Error("Abstract classes cannot be auto registered");
-    }
-
-    return target;
-  };
-};
-
-export const RegisterSubscriber = (): ClassDecorator => {
-  return <TFunction extends Function>(target: TFunction): TFunction => {
-    if (isNewable(target)) {
-      autoregisteredSubscribers.push(target);
-    } else {
-      throw new Error("Abstract classes cannot be auto registered");
-    }
-
-    return target;
-  };
-};
-
-export const autoregister = (builder: ContainerBuilder): ContainerBuilder => {
-  for (const service of autoregisteredServices) {
-    builder.registerAndUse(service);
+  if (classes.length > 1) {
+    const classNames = classes.map(([name]) => name);
+    throw new Error(formatMultipleClassesError(filePath, classNames));
   }
 
-  for (const subscriber of autoregisteredSubscribers) {
-    builder.registerAndUse(subscriber).addTag(DOMAIN_EVENT_SUBSCRIBER);
+  return classes[0][1];
+}
+
+async function discoverClasses(pattern: string) {
+  const files = glob.sync(pattern);
+  const classes: Newable<unknown>[] = [];
+
+  for (const file of files) {
+    const module = await import(file);
+    classes.push(extractSingleClassExport(module, file));
   }
 
-  return builder;
-};
+  return classes;
+}
+
+async function registerUseCases(builder: ContainerBuilder) {
+  const useCases = await discoverClasses(USE_CASE_PATTERN);
+
+  for (const cls of useCases) {
+    builder.registerAndUse(cls);
+  }
+}
+
+async function registerSubscribers(builder: ContainerBuilder) {
+  const subscribers = await discoverClasses(SUBSCRIBER_PATTERN);
+
+  for (const cls of subscribers) {
+    builder.registerAndUse(cls).addTag(DOMAIN_EVENT_SUBSCRIBER);
+  }
+}
+
+async function registerDiModules(builder: ContainerBuilder) {
+  const files = glob.sync(DI_MODULE_PATTERN);
+
+  for (const file of files) {
+    const module = await import(file);
+    module.register(builder);
+  }
+}
+
+export async function autoregister(builder: ContainerBuilder) {
+  await registerDiModules(builder);
+  await registerUseCases(builder);
+  await registerSubscribers(builder);
+}

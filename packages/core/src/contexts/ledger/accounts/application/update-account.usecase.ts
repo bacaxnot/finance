@@ -1,9 +1,12 @@
+import { InferDependencies } from "../../../../../di/autoregister";
+
 import type { Account } from "../domain/account";
 import { AccountDoesNotExistError } from "../domain/account-does-not-exist-error";
 import { AccountId } from "../domain/account-id";
-import type { AccountRepository } from "../domain/account-repository";
+import { AccountRepository } from "../domain/account-repository";
 
-export class UpdateAccountUseCase {
+@InferDependencies()
+export class UpdateAccount {
   constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: {

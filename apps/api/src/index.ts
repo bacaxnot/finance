@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 import { auth } from "@repo/auth";
 import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";

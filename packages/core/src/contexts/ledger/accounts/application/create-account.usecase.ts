@@ -1,6 +1,9 @@
-import { Account } from "../domain/account";
-import type { AccountRepository } from "../domain/account-repository";
+import { InferDependencies } from "../../../../../di/autoregister";
 
+import { Account } from "../domain/account";
+import { AccountRepository } from "../domain/account-repository";
+
+@InferDependencies()
 export class CreateAccount {
   constructor(private readonly accountRepository: AccountRepository) {}
 

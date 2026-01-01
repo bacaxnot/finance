@@ -1,7 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { container } from "@repo/core/container";
-import { SearchTransactionsByAccount } from "@repo/core/ledger/transactions/application/search-transactions-by-account";
-import { SearchTransactionsByUser } from "@repo/core/ledger/transactions/application/search-transactions-by-user";
+import { SearchTransactionsByAccount } from "@repo/core/ledger/transactions/application/search-transactions-by-account.usecase";
+import { SearchTransactionsByUser } from "@repo/core/ledger/transactions/application/search-transactions-by-user.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { factory } from "~/lib/factory";

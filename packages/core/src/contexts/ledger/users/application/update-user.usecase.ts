@@ -1,14 +1,11 @@
+import { InferDependencies } from "../../../../../di/autoregister";
+
 import type { User } from "../domain/user";
+import { UserDoesNotExistError } from "../domain/user-does-not-exist-error";
 import { UserId } from "../domain/user-id";
-import type { UserRepository } from "../domain/user-repository";
+import { UserRepository } from "../domain/user-repository";
 
-export class UserDoesNotExistError extends Error {
-  constructor(userId: string) {
-    super(`User with id ${userId} does not exist`);
-    this.name = "UserDoesNotExistError";
-  }
-}
-
+@InferDependencies()
 export class UpdateUser {
   constructor(private readonly repository: UserRepository) {}
 

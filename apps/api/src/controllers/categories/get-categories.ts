@@ -1,5 +1,5 @@
 import { container } from "@repo/core/container";
-import { SearchCategoriesByUser } from "@repo/core/ledger/categories/application/search-categories-by-user";
+import { SearchCategoriesByUser } from "@repo/core/ledger/categories/application/search-categories-by-user.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { factory } from "~/lib/factory";
 import { domainError, internalServerError, json } from "~/lib/http-response";
@@ -20,7 +20,7 @@ export const getCategoriesHandlers = factory.createHandlers(async (c) => {
     if (error instanceof DomainError) {
       return domainError(c, error, 400);
     }
-
+    console.error(error);
     return internalServerError(c);
   }
 });

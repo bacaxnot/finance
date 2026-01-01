@@ -1,9 +1,12 @@
+import { InferDependencies } from "../../../../../di/autoregister";
+
 import type { Account } from "../domain/account";
 import { AccountDoesNotExistError } from "../domain/account-does-not-exist-error";
 import { AccountId } from "../domain/account-id";
-import type { AccountRepository } from "../domain/account-repository";
+import { AccountRepository } from "../domain/account-repository";
 
-export class DeleteAccountUseCase {
+@InferDependencies()
+export class DeleteAccount {
   constructor(private readonly repository: AccountRepository) {}
 
   async execute(params: { userId: string; accountId: string }): Promise<void> {
@@ -24,10 +27,7 @@ export class DeleteAccountUseCase {
     throw new AccountDoesNotExistError(accountId);
   }
 
-  private ensureAccountBelongsToUser(
-    account: Account,
-    userId: string,
-  ): void {
+  private ensureAccountBelongsToUser(account: Account, userId: string): void {
     if (account.belongsTo(userId)) return;
     throw new Error("Account does not belong to user");
   }

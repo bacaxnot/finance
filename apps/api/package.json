@@ -19,7 +19,8 @@
     "@repo/core": "workspace:*",
     "@scalar/hono-api-reference": "^0.9.28",
     "hono": "^4.10.8",
-    "zod": "4.1.13"
+    "zod": "4.1.13",
+    "reflect-metadata": "0.2.2"
   },
   "devDependencies": {
     "@types/bun": "latest",

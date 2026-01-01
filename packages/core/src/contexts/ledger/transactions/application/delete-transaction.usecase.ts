@@ -1,9 +1,12 @@
-import type { EventBus } from "../../../../shared/domain/event-bus";
-import type { FindTransaction } from "../domain/find-transaction";
-import { TransactionId } from "../domain/transaction-id";
-import type { TransactionRepository } from "../domain/transaction-repository";
+import { InferDependencies } from "../../../../../di/autoregister";
 
-export class DeleteTransactionUseCase {
+import { EventBus } from "../../../../shared/domain/event-bus";
+import { FindTransaction } from "../domain/find-transaction.usecase";
+import { TransactionId } from "../domain/transaction-id";
+import { TransactionRepository } from "../domain/transaction-repository";
+
+@InferDependencies()
+export class DeleteTransaction {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly findTransaction: FindTransaction,

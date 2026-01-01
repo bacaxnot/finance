@@ -1,8 +1,11 @@
+import { InferDependencies } from "../../../../../di/autoregister";
+
 import type { DomainEventName } from "../../../../shared/domain/domain-event-name";
 import { DomainEventSubscriber } from "../../../../shared/domain/domain-event-subscriber";
 import { TransactionCreatedDomainEvent } from "../../transactions/domain/events/transaction-created";
-import type { UpdateAccountBalance } from "./update-account-balance";
+import { UpdateAccountBalance } from "./update-account-balance.usecase";
 
+@InferDependencies()
 export class UpdateAccountBalanceOnTransactionCreated extends DomainEventSubscriber<TransactionCreatedDomainEvent> {
   constructor(private readonly updateAccountBalance: UpdateAccountBalance) {
     super();

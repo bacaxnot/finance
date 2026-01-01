@@ -1,6 +1,9 @@
-import { Category } from "../domain/category";
-import type { CategoryRepository } from "../domain/category-repository";
+import { InferDependencies } from "../../../../../di/autoregister";
 
+import { Category } from "../domain/category";
+import { CategoryRepository } from "../domain/category-repository";
+
+@InferDependencies()
 export class CreateCategory {
   constructor(private readonly repository: CategoryRepository) {}
 

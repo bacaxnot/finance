@@ -1,7 +1,10 @@
+import { InferDependencies } from "../../../../../di/autoregister";
+
 import { AccountId } from "../../accounts/domain/account-id";
 import type { TransactionPrimitives } from "../domain/transaction";
-import type { TransactionRepository } from "../domain/transaction-repository";
+import { TransactionRepository } from "../domain/transaction-repository";
 
+@InferDependencies()
 export class SearchTransactionsByAccount {
   constructor(private readonly repository: TransactionRepository) {}
 

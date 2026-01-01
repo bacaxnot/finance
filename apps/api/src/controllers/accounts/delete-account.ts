@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { container } from "@repo/core/container";
-import { DeleteAccountUseCase } from "@repo/core/ledger/accounts/application/delete-account";
+import { DeleteAccount } from "@repo/core/ledger/accounts/application/delete-account.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { factory } from "~/lib/factory";
@@ -22,7 +22,7 @@ export const deleteAccountHandlers = factory.createHandlers(
   zValidator("param", deleteAccountParamsSchema),
   async (c) => {
     try {
-      const useCase = container.get(DeleteAccountUseCase);
+      const useCase = container.get(DeleteAccount);
       const params = c.req.valid("param");
       const user = c.get("user");
 

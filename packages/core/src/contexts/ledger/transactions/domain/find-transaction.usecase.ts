@@ -1,8 +1,11 @@
+import { InferDependencies } from "../../../../../di/autoregister";
+
 import type { Transaction } from "./transaction";
 import { TransactionDoesNotExistError } from "./transaction-does-not-exist-error";
 import { TransactionId } from "./transaction-id";
-import type { TransactionRepository } from "./transaction-repository";
+import { TransactionRepository } from "./transaction-repository";
 
+@InferDependencies()
 export class FindTransaction {
   constructor(private readonly repository: TransactionRepository) {}
 

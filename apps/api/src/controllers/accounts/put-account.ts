@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { container } from "@repo/core/container";
-import { CreateAccount } from "@repo/core/ledger/accounts/application/create-account";
+import { CreateAccount } from "@repo/core/ledger/accounts/application/create-account.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { factory } from "~/lib/factory";

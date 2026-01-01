@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { container } from "@repo/core/container";
-import { CreateTransactionUseCase } from "@repo/core/ledger/transactions/application/create-transaction";
+import { CreateTransaction } from "@repo/core/ledger/transactions/application/create-transaction.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { factory } from "~/lib/factory";
@@ -30,7 +30,7 @@ export const putTransactionHandlers = factory.createHandlers(
   zValidator("json", putTransactionBodySchema),
   async (c) => {
     try {
-      const useCase = container.get(CreateTransactionUseCase);
+      const useCase = container.get(CreateTransaction);
       const params = c.req.valid("param");
       const body = c.req.valid("json");
       const user = c.get("user");

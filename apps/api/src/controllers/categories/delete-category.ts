@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { container } from "@repo/core/container";
-import { DeleteCategoryUseCase } from "@repo/core/ledger/categories/application/delete-category";
+import { DeleteCategory } from "@repo/core/ledger/categories/application/delete-category.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { factory } from "~/lib/factory";
@@ -22,7 +22,7 @@ export const deleteCategoryHandlers = factory.createHandlers(
   zValidator("param", deleteCategoryParamsSchema),
   async (c) => {
     try {
-      const useCase = container.get(DeleteCategoryUseCase);
+      const useCase = container.get(DeleteCategory);
       const params = c.req.valid("param");
       const user = c.get("user");
 

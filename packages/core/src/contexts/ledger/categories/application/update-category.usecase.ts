@@ -1,19 +1,28 @@
+import { InferDependencies } from "../../../../../di/autoregister";
+
 import type { Category } from "../domain/category";
 import { CategoryDoesNotExistError } from "../domain/category-does-not-exist-error";
 import { CategoryId } from "../domain/category-id";
-import type { CategoryRepository } from "../domain/category-repository";
+import { CategoryRepository } from "../domain/category-repository";
 
-export class DeleteCategoryUseCase {
+@InferDependencies()
+export class UpdateCategory {
   constructor(private readonly repository: CategoryRepository) {}
 
-  async execute(params: { userId: string; categoryId: string }): Promise<void> {
+  async execute(params: {
+    userId: string;
+    categoryId: string;
+    name: string;
+  }): Promise<void> {
     const categoryId = new CategoryId(params.categoryId);
     const category = await this.repository.search(categoryId);
 
     this.ensureCategoryExists(category, params.categoryId);
     this.ensureCategoryBelongsToUser(category, params.userId);
 
-    await this.repository.delete(categoryId);
+    category.update(params.name);
+
+    await this.repository.save(category);
   }
 
   private ensureCategoryExists(

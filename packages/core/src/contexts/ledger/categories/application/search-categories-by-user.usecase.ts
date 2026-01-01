@@ -1,7 +1,10 @@
+import { InferDependencies } from "../../../../../di/autoregister";
+
 import { UserId } from "../../users/domain/user-id";
 import type { CategoryPrimitives } from "../domain/category";
-import type { CategoryRepository } from "../domain/category-repository";
+import { CategoryRepository } from "../domain/category-repository";
 
+@InferDependencies()
 export class SearchCategoriesByUser {
   constructor(private readonly repository: CategoryRepository) {}
 

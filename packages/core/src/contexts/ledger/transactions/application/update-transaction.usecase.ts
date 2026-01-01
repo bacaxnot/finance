@@ -1,10 +1,12 @@
-import type { EventBus } from "../../../../shared/domain/event-bus";
-import type { FindTransaction } from "../domain/find-transaction";
+import { InferDependencies } from "../../../../../di/autoregister";
+
+import { EventBus } from "../../../../shared/domain/event-bus";
+import { FindTransaction } from "../domain/find-transaction.usecase";
 import type { Transaction } from "../domain/transaction";
 import type { TransactionDirectionType } from "../domain/transaction-direction";
-import type { TransactionRepository } from "../domain/transaction-repository";
+import { TransactionRepository } from "../domain/transaction-repository";
 
-type UpdateTransactionPayload = {
+export type UpdateTransactionPayload = {
   categoryId?: string | null;
   amount?: number;
   direction?: TransactionDirectionType;
@@ -13,7 +15,8 @@ type UpdateTransactionPayload = {
   notes?: string | null;
 };
 
-export class UpdateTransactionUseCase {
+@InferDependencies()
+export class UpdateTransaction {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly findTransaction: FindTransaction,

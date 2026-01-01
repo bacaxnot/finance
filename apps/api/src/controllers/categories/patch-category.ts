@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { container } from "@repo/core/container";
-import { UpdateCategoryUseCase } from "@repo/core/ledger/categories/application/update-category";
+import { UpdateCategory } from "@repo/core/ledger/categories/application/update-category.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { factory } from "~/lib/factory";
@@ -27,7 +27,7 @@ export const patchCategoryHandlers = factory.createHandlers(
   zValidator("json", patchCategoryBodySchema),
   async (c) => {
     try {
-      const useCase = container.get(UpdateCategoryUseCase);
+      const useCase = container.get(UpdateCategory);
       const params = c.req.valid("param");
       const body = c.req.valid("json");
       const user = c.get("user");

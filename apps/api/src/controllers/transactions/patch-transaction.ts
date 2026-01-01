@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { container } from "@repo/core/container";
-import { UpdateTransactionUseCase } from "@repo/core/ledger/transactions/application/update-transaction";
+import { UpdateTransaction } from "@repo/core/ledger/transactions/application/update-transaction.usecase";
 import { DomainError } from "@repo/core/shared/domain/domain-error";
 import { z } from "zod";
 import { factory } from "~/lib/factory";
@@ -32,7 +32,7 @@ export const patchTransactionHandlers = factory.createHandlers(
   zValidator("json", patchTransactionBodySchema),
   async (c) => {
     try {
-      const useCase = container.get(UpdateTransactionUseCase);
+      const useCase = container.get(UpdateTransaction);
       const params = c.req.valid("param");
       const body = c.req.valid("json");
 
