@@ -1,5 +1,4 @@
 import type { ContainerBuilder, Newable } from "diod";
-import { glob } from "glob";
 import { DOMAIN_EVENT_SUBSCRIBER } from "./tags";
 
 /**
@@ -19,9 +18,11 @@ export const InferDependencies = (): ClassDecorator => {
 };
 
 const CONTEXTS_PATH = `${__dirname}/../src/contexts`;
-const USE_CASE_PATTERN = `${CONTEXTS_PATH}/**/*.usecase.ts`;
-const SUBSCRIBER_PATTERN = `${CONTEXTS_PATH}/**/*.subscriber.ts`;
-const DI_MODULE_PATTERN = `${__dirname}/{contexts,shared}/**/*.ts`;
+const DI_MODULES_PATH = __dirname;
+
+const USE_CASE_GLOB = new Bun.Glob("**/*.usecase.ts");
+const SUBSCRIBER_GLOB = new Bun.Glob("**/*.subscriber.ts");
+const DI_MODULE_GLOB = new Bun.Glob("{contexts,shared}/**/*.ts");
 
 function formatNoClassesError(filePath: string) {
   return `No class exports found in:\n  ${filePath}`;
@@ -59,8 +60,8 @@ function extractSingleClassExport(
   return classes[0][1];
 }
 
-async function discoverClasses(pattern: string) {
-  const files = glob.sync(pattern);
+async function discoverClasses(glob: InstanceType<typeof Bun.Glob>, cwd: string) {
+  const files = Array.from(glob.scanSync({ cwd, absolute: true }));
   const classes: Newable<unknown>[] = [];
 
   for (const file of files) {
@@ -72,7 +73,7 @@ async function discoverClasses(pattern: string) {
 }
 
 async function registerUseCases(builder: ContainerBuilder) {
-  const useCases = await discoverClasses(USE_CASE_PATTERN);
+  const useCases = await discoverClasses(USE_CASE_GLOB, CONTEXTS_PATH);
 
   for (const cls of useCases) {
     builder.registerAndUse(cls);
@@ -80,7 +81,7 @@ async function registerUseCases(builder: ContainerBuilder) {
 }
 
 async function registerSubscribers(builder: ContainerBuilder) {
-  const subscribers = await discoverClasses(SUBSCRIBER_PATTERN);
+  const subscribers = await discoverClasses(SUBSCRIBER_GLOB, CONTEXTS_PATH);
 
   for (const cls of subscribers) {
     builder.registerAndUse(cls).addTag(DOMAIN_EVENT_SUBSCRIBER);
@@ -88,7 +89,9 @@ async function registerSubscribers(builder: ContainerBuilder) {
 }
 
 async function registerDiModules(builder: ContainerBuilder) {
-  const files = glob.sync(DI_MODULE_PATTERN);
+  const files = Array.from(
+    DI_MODULE_GLOB.scanSync({ cwd: DI_MODULES_PATH, absolute: true }),
+  );
 
   for (const file of files) {
     const module = await import(file);
