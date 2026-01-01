@@ -3,7 +3,7 @@
  * Use in fromPrimitives() methods when reconstituting aggregates from primitives
  */
 export function dateFromPrimitive(isoString: string): Date {
-	return new Date(isoString);
+  return new Date(isoString);
 }
 
 /**
@@ -11,5 +11,5 @@ export function dateFromPrimitive(isoString: string): Date {
  * Use in toPrimitives() methods when serializing aggregates to primitives
  */
 export function dateToPrimitive(date: Date): string {
-	return date.toISOString();
+  return date.toISOString();
 }

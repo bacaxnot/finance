@@ -60,7 +60,10 @@ function extractSingleClassExport(
   return classes[0][1];
 }
 
-async function discoverClasses(glob: InstanceType<typeof Bun.Glob>, cwd: string) {
+async function discoverClasses(
+  glob: InstanceType<typeof Bun.Glob>,
+  cwd: string,
+) {
   const files = Array.from(glob.scanSync({ cwd, absolute: true }));
   const classes: Newable<unknown>[] = [];
 
