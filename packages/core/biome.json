@@ -7,6 +7,27 @@
       "linter": {
         "rules": {
           "style": {
+            /**
+             * Disable useImportType for dependency-injected classes.
+             *
+             * WHY: DIOD (our DI container) uses reflect-metadata to infer constructor
+             * parameter types at runtime. When TypeScript compiles `import type`,
+             * the import is erased entirely - leaving no runtime reference for the
+             * DI container to resolve.
+             *
+             * WHAT HAPPENS WITHOUT THIS:
+             *   import type { UserRepository } from "./user-repository";
+             *   // At runtime: UserRepository = undefined (or Object)
+             *   // DIOD error: "Service not registered for dependencies: Object"
+             *
+             * THE FIX:
+             *   import { UserRepository } from "./user-repository";
+             *   // At runtime: UserRepository = [class UserRepository]
+             *   // DIOD can now resolve the dependency correctly
+             *
+             * This override only applies to .usecase.ts and .subscriber.ts files,
+             * which are auto-registered by the DI container and need runtime type info.
+             */
             "useImportType": "off"
           }
         }
