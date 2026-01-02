@@ -2,6 +2,12 @@ import { DomainEvent } from "../../../../../shared/domain/domain-event";
 import type { TransactionPrimitives } from "../transaction";
 import type { TransactionDirectionType } from "../transaction-direction";
 
+type TransactionAmountUpdatedPrimitives = Omit<
+  TransactionPrimitives,
+  "createdAt" | "updatedAt"
+> & {
+  previousAmount: { amount: number; currency: string };
+};
 export class TransactionAmountUpdatedDomainEvent extends DomainEvent {
   static eventName = "toke.ledger.transaction.amount.updated";
 
@@ -15,11 +21,12 @@ export class TransactionAmountUpdatedDomainEvent extends DomainEvent {
     public readonly description: string,
     public readonly date: string,
     public readonly notes: string | null,
+    public readonly previousAmount: { amount: number; currency: string },
   ) {
     super(TransactionAmountUpdatedDomainEvent.eventName, id);
   }
 
-  toPrimitives(): Omit<TransactionPrimitives, "createdAt" | "updatedAt"> {
+  toPrimitives(): TransactionAmountUpdatedPrimitives {
     return {
       id: this.id,
       userId: this.userId,
@@ -30,6 +37,7 @@ export class TransactionAmountUpdatedDomainEvent extends DomainEvent {
       description: this.description,
       date: this.date,
       notes: this.notes,
+      previousAmount: this.previousAmount,
     };
   }
 }

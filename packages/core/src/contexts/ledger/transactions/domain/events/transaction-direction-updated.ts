@@ -2,6 +2,13 @@ import { DomainEvent } from "../../../../../shared/domain/domain-event";
 import type { TransactionPrimitives } from "../transaction";
 import type { TransactionDirectionType } from "../transaction-direction";
 
+type TransactionDirectionUpdatedPrimitives = Omit<
+  TransactionPrimitives,
+  "createdAt" | "updatedAt"
+> & {
+  previousDirection: TransactionDirectionType;
+};
+
 export class TransactionDirectionUpdatedDomainEvent extends DomainEvent {
   static eventName = "toke.ledger.transaction.direction.updated";
 
@@ -15,11 +22,12 @@ export class TransactionDirectionUpdatedDomainEvent extends DomainEvent {
     public readonly description: string,
     public readonly date: string,
     public readonly notes: string | null,
+    public readonly previousDirection: TransactionDirectionType,
   ) {
     super(TransactionDirectionUpdatedDomainEvent.eventName, id);
   }
 
-  toPrimitives(): Omit<TransactionPrimitives, "createdAt" | "updatedAt"> {
+  toPrimitives(): TransactionDirectionUpdatedPrimitives {
     return {
       id: this.id,
       userId: this.userId,
@@ -30,6 +38,7 @@ export class TransactionDirectionUpdatedDomainEvent extends DomainEvent {
       description: this.description,
       date: this.date,
       notes: this.notes,
+      previousDirection: this.previousDirection,
     };
   }
 }

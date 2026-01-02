@@ -153,8 +153,8 @@ export class Transaction extends AggregateRoot {
   }
 
   updateAmount(amount: number): void {
-    const currentCurrency = this.amount.toPrimitives().currency;
-    this.amount = new Money(amount, currentCurrency);
+    const previousAmount = this.amount.toPrimitives();
+    this.amount = new Money(amount, previousAmount.currency);
     this.updatedAt = new Date();
 
     this.record(
@@ -168,11 +168,13 @@ export class Transaction extends AggregateRoot {
         this.description.value,
         dateToPrimitive(this.date.value),
         this.notes,
+        previousAmount,
       ),
     );
   }
 
   updateDirection(direction: TransactionDirectionType): void {
+    const previousDirection = this.direction.value;
     this.direction = new TransactionDirection(direction);
     this.updatedAt = new Date();
 
@@ -187,6 +189,7 @@ export class Transaction extends AggregateRoot {
         this.description.value,
         dateToPrimitive(this.date.value),
         this.notes,
+        previousDirection,
       ),
     );
   }
